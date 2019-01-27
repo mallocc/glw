@@ -4,6 +4,8 @@
 #
 ##### Dependancies #####
 #
+#  This was built on Linux Xubuntu 18.04
+#
 #  cmake
 #  build-essential
 #  xorg-dev

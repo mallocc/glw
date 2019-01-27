@@ -69,6 +69,7 @@ namespace glw
 			void clearAll();
 			
 			void getWindowSize(glm::vec2& windowSize) const;
+      void setWindowSize(glm::vec2 windowSize);
 
       void setEyePos(const glm::vec3& pos);
 			void setEyeLookPos(const glm::vec3& pos);
@@ -108,10 +109,10 @@ namespace glw
 		  GReturnCode glLoop(GEngineLoop loop, GLFWwindow * window);
 		  //GL window initialise
 		  GReturnCode initWindow(
-		    glw::engine::GEngineInit init, 
-		    GLFWkeyfun key_func, 
-		    GLFWmousebuttonfun mouse_func,
-		    GLFWwindow * window);
+          glw::engine::GEngineInit init,
+          GLFWkeyfun key_func,
+          GLFWmousebuttonfun mouse_func,
+          GLFWwindow * window);
 
   
 		  GLFWwindow * m_window;

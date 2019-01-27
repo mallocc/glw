@@ -33,18 +33,18 @@ namespace
 {
   const char * TRG = "MAIN";
   const char * __CLASSNAME__ = "main";
-  
+
   GEngine * engine;
   GShaderProgramManager * shaderProgramManager;
   GShaderProgram * shaderProgram;
-  GShaderProgramId RENDER_PROGRAM;  
+  GShaderProgramId RENDER_PROGRAM;
   GShaderProgramId PHONG_PROGRAM;
   GShaderProgramId BLUR_PROGRAM;
   GFrameBufferObject fbo;
   GFrameBufferObject fboBlur;
-  GMesh mesh;  
+  GMesh mesh;
   GCamera camera(glm::vec3(0, 0, 5), glm::vec3(), glm::vec3(0,0,-1), glm::vec3(0, 1, 0));
-	GMeshShaderHandle_T meshShaderHandle;
+  GMeshShaderHandle_T meshShaderHandle;
   GLight_T light = { glm::vec3(0,5,0), glw::RED, glm::vec3(2,25,100) };
 
   glm::vec3 blurProperties(0.06f,0.06f,0.02f);
@@ -264,7 +264,7 @@ GReturnCode init()
 
   // SHADER PROGRAM SETUP //
   success = initShaderPrograms();
-  
+
   // FBO SETUP //
   if (GLW_SUCCESS == success)
   {
@@ -282,56 +282,56 @@ GReturnCode init()
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-	if (action == GLFW_PRESS)
-	{
-		switch (button)
-		{
-		case GLFW_MOUSE_BUTTON_LEFT:		
-		  CINFO(TRG, "User left click");
-			break;
-		}
-	}
+  if (action == GLFW_PRESS)
+  {
+    switch (button)
+    {
+    case GLFW_MOUSE_BUTTON_LEFT:
+      CINFO(TRG, "User left click");
+      break;
+    }
+  }
 }
 
 static void	key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{	
-	if (action == GLFW_PRESS || action == GLFW_REPEAT)
-	{		
-		switch (key)
-		{
+{
+  if (action == GLFW_PRESS || action == GLFW_REPEAT)
+  {
+    switch (key)
+    {
     case GLFW_KEY_A:
       camera.applyForceLeft();
       break;
     case GLFW_KEY_D:
       camera.applyForceRight();
-      break;      
+      break;
     case GLFW_KEY_W:
       camera.applyForceForward();
-      break;      
+      break;
     case GLFW_KEY_S:
       camera.applyForceBackward();
       break;
-	  case GLFW_KEY_Q:	
+    case GLFW_KEY_Q:
       camera.applyForceDown();
       break;
-	  case GLFW_KEY_E:	
+    case GLFW_KEY_E:
       camera.applyForceUp();
       break;
-      
-	  case GLFW_KEY_UP:	
+
+    case GLFW_KEY_UP:
       engine->setFpsCap(engine->getFpsCap()+1);
       break;
-      
-	  case GLFW_KEY_DOWN:
+
+    case GLFW_KEY_DOWN:
       engine->setFpsCap(engine->getFpsCap()-1);
       break;
-      
-		case GLFW_KEY_ESCAPE:	
-		  CINFO(TRG, "User triggered terminatation.");
-			glfwSetWindowShouldClose(window, GL_TRUE);
-			break;
-		}
-	}
+
+    case GLFW_KEY_ESCAPE:
+      CINFO(TRG, "User triggered terminatation.");
+      glfwSetWindowShouldClose(window, GL_TRUE);
+      break;
+    }
+  }
 }
 
 int main()
@@ -346,10 +346,10 @@ int main()
   engine->setFpsCap(60);
   engine->setWindowSize(glm::vec2(1280,720));
   engine->run(loop, init, key_callback, mouse_button_callback);
-  
+
   CINFO(TRG, "Program exit.");
-  
+
   CENDLOGGER();
-  
+
   return 0;
 }

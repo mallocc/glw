@@ -266,6 +266,12 @@ void GEngine::getWindowSize(glm::vec2& windowSize) const
   windowSize = m_windowSize;
 }
 
+void GEngine::setWindowSize(glm::vec2 windowSize)
+{
+  m_windowSize = windowSize;
+  m_aspectRatio = windowSize.x/windowSize.y;
+}
+
 void GEngine::setEyePos(const glm::vec3& pos)
 {
   m_eyePos = pos;
