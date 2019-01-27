@@ -10,7 +10,7 @@ namespace glw
   {
     namespace glsl
     {
-      struct GMeshShaderHandle_T
+      struct GShaderHandle_T
       {
         GShaderVariableHandle * textureHandle;
         GShaderVariableHandle * colorHandle;

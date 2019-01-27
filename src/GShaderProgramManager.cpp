@@ -118,35 +118,35 @@ GShaderProgram * GShaderProgramManager::getCurrentProgram()
 	return &m_shaderPrograms[m_currentProgram];
 }
 
-void GShaderProgramManager::drawMesh(GMesh& mesh)
+void GShaderProgramManager::drawVBO(GVertexBufferObject& vbo)
 {
   GShaderProgram * shaderProgram = getCurrentProgram();
   if(NULL != shaderProgram)
   {
-    mesh.draw(0, shaderProgram->getMeshShaderHandle());
+    vbo.draw(0, shaderProgram->getShaderHandle());
   }
 }
 
-void GShaderProgramManager::drawMeshes(std::vector<GMesh*>& meshes)
+void GShaderProgramManager::drawVBOs(std::vector<GVertexBufferObject*>& vbos)
 {
   GShaderProgram * shaderProgram = getCurrentProgram();
   if(NULL != shaderProgram)
   {
-    for (GMesh * mesh : meshes)
+    for (GVertexBufferObject * vbo : vbos)
     {
-      if (NULL != mesh)
+      if (NULL != vbo)
       {
-        mesh->draw(0, shaderProgram->getMeshShaderHandle());
+        vbo->draw(0, shaderProgram->getShaderHandle());
       }
     }
   }
 }
 
-void GShaderProgramManager::drawFrameBufferObject(GFrameBufferObject& fbo)
+void GShaderProgramManager::drawFBO(GFrameBufferObject& fbo)
 {
   GShaderProgram * shaderProgram = getCurrentProgram();
   if(NULL != shaderProgram)
   {
-    fbo.draw(shaderProgram->getMeshShaderHandle());
+    fbo.draw(shaderProgram->getShaderHandle());
   }
 }

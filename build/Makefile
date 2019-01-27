@@ -204,33 +204,6 @@ src/GFrameBufferObject.cpp.s:
 	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.s
 .PHONY : src/GFrameBufferObject.cpp.s
 
-src/GMesh.o: src/GMesh.cpp.o
-
-.PHONY : src/GMesh.o
-
-# target to build an object file
-src/GMesh.cpp.o:
-	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/GMesh.cpp.o
-.PHONY : src/GMesh.cpp.o
-
-src/GMesh.i: src/GMesh.cpp.i
-
-.PHONY : src/GMesh.i
-
-# target to preprocess a source file
-src/GMesh.cpp.i:
-	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/GMesh.cpp.i
-.PHONY : src/GMesh.cpp.i
-
-src/GMesh.s: src/GMesh.cpp.s
-
-.PHONY : src/GMesh.s
-
-# target to generate assembly for a file
-src/GMesh.cpp.s:
-	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/GMesh.cpp.s
-.PHONY : src/GMesh.cpp.s
-
 src/GPrimativeFactory.o: src/GPrimativeFactory.cpp.o
 
 .PHONY : src/GPrimativeFactory.o
@@ -339,6 +312,33 @@ src/GShaderVariableHandle.cpp.s:
 	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.s
 .PHONY : src/GShaderVariableHandle.cpp.s
 
+src/GVertexBufferObject.o: src/GVertexBufferObject.cpp.o
+
+.PHONY : src/GVertexBufferObject.o
+
+# target to build an object file
+src/GVertexBufferObject.cpp.o:
+	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o
+.PHONY : src/GVertexBufferObject.cpp.o
+
+src/GVertexBufferObject.i: src/GVertexBufferObject.cpp.i
+
+.PHONY : src/GVertexBufferObject.i
+
+# target to preprocess a source file
+src/GVertexBufferObject.cpp.i:
+	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.i
+.PHONY : src/GVertexBufferObject.cpp.i
+
+src/GVertexBufferObject.s: src/GVertexBufferObject.cpp.s
+
+.PHONY : src/GVertexBufferObject.s
+
+# target to generate assembly for a file
+src/GVertexBufferObject.cpp.s:
+	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.s
+.PHONY : src/GVertexBufferObject.cpp.s
+
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -384,9 +384,6 @@ help:
 	@echo "... src/GFrameBufferObject.o"
 	@echo "... src/GFrameBufferObject.i"
 	@echo "... src/GFrameBufferObject.s"
-	@echo "... src/GMesh.o"
-	@echo "... src/GMesh.i"
-	@echo "... src/GMesh.s"
 	@echo "... src/GPrimativeFactory.o"
 	@echo "... src/GPrimativeFactory.i"
 	@echo "... src/GPrimativeFactory.s"
@@ -399,6 +396,9 @@ help:
 	@echo "... src/GShaderVariableHandle.o"
 	@echo "... src/GShaderVariableHandle.i"
 	@echo "... src/GShaderVariableHandle.s"
+	@echo "... src/GVertexBufferObject.o"
+	@echo "... src/GVertexBufferObject.i"
+	@echo "... src/GVertexBufferObject.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

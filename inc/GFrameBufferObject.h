@@ -2,12 +2,12 @@
 
 #include "glm.h"
 #include "opengl.h"
-#include "GMeshShaderHandle_T.h"
-#include "GMesh.h"
+#include "GShaderHandle_T.h"
+#include "GVertexBufferObject.h"
 
 
-using glw::engine::glsl::GMeshShaderHandle_T;
-using glw::engine::buffers::GMesh;
+using glw::engine::glsl::GShaderHandle_T;
+using glw::engine::buffers::GVertexBufferObject;
 
 
 namespace glw
@@ -32,7 +32,7 @@ namespace glw
 
         GFrameBufferObject(glm::vec2 windowSize);
 
-        void draw(GMeshShaderHandle_T handles);
+        void draw(GShaderHandle_T handles);
 
         // Binds FBO for render
         void bind();
@@ -53,12 +53,12 @@ namespace glw
 
         int m_width = 0, m_height = 0;
 
-        GMesh m_fboMesh;
+        GVertexBufferObject m_vbo;
 
         // Creates a FBO and its render texture and depth buffer
-        GReturnCode createFrameBufferObject();
+        GReturnCode createFBO();
 
-        void createFrameBufferObjectMesh();
+        void createVBO();
       };
     }
   }

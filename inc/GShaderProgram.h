@@ -4,7 +4,7 @@
 #include "glm.h"
 
 #include "GShaderVariableHandle.h"
-#include "GMeshShaderHandle_T.h"
+#include "GShaderHandle_T.h"
 
 #include <map>
 
@@ -20,7 +20,7 @@
 #define VAR_TEXTURE_PROJECTION  "u_p"
 
 using glw::engine::glsl::GShaderVariableHandle;
-using glw::engine::glsl::GMeshShaderHandle_T;
+using glw::engine::glsl::GShaderHandle_T;
 
 
 namespace glw
@@ -76,8 +76,8 @@ namespace glw
 
 			  GShaderVariableHandle * getTex1Handle();
 
-			  GMeshShaderHandle_T getMeshShaderHandle();
-			  void getMeshShaderHandle(GMeshShaderHandle_T& meshShaderHandle);
+        GShaderHandle_T getShaderHandle();
+        void getShaderHandle(GShaderHandle_T& shaderHandle);
 			  
 			  bool isValid() const;
 

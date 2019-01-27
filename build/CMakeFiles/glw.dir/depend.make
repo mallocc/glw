@@ -16,27 +16,16 @@ CMakeFiles/glw.dir/src/GEngine.cpp.o: ../src/GEngine.cpp
 
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/CLog.h
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/GFrameBufferObject.h
-CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/GMesh.h
-CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/GMeshShaderHandle_T.h
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/GPrimativeFactory.h
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/GReturnCode.h
+CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/GShaderHandle_T.h
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/GShaderVariableHandle.h
+CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/GVertexBufferObject.h
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/GVertex_T.h
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/StringFormat.h
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/glm.h
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../inc/opengl.h
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../src/GFrameBufferObject.cpp
-
-CMakeFiles/glw.dir/src/GMesh.cpp.o: ../inc/CLog.h
-CMakeFiles/glw.dir/src/GMesh.cpp.o: ../inc/GMesh.h
-CMakeFiles/glw.dir/src/GMesh.cpp.o: ../inc/GMeshShaderHandle_T.h
-CMakeFiles/glw.dir/src/GMesh.cpp.o: ../inc/GReturnCode.h
-CMakeFiles/glw.dir/src/GMesh.cpp.o: ../inc/GShaderVariableHandle.h
-CMakeFiles/glw.dir/src/GMesh.cpp.o: ../inc/GVertex_T.h
-CMakeFiles/glw.dir/src/GMesh.cpp.o: ../inc/StringFormat.h
-CMakeFiles/glw.dir/src/GMesh.cpp.o: ../inc/glm.h
-CMakeFiles/glw.dir/src/GMesh.cpp.o: ../inc/opengl.h
-CMakeFiles/glw.dir/src/GMesh.cpp.o: ../src/GMesh.cpp
 
 CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o: ../inc/GPrimativeFactory.h
 CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o: ../inc/GVertex_T.h
@@ -44,8 +33,8 @@ CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o: ../inc/glm.h
 CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o: ../src/GPrimativeFactory.cpp
 
 CMakeFiles/glw.dir/src/GShaderProgram.cpp.o: ../inc/CLog.h
-CMakeFiles/glw.dir/src/GShaderProgram.cpp.o: ../inc/GMeshShaderHandle_T.h
 CMakeFiles/glw.dir/src/GShaderProgram.cpp.o: ../inc/GReturnCode.h
+CMakeFiles/glw.dir/src/GShaderProgram.cpp.o: ../inc/GShaderHandle_T.h
 CMakeFiles/glw.dir/src/GShaderProgram.cpp.o: ../inc/GShaderProgram.h
 CMakeFiles/glw.dir/src/GShaderProgram.cpp.o: ../inc/GShaderVariableHandle.h
 CMakeFiles/glw.dir/src/GShaderProgram.cpp.o: ../inc/StringFormat.h
@@ -55,12 +44,12 @@ CMakeFiles/glw.dir/src/GShaderProgram.cpp.o: ../src/GShaderProgram.cpp
 
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/CLog.h
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/GFrameBufferObject.h
-CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/GMesh.h
-CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/GMeshShaderHandle_T.h
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/GReturnCode.h
+CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/GShaderHandle_T.h
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/GShaderProgram.h
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/GShaderProgramManager.h
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/GShaderVariableHandle.h
+CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/GVertexBufferObject.h
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/GVertex_T.h
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/glm.h
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../inc/opengl.h
@@ -74,18 +63,29 @@ CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o: ../inc/glm.h
 CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o: ../inc/opengl.h
 CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o: ../src/GShaderVariableHandle.cpp
 
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/CLog.h
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/GReturnCode.h
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/GShaderHandle_T.h
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/GShaderVariableHandle.h
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/GVertexBufferObject.h
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/GVertex_T.h
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/StringFormat.h
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/glm.h
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/opengl.h
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../src/GVertexBufferObject.cpp
+
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/CLog.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GCamera.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GEngine.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GFrameBufferObject.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GLight_T.h
-CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GMesh.h
-CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GMeshShaderHandle_T.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GPrimativeFactory.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GReturnCode.h
+CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GShaderHandle_T.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GShaderProgram.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GShaderProgramManager.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GShaderVariableHandle.h
+CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GVertexBufferObject.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GVertex_T.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/colors.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/glm.h

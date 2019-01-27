@@ -129,28 +129,28 @@ CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o.provides: CMakeFiles/glw.dir/src/
 CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o.provides.build: CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o
 
 
-CMakeFiles/glw.dir/src/GMesh.cpp.o: CMakeFiles/glw.dir/flags.make
-CMakeFiles/glw.dir/src/GMesh.cpp.o: ../src/GMesh.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/glw.dir/src/GMesh.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glw.dir/src/GMesh.cpp.o -c /home/alex/projects/opengl/glw/src/GMesh.cpp
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: CMakeFiles/glw.dir/flags.make
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../src/GVertexBufferObject.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o -c /home/alex/projects/opengl/glw/src/GVertexBufferObject.cpp
 
-CMakeFiles/glw.dir/src/GMesh.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/glw.dir/src/GMesh.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/alex/projects/opengl/glw/src/GMesh.cpp > CMakeFiles/glw.dir/src/GMesh.cpp.i
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/alex/projects/opengl/glw/src/GVertexBufferObject.cpp > CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.i
 
-CMakeFiles/glw.dir/src/GMesh.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/glw.dir/src/GMesh.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/alex/projects/opengl/glw/src/GMesh.cpp -o CMakeFiles/glw.dir/src/GMesh.cpp.s
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/alex/projects/opengl/glw/src/GVertexBufferObject.cpp -o CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.s
 
-CMakeFiles/glw.dir/src/GMesh.cpp.o.requires:
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o.requires:
 
-.PHONY : CMakeFiles/glw.dir/src/GMesh.cpp.o.requires
+.PHONY : CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o.requires
 
-CMakeFiles/glw.dir/src/GMesh.cpp.o.provides: CMakeFiles/glw.dir/src/GMesh.cpp.o.requires
-	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/GMesh.cpp.o.provides.build
-.PHONY : CMakeFiles/glw.dir/src/GMesh.cpp.o.provides
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o.provides: CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o.requires
+	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o.provides.build
+.PHONY : CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o.provides
 
-CMakeFiles/glw.dir/src/GMesh.cpp.o.provides.build: CMakeFiles/glw.dir/src/GMesh.cpp.o
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o.provides.build: CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o
 
 
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: CMakeFiles/glw.dir/flags.make
@@ -278,7 +278,7 @@ glw_OBJECTS = \
 "CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o" \
 "CMakeFiles/glw.dir/src/GCamera.cpp.o" \
 "CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o" \
-"CMakeFiles/glw.dir/src/GMesh.cpp.o" \
+"CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o" \
 "CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o" \
 "CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o" \
 "CMakeFiles/glw.dir/src/GShaderProgram.cpp.o" \
@@ -291,7 +291,7 @@ glw_EXTERNAL_OBJECTS =
 glw: CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o
 glw: CMakeFiles/glw.dir/src/GCamera.cpp.o
 glw: CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o
-glw: CMakeFiles/glw.dir/src/GMesh.cpp.o
+glw: CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o
 glw: CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o
 glw: CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o
 glw: CMakeFiles/glw.dir/src/GShaderProgram.cpp.o
@@ -310,7 +310,7 @@ CMakeFiles/glw.dir/build: glw
 CMakeFiles/glw.dir/requires: CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o.requires
 CMakeFiles/glw.dir/requires: CMakeFiles/glw.dir/src/GCamera.cpp.o.requires
 CMakeFiles/glw.dir/requires: CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o.requires
-CMakeFiles/glw.dir/requires: CMakeFiles/glw.dir/src/GMesh.cpp.o.requires
+CMakeFiles/glw.dir/requires: CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o.requires
 CMakeFiles/glw.dir/requires: CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o.requires
 CMakeFiles/glw.dir/requires: CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o.requires
 CMakeFiles/glw.dir/requires: CMakeFiles/glw.dir/src/GShaderProgram.cpp.o.requires

@@ -4,14 +4,14 @@
 #include "glm.h"
 #include "GReturnCode.h"
 #include "GShaderProgram.h"
-#include "GMesh.h"
+#include "GVertexBufferObject.h"
 #include "GFrameBufferObject.h"
 
 
 using glw::GReturnCode;
 using glw::engine::glsl::GShaderProgram;
 using glw::engine::glsl::GShaderProgramId;
-using glw::engine::buffers::GMesh;
+using glw::engine::buffers::GVertexBufferObject;
 using glw::engine::buffers::GFrameBufferObject;
 
 
@@ -51,11 +51,11 @@ namespace glw
 
 			  GShaderProgram * getCurrentProgram();
 
-        void drawMesh(GMesh& mesh);
+        void drawVBO(GVertexBufferObject& vbo);
 
-        void drawMeshes(std::vector<GMesh*>& meshes);
+        void drawVBOs(std::vector<GVertexBufferObject*>& vbos);
 
-        void drawFrameBufferObject(GFrameBufferObject& fbo);
+        void drawFBO(GFrameBufferObject& fbo);
 
       private:
         std::map<GShaderProgramId, GShaderProgram> m_shaderPrograms;

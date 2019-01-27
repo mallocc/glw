@@ -3,7 +3,7 @@
 #include "opengl.h"
 #include "glm.h"
 
-#include "GMeshShaderHandle_T.h"
+#include "GShaderHandle_T.h"
 #include "GVertex_T.h"
 #include "GShaderVariableHandle.h"
 #include "GReturnCode.h"
@@ -11,7 +11,7 @@
 #include <vector>
 
 
-using glw::engine::glsl::GMeshShaderHandle_T;
+using glw::engine::glsl::GShaderHandle_T;
 using glw::engine::buffers::GVertex_T;
 using glw::engine::glsl::GShaderVariableHandle;
 using glw::GReturnCode;
@@ -23,16 +23,16 @@ namespace glw
   {
     namespace buffers
     {
-      class GMesh
+      class GVertexBufferObject
       {
       public:
         
-        GMesh();
+        GVertexBufferObject();
         
         // Texture filename, Vertex data pack, world position, 
         // dynamic axis of rotation, and amount, static axis of rotation, 
         // and amount, scale vector. 
-			  GMesh(
+        GVertexBufferObject(
 				    std::vector<GVertex_T>& data,
 				    glm::vec3 pos,
 				    glm::vec3 rotation,
@@ -42,7 +42,7 @@ namespace glw
             glm::vec3 scale = glm::vec3(1),
             const char * texfilename = "");
         
-        ~GMesh();
+        ~GVertexBufferObject();
         
         // Buffers Vertex data into the VBO
 			  GReturnCode init(std::vector<GVertex_T> * d);
@@ -50,8 +50,8 @@ namespace glw
 			  // Loads image file into a texture
 			  void loadTextures(const char * texfilename);
 
-			  // Draws the mesh including linking the model matrix
-        void draw(int wireFrame, GMeshShaderHandle_T handles);
+        // Draws the vbo including linking the model matrix
+        void draw(int wireFrame, GShaderHandle_T handles);
 
 			  // Draws just the VBO and activating the texture
 			  void drawArray(int wireFrame, GShaderVariableHandle * textureHandle);

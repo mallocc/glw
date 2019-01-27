@@ -41,34 +41,14 @@ glm.h
 ../inc/glm.h
 opengl.h
 ../inc/opengl.h
-GMeshShaderHandle_T.h
-../inc/GMeshShaderHandle_T.h
-GMesh.h
-../inc/GMesh.h
+GShaderHandle_T.h
+../inc/GShaderHandle_T.h
+GVertexBufferObject.h
+../inc/GVertexBufferObject.h
 
 ../inc/GLight_T.h
 glm.h
 ../inc/glm.h
-
-../inc/GMesh.h
-opengl.h
-../inc/opengl.h
-glm.h
-../inc/glm.h
-GMeshShaderHandle_T.h
-../inc/GMeshShaderHandle_T.h
-GVertex_T.h
-../inc/GVertex_T.h
-GShaderVariableHandle.h
-../inc/GShaderVariableHandle.h
-GReturnCode.h
-../inc/GReturnCode.h
-vector
--
-
-../inc/GMeshShaderHandle_T.h
-GShaderVariableHandle.h
-../inc/GShaderVariableHandle.h
 
 ../inc/GPrimativeFactory.h
 glm.h
@@ -80,6 +60,10 @@ vector
 
 ../inc/GReturnCode.h
 
+../inc/GShaderHandle_T.h
+GShaderVariableHandle.h
+../inc/GShaderVariableHandle.h
+
 ../inc/GShaderProgram.h
 opengl.h
 ../inc/opengl.h
@@ -87,8 +71,8 @@ glm.h
 ../inc/glm.h
 GShaderVariableHandle.h
 ../inc/GShaderVariableHandle.h
-GMeshShaderHandle_T.h
-../inc/GMeshShaderHandle_T.h
+GShaderHandle_T.h
+../inc/GShaderHandle_T.h
 map
 -
 
@@ -101,8 +85,8 @@ GReturnCode.h
 ../inc/GReturnCode.h
 GShaderProgram.h
 ../inc/GShaderProgram.h
-GMesh.h
-../inc/GMesh.h
+GVertexBufferObject.h
+../inc/GVertexBufferObject.h
 GFrameBufferObject.h
 ../inc/GFrameBufferObject.h
 
@@ -113,6 +97,22 @@ glm.h
 ../inc/glm.h
 GReturnCode.h
 ../inc/GReturnCode.h
+
+../inc/GVertexBufferObject.h
+opengl.h
+../inc/opengl.h
+glm.h
+../inc/glm.h
+GShaderHandle_T.h
+../inc/GShaderHandle_T.h
+GVertex_T.h
+../inc/GVertex_T.h
+GShaderVariableHandle.h
+../inc/GShaderVariableHandle.h
+GReturnCode.h
+../inc/GReturnCode.h
+vector
+-
 
 ../inc/GVertex_T.h
 glm.h
@@ -178,20 +178,6 @@ StringFormat.h
 GReturnCode.h
 /home/alex/projects/opengl/glw/src/GReturnCode.h
 
-/home/alex/projects/opengl/glw/src/GMesh.cpp
-GMesh.h
-/home/alex/projects/opengl/glw/src/GMesh.h
-CLog.h
-/home/alex/projects/opengl/glw/src/CLog.h
-GVertex_T.h
-/home/alex/projects/opengl/glw/src/GVertex_T.h
-StringFormat.h
-/home/alex/projects/opengl/glw/src/StringFormat.h
-GReturnCode.h
-/home/alex/projects/opengl/glw/src/GReturnCode.h
-GMeshShaderHandle_T.h
-/home/alex/projects/opengl/glw/src/GMeshShaderHandle_T.h
-
 /home/alex/projects/opengl/glw/src/GPrimativeFactory.cpp
 GPrimativeFactory.h
 /home/alex/projects/opengl/glw/src/GPrimativeFactory.h
@@ -224,6 +210,20 @@ CLog.h
 StringFormat.h
 /home/alex/projects/opengl/glw/src/StringFormat.h
 
+/home/alex/projects/opengl/glw/src/GVertexBufferObject.cpp
+GVertexBufferObject.h
+/home/alex/projects/opengl/glw/src/GVertexBufferObject.h
+CLog.h
+/home/alex/projects/opengl/glw/src/CLog.h
+GVertex_T.h
+/home/alex/projects/opengl/glw/src/GVertex_T.h
+StringFormat.h
+/home/alex/projects/opengl/glw/src/StringFormat.h
+GReturnCode.h
+/home/alex/projects/opengl/glw/src/GReturnCode.h
+GShaderHandle_T.h
+/home/alex/projects/opengl/glw/src/GShaderHandle_T.h
+
 /home/alex/projects/opengl/glw/src/main.cpp
 stdio.h
 -
@@ -239,12 +239,12 @@ GShaderProgram.h
 /home/alex/projects/opengl/glw/src/GShaderProgram.h
 GShaderProgramManager.h
 /home/alex/projects/opengl/glw/src/GShaderProgramManager.h
-GMesh.h
-/home/alex/projects/opengl/glw/src/GMesh.h
+GVertexBufferObject.h
+/home/alex/projects/opengl/glw/src/GVertexBufferObject.h
 GPrimativeFactory.h
 /home/alex/projects/opengl/glw/src/GPrimativeFactory.h
-GMeshShaderHandle_T.h
-/home/alex/projects/opengl/glw/src/GMeshShaderHandle_T.h
+GShaderHandle_T.h
+/home/alex/projects/opengl/glw/src/GShaderHandle_T.h
 GLight_T.h
 /home/alex/projects/opengl/glw/src/GLight_T.h
 GFrameBufferObject.h

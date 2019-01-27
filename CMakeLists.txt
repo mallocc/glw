@@ -32,7 +32,7 @@ set(SRC_FILES
 ${SRC}/GFrameBufferObject.cpp
 ${SRC}/GCamera.cpp
 ${SRC}/GPrimativeFactory.cpp
-${SRC}/GMesh.cpp
+${SRC}/GVertexBufferObject.cpp
 ${SRC}/GShaderProgramManager.cpp
 ${SRC}/GShaderVariableHandle.cpp
 ${SRC}/GShaderProgram.cpp

@@ -8,7 +8,7 @@ using glw::engine::glsl::GShaderProgram;
 using glw::engine::glsl::GShaderProgramId;
 using glw::engine::glsl::GShaderVariableHandle;
 using glw::engine::glsl::GShaderVariableHandleId;
-using glw::engine::glsl::GMeshShaderHandle_T;
+using glw::engine::glsl::GShaderHandle_T;
 using util::StringFormat;
 using glw::GReturnCode::GLW_SUCCESS;
 using glw::GReturnCode::GLW_FAIL;
@@ -356,7 +356,7 @@ GShaderVariableHandle * GShaderProgram::getTex1Handle()
 	return getHandle(m_tex1);
 }
 
-GMeshShaderHandle_T GShaderProgram::getMeshShaderHandle()
+GShaderHandle_T GShaderProgram::getShaderHandle()
 {
   return { 
       getTexHandle(), 
@@ -368,14 +368,14 @@ GMeshShaderHandle_T GShaderProgram::getMeshShaderHandle()
     };
 }
 
-void GShaderProgram::getMeshShaderHandle(GMeshShaderHandle_T& meshShaderHandle)
+void GShaderProgram::getShaderHandle(GShaderHandle_T& shaderHandle)
 {
-  meshShaderHandle.textureHandle = getTexHandle();  
-  meshShaderHandle.colorHandle = getColorHandle();  
-  meshShaderHandle.flagHandle = getFlagHandle();  
-  meshShaderHandle.modelMatHandle = getModelMat4Handle();  
-  meshShaderHandle.viewMatHandle = getViewMat4Handle();  
-  meshShaderHandle.projMatHandle = getProjMat4Handle();
+  shaderHandle.textureHandle = getTexHandle();
+  shaderHandle.colorHandle = getColorHandle();
+  shaderHandle.flagHandle = getFlagHandle();
+  shaderHandle.modelMatHandle = getModelMat4Handle();
+  shaderHandle.viewMatHandle = getViewMat4Handle();
+  shaderHandle.projMatHandle = getProjMat4Handle();
 }
 			  
 bool GShaderProgram::isValid() const

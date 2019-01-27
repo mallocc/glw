@@ -95,7 +95,7 @@ sudo apt-get install cmake build-essential xorg-dev libglew-dev libglm-dev libx1
 #      shaders.
 #    - Can load pointers to be loaded quickly or load directly with a variable.
 #    
-#  GMesh
+#  GVertexBufferObject
 #    
 #    - This is a simple vertex buffer wrapper that will handle loading and drawing of
 #      vertex buffers.

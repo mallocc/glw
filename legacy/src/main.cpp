@@ -37,7 +37,7 @@ glm::vec3 ambient_color;
 
 float alpha = 0.5f;
 
-gfx::gui::GFXMesh mesh, mesh2;
+gfx::gui::GFXMesh vbo, mesh2;
 gfx::gui::GFXContainer container;
 
 //Returns random float

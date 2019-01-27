@@ -5,9 +5,9 @@
 #include "GShaderVariableHandle.h"
 #include "GShaderProgram.h"
 #include "GShaderProgramManager.h"
-#include "GMesh.h"
+#include "GVertexBufferObject.h"
 #include "GPrimativeFactory.h"
-#include "GMeshShaderHandle_T.h"
+#include "GShaderHandle_T.h"
 #include "GLight_T.h"
 #include "GFrameBufferObject.h"
 
@@ -17,10 +17,10 @@ using glw::engine::glsl::GShaderVariableHandle;
 using glw::engine::glsl::GShaderProgram;
 using glw::engine::glsl::GShaderProgramId;
 using glw::engine::glsl::GShaderProgramManager;
-using glw::engine::glsl::GMeshShaderHandle_T;
+using glw::engine::glsl::GShaderHandle_T;
 using glw::GReturnCode::GLW_SUCCESS;
 using glw::GReturnCode::GLW_FAIL;
-using glw::engine::buffers::GMesh;
+using glw::engine::buffers::GVertexBufferObject;
 using glw::engine::buffers::GPrimativeFactory;
 using glw::engine::buffers::GArrayVertex;
 using glw::engine::buffers::GArrayVec3;
@@ -42,9 +42,8 @@ namespace
   GShaderProgramId BLUR_PROGRAM;
   GFrameBufferObject fbo;
   GFrameBufferObject fboBlur;
-  GMesh mesh;  
+  GVertexBufferObject vbo;
   GCamera camera(glm::vec3(0, 0, 5), glm::vec3(), glm::vec3(0,0,-1), glm::vec3(0, 1, 0));
-	GMeshShaderHandle_T meshShaderHandle;
   GLight_T light = { glm::vec3(0,5,0), glw::RED, glm::vec3(2,25,100) };
 
   glm::vec3 blurProperties(0.06f,0.06f,0.02f);
@@ -64,9 +63,9 @@ GReturnCode loop()
   ambientColor /= 5.0f;
   engine->setClearColor(ambientColor);
 
-  mesh.m_theta += 0.05f;
-  light.pos.x = sin(mesh.m_theta) * 5.0f;
-  light.pos.z = cos(mesh.m_theta) * 5.0f;
+  vbo.m_theta += 0.05f;
+  light.pos.x = sin(vbo.m_theta) * 5.0f;
+  light.pos.z = cos(vbo.m_theta) * 5.0f;
 
 
   glm::vec2 windowSize;
@@ -79,7 +78,7 @@ GReturnCode loop()
   engine->setCamera(camera);
 
 
-  // Draw mesh to blur FBO //
+  // Draw vbo to blur FBO //
 
   // Setup 3D perspective
   engine->clearAll();
@@ -90,8 +89,8 @@ GReturnCode loop()
 
   // Enable binding to FBO
   fboBlur.bind();
-  // Draw the meshes
-  shaderProgramManager->drawMesh(mesh);
+  // Draw the vbo
+  shaderProgramManager->drawVBO(vbo);
   // Unbind the bound FBO
   fboBlur.unbind();
 
@@ -108,19 +107,19 @@ GReturnCode loop()
 
   // Draw the FBO
   fboBlur.setTopLeft(windowSize * 0.25f);
-  shaderProgramManager->drawFrameBufferObject(fboBlur);
+  shaderProgramManager->drawFBO(fboBlur);
 
   fboBlur.setTopLeft(windowSize * -0.25f);
-  shaderProgramManager->drawFrameBufferObject(fboBlur);
+  shaderProgramManager->drawFBO(fboBlur);
 
   fboBlur.setTopLeft(windowSize * glm::vec2(1, -1) * 0.25f);
-  shaderProgramManager->drawFrameBufferObject(fboBlur);
+  shaderProgramManager->drawFBO(fboBlur);
 
   fboBlur.setTopLeft(windowSize * glm::vec2(-1, 1) * 0.25f);
-  shaderProgramManager->drawFrameBufferObject(fboBlur);
+  shaderProgramManager->drawFBO(fboBlur);
 
 
-  // Draw the mesh on its own //
+  // Draw the vbo on its own //
 
   // Only clear depth buffer so we can have the blur FBO as a background
   engine->clearDepthBuffer();
@@ -129,8 +128,8 @@ GReturnCode loop()
 
   // Load the shader program to draw with
   shaderProgramManager->loadProgram(PHONG_PROGRAM);
-  // Draw the meshes
-  shaderProgramManager->drawMesh(mesh);
+  // Draw the vbo
+  shaderProgramManager->drawVBO(vbo);
 
 
   return GLW_SUCCESS;
@@ -235,7 +234,7 @@ GReturnCode initFBOs()
   return success;
 }
 
-GReturnCode initMeshes()
+GReturnCode initVBOs()
 {
   GReturnCode success = GLW_SUCCESS;
 
@@ -248,7 +247,7 @@ GReturnCode initMeshes()
     GPrimativeFactory::sphere(v, 200, 200);
     GPrimativeFactory::packObject(o, v);
 
-    mesh = GMesh(
+    vbo = GVertexBufferObject(
              o,
              glm::vec3(0, 0, 0),
              glm::vec3(-1, 1, 0.5), glm::radians(0.0f),
@@ -274,7 +273,7 @@ GReturnCode init()
   // MESH SETUP //
   if (GLW_SUCCESS == success)
   {
-    success = initMeshes();
+    success = initVBOs();
   }
 
   return success;

@@ -1,34 +1,34 @@
-#include "GMesh.h"
+#include "GVertexBufferObject.h"
 #include "CLog.h"
 
 #include "GVertex_T.h"
 #include "StringFormat.h"
 #include "GReturnCode.h"
-#include "GMeshShaderHandle_T.h"
+#include "GShaderHandle_T.h"
 
 
-using glw::engine::buffers::GMesh;
+using glw::engine::buffers::GVertexBufferObject;
 using glw::engine::buffers::GVertex_T;
 using glw::GReturnCode::GLW_FAIL;
 using glw::GReturnCode::GLW_SUCCESS;
-using glw::engine::glsl::GMeshShaderHandle_T;
+using glw::engine::glsl::GShaderHandle_T;
 
 
 namespace
 {
-  const char * TRG = "GMSH";
-  const char * __CLASSNAME__ = "GMesh";
+  const char * TRG = "GVBO";
+  const char * __CLASSNAME__ = "GVertexBufferObject";
 }
 
 
-GMesh::GMesh()
+GVertexBufferObject::GVertexBufferObject()
 {
 }
 
 // Texture filename, Vertex data pack, world position, 
 // dynamic axis of rotation, and amount, static axis of rotation, 
 // and amount, scale vector. 
-GMesh::GMesh(
+GVertexBufferObject::GVertexBufferObject(
     std::vector<GVertex_T>& data,
     glm::vec3 pos,
     glm::vec3 rotation,
@@ -45,7 +45,7 @@ GMesh::GMesh(
     m_preRotation(preRotation),
     m_preTheta(preTheta)
 {
-	CINFO(TRG, "Loading new Mesh...");
+  CINFO(TRG, "Loading new GVertexBufferObject...");
 
 #ifdef USE_TEXTURES
   load_textures(texfilename);
@@ -53,17 +53,17 @@ GMesh::GMesh(
 
 	if (GLW_SUCCESS != init(&data))
 	{
-	  CERROR(TRG, "Failed it initialise GMesh.", 
+    CERROR(TRG, "Failed it initialise GVertexBufferObject.",
 	      __FILE__, __LINE__, __CLASSNAME__, __func__);
 	}
 }
 
-GMesh::~GMesh()
+GVertexBufferObject::~GVertexBufferObject()
 {
 }
 
 // Buffers Vertex data into the VBO
-GReturnCode GMesh::init(std::vector<GVertex_T> * d)
+GReturnCode GVertexBufferObject::init(std::vector<GVertex_T> * d)
 {
   m_dataSize = d->size();
 	glGenVertexArrays(1, &m_vao);
@@ -95,14 +95,14 @@ GReturnCode GMesh::init(std::vector<GVertex_T> * d)
 }
 
 // Draws the mesh including linking the model matrix
-void GMesh::draw(int wireFrame, GMeshShaderHandle_T handles)
+void GVertexBufferObject::draw(int wireFrame, GShaderHandle_T handles)
 {
 	handles.modelMatHandle->load(getModelMat());
 	drawArray(wireFrame, handles.textureHandle);
 }
 
 // Draws just the VBO and activating the texture
-void GMesh::drawArray(int wireFrame, GShaderVariableHandle * textureHandle)
+void GVertexBufferObject::drawArray(int wireFrame, GShaderVariableHandle * textureHandle)
 {
 #ifdef USE_TEXTURES
 	// load the textures
@@ -133,7 +133,7 @@ void GMesh::drawArray(int wireFrame, GShaderVariableHandle * textureHandle)
 }
 
 // Get the model matrix
-glm::mat4 GMesh::getModelMat()
+glm::mat4 GVertexBufferObject::getModelMat()
 {
 	return glm::translate(glm::mat4(1.), m_pos) *
 		glm::rotate(glm::mat4(1.), m_theta, m_rotation) *

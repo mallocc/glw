@@ -2,7 +2,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o"
   "CMakeFiles/glw.dir/src/GCamera.cpp.o"
   "CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o"
-  "CMakeFiles/glw.dir/src/GMesh.cpp.o"
+  "CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o"
   "CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o"
   "CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o"
   "CMakeFiles/glw.dir/src/GShaderProgram.cpp.o"

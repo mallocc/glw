@@ -33,22 +33,22 @@ GFrameBufferObject::GFrameBufferObject()
 GFrameBufferObject::GFrameBufferObject(int w, int h)
 {
   this->m_width = w; this->m_height = h;
-  createFrameBufferObject();
-  createFrameBufferObjectMesh();
+  createFBO();
+  createVBO();
 }
 // Frame size
 GFrameBufferObject::GFrameBufferObject(glm::vec2 windowSize)
 {
   this->m_width = windowSize.x; this->m_height = windowSize.y;
-  createFrameBufferObject();
-  createFrameBufferObjectMesh();
+  createFBO();
+  createVBO();
 }
 
 GFrameBufferObject::~GFrameBufferObject()
 {
 }
 
-void GFrameBufferObject::draw(GMeshShaderHandle_T handles)
+void GFrameBufferObject::draw(GShaderHandle_T handles)
 {
   if (NULL != handles.textureHandle)
   {
@@ -56,7 +56,7 @@ void GFrameBufferObject::draw(GMeshShaderHandle_T handles)
     glActiveTexture(GL_TEXTURE0 + m_tex);
     glBindTexture(GL_TEXTURE_2D, m_tex);
 
-    m_fboMesh.draw(0, handles);
+    m_vbo.draw(0, handles);
 
     glActiveTexture(GL_TEXTURE0 + m_tex);
     glBindTexture(GL_TEXTURE_2D, GL_TEXTURE0);
@@ -96,18 +96,18 @@ void GFrameBufferObject::unbind()
 
 void GFrameBufferObject::setTopLeft(glm::vec2 topLeft)
 {
-  m_fboMesh.m_pos.x = topLeft.x;
-  m_fboMesh.m_pos.y = topLeft.y;
+  m_vbo.m_pos.x = topLeft.x;
+  m_vbo.m_pos.y = topLeft.y;
 }
 
 void GFrameBufferObject::setSize(glm::vec2 size)
 {
-  m_fboMesh.m_scale.x = size.x;
-  m_fboMesh.m_scale.y = size.y;
+  m_vbo.m_scale.x = size.x;
+  m_vbo.m_scale.y = size.y;
 }
 
 
-GReturnCode GFrameBufferObject::createFrameBufferObject()
+GReturnCode GFrameBufferObject::createFBO()
 {
   GReturnCode retCode = GLW_SUCCESS;
 
@@ -166,7 +166,7 @@ GReturnCode GFrameBufferObject::createFrameBufferObject()
   return retCode;
 }
 
-void GFrameBufferObject::createFrameBufferObjectMesh()
+void GFrameBufferObject::createVBO()
 {
   GArrayVec3 v, c, n, t;
   GPrimativeFactory::centeredSquareMesh(v, 1, 1);
@@ -177,7 +177,7 @@ void GFrameBufferObject::createFrameBufferObjectMesh()
   GArrayVertex o;
   GPrimativeFactory::packObject(o, v, c, n, t, uv);
 
-  m_fboMesh = GMesh(o,
+  m_vbo = GVertexBufferObject(o,
                 glm::vec3(0, 0, 0),
                 glm::vec3(0, 0, 1),	glm::radians(0.0f),
                 glm::vec3(1, 0, 0),	glm::radians(0.0f),
