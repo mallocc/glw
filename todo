@@ -1,0 +1,11 @@
+ - finish porting and refactoring code
+ - test that proper shading works (i.e. lighting, texturing, etc)
+ - investigate if FBO can be ported over nicely
+ - finish the GLW
+ - make a template project with the basics
+ - make a proper trace logger to files
+ - port over GUI code
+ - finish GUI code
+ - add config parsing for GUI
+ - add config parsing for GLW
+ - investigate implementing into the game engine

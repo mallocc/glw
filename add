@@ -1,0 +1,122 @@
+#!/bin/bash
+
+tab="  "
+ob="{"
+cb="}"
+
+tabs=""
+
+function addtab
+{
+tabs="$tabs"$tab
+}
+function subtab
+{
+tabs=${tabs%?}
+tabs=${tabs%?}
+}
+
+src=src
+inc=inc
+
+class=$1
+namespace=$2
+names=$(echo $namespace | tr "::" '\n')
+
+classfile=$src/$class.cpp
+headerfile=$inc/$class.h
+
+echo "CLASS      = "$class" : "$classfile":"$headerfile
+echo "NAMESPACE  = "$namespace
+
+
+## Dont write to any of the files if they exist
+
+if [ -f "$headerfile" ] || [ -f "$classfile" ]; then 
+  echo Class already exists.;
+  exit 1
+fi
+
+
+## Write to header file
+
+# Flush file
+> $headerfile
+
+# Add header guard
+echo "#pragma once" >> $headerfile
+echo >> $headerfile
+echo >> $headerfile
+
+# Open namespaces
+for name in $names; do
+  echo "$tabs""namespace "$name >> $headerfile
+  echo "$tabs"$ob >> $headerfile
+  addtab
+done
+
+# Write class skeleton
+echo "$tabs""class "$class >> $headerfile
+echo "$tabs"$ob >> $headerfile
+echo "$tabs""public:" >> $headerfile
+addtab
+echo "$tabs" >> $headerfile
+echo "$tabs"$class"();" >> $headerfile
+echo "$tabs" >> $headerfile
+echo "$tabs"~$class"();" >> $headerfile
+echo "$tabs" >> $headerfile
+subtab
+echo "$tabs""private:" >> $headerfile
+addtab
+echo "$tabs" >> $headerfile
+subtab
+echo "$tabs"$cb\; >> $headerfile
+
+# Close namespaces
+for name in $names; do
+  subtab
+  echo "$tabs"$cb >> $headerfile
+done
+
+
+## Write to class file
+
+tabs=""
+
+# Flush file
+> $classfile
+
+echo "#include "\"$class.h\" >> $classfile
+echo >> $classfile
+echo >> $classfile
+echo "using "$namespace::$class\; >> $classfile
+echo >> $classfile
+echo >> $classfile
+echo "namespace" >> $classfile
+echo $ob >> $classfile
+addtab 
+echo "$tabs""const char * __CLASSNAME__ = "\"$class\"\; >> $classfile
+echo $cb >> $classfile
+echo >> $classfile
+echo >> $classfile
+echo $class::$class"()" >> $classfile
+echo $ob >> $classfile
+echo $cb >> $classfile
+echo >> $classfile
+echo >> $classfile
+echo $class::~$class"()" >> $classfile
+echo $ob >> $classfile
+echo $cb >> $classfile
+
+
+## Write to CMakeLists.txt
+
+# Add new source file
+
+match="#files"
+insert="$match\n\${SRC}/$class.cpp"
+echo "$(sed -e "s@$match@$insert@" CMakeLists.txt)" > CMakeLists.txt
+
+
+
+

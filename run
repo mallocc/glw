@@ -1,0 +1,45 @@
+#!/bin/bash
+
+if [[ $1 == "nocolor" ]]; then nocolor=true; else nocolor=false; fi
+
+function print()
+{
+if ! $nocolor; then
+  tput setaf 6
+  echo $1
+  tput sgr0
+else
+  echo $1
+fi
+}
+
+
+if [ ! -d "logs" ]; then mkdir inc; print "Added logs/"; fi
+
+if [ ! -d "inc" ]; then mkdir inc; print "Added inc/"; fi
+
+if [ ! -d "src" ]; then mkdir src; print "Added src/"; fi
+
+if [ ! -d "build" ]; then mkdir build; print "Added build/"; fi
+
+cd build
+
+print CMAKE
+cmake ../
+
+if [[ $1 == "cmake" ]]; then exit 0; fi
+
+print MAKE
+make
+exit_code=$?
+
+if [[ $1 == "make" ]]; then exit 0; fi
+
+if [[ $exit_code == 0 ]]; then
+  print RUNNING...
+  ./glw
+else
+  print "NOT RUNNING"
+fi
+
+if [[ $1 == "run" ]]; then exit 0; fi

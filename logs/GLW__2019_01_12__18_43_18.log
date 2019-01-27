@@ -1,0 +1,49 @@
+[2019_01_12__18_43_18] :MAIN [INFO   ] Program started.
+[2019_01_12__18_43_18] :GENG [INFO   ] Constructing default GEngine.
+[2019_01_12__18_43_18] :GENG [INFO   ] Initialising new GEngine...
+[2019_01_12__18_43_19] :GENG [INFO   ] GLFW Initialised.
+[2019_01_12__18_43_19] :GENG [INFO   ] Created GLFW window.
+[2019_01_12__18_43_19] :GENG [INFO   ] GLFW window context set.
+[2019_01_12__18_43_19] :GENG [INFO   ] GLEW Initialised.
+[2019_01_12__18_43_19] :GENG [INFO   ] GEngine initialisation started...
+[2019_01_12__18_43_19] :MAIN [INFO   ] Initialising GLSL shader programs...
+[2019_01_12__18_43_19] :GSPR [INFO   ] Creating new program...
+[2019_01_12__18_43_19] :GSPR [INFO   ] ../shaders/basic_texture.vert compiled succesfully.
+[2019_01_12__18_43_19] :GSPR [INFO   ] ../shaders/basic_texture.frag compiled succesfully.
+[2019_01_12__18_43_19] :GSPR [INFO   ] Program linked succesfully.
+[2019_01_12__18_43_19] :GSPR [INFO   ] Loaded GShaderProgram 3 succesfully.
+[2019_01_12__18_43_19] :GSVR [INFO   ] GShaderProgram Id 3, linking u_m to GShaderVariableHandleId 0
+[2019_01_12__18_43_19] :GSVR [INFO   ] GShaderProgram Id 3, linking u_v to GShaderVariableHandleId 1
+[2019_01_12__18_43_19] :GSVR [INFO   ] GShaderProgram Id 3, linking u_p to GShaderVariableHandleId 2
+[2019_01_12__18_43_19] :GSPM [INFO   ] GShaderProgram added to GShaderProgramManager.
+[2019_01_12__18_43_19] :GMSH [INFO   ] Loading new Mesh...
+[2019_01_12__18_43_19] :GMSH [INFO   ] Buffered into VAO
+[2019_01_12__18_43_19] :GENG [INFO   ] GEngine initialisation succesful.
+[2019_01_12__18_43_19] :GENG [INFO   ] Initialised content succesfully.
+[2019_01_12__18_43_19] :GENG [INFO   ] Running GL loop...
+[2019_01_12__18_43_19] :GENG [INFO   ] ==================
+[2019_01_12__18_43_20] :GENG [INFO   ] FPS 9
+[2019_01_12__18_43_20] :GENG [INFO   ] FPS 9
+[2019_01_12__18_43_21] :GENG [INFO   ] FPS 9
+[2019_01_12__18_43_22] :GENG [INFO   ] FPS 9
+[2019_01_12__18_43_23] :GENG [INFO   ] FPS 9
+[2019_01_12__18_43_24] :GENG [INFO   ] FPS 10
+[2019_01_12__18_43_24] :GENG [INFO   ] FPS 15
+[2019_01_12__18_43_25] :GENG [INFO   ] FPS 17
+[2019_01_12__18_43_25] :GENG [INFO   ] FPS 18
+[2019_01_12__18_43_26] :GENG [INFO   ] FPS 28
+[2019_01_12__18_43_28] :GENG [INFO   ] FPS 58
+[2019_01_12__18_43_29] :GENG [INFO   ] FPS 58
+[2019_01_12__18_43_30] :GENG [INFO   ] FPS 58
+[2019_01_12__18_43_31] :GENG [INFO   ] FPS 58
+[2019_01_12__18_43_32] :GENG [INFO   ] FPS 58
+[2019_01_12__18_43_33] :GENG [INFO   ] FPS 58
+[2019_01_12__18_43_34] :GENG [INFO   ] FPS 58
+[2019_01_12__18_43_35] :GENG [INFO   ] FPS 58
+[2019_01_12__18_43_36] :GENG [INFO   ] FPS 58
+[2019_01_12__18_43_37] :GENG [INFO   ] FPS 58
+[2019_01_12__18_43_37] :MAIN [INFO   ] User triggered terminatation.
+[2019_01_12__18_43_37] :GENG [INFO   ] ==================
+[2019_01_12__18_43_37] :GENG [INFO   ] Window has closed. Application will now exit.
+[2019_01_12__18_43_37] :GENG [INFO   ] GEngine terminated succesfully.
+[2019_01_12__18_43_37] :MAIN [INFO   ] Program exit.

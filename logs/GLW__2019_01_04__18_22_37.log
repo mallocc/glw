@@ -1,0 +1,83 @@
+[2019_01_04__18_22_37] :MAIN [INFO   ] Program started.
+[2019_01_04__18_22_37] :GENG [INFO   ] Constructing default GEngine.
+[2019_01_04__18_22_37] :GENG [INFO   ] Initialising new GEngine...
+[2019_01_04__18_22_37] :GENG [INFO   ] GLFW Initialised.
+[2019_01_04__18_22_37] :GENG [INFO   ] Created GLFW window.
+[2019_01_04__18_22_37] :GENG [INFO   ] GLFW window context set.
+[2019_01_04__18_22_37] :GENG [INFO   ] GLEW Initialised.
+[2019_01_04__18_22_37] :GENG [INFO   ] GEngine initialisation started...
+[2019_01_04__18_22_37] :MAIN [INFO   ] Initialising GLSL shader programs...
+[2019_01_04__18_22_37] :GSPR [INFO   ] Creating new program...
+[2019_01_04__18_22_37] :GSPR [INFO   ] ../shaders/basic_texture.vert compiled succesfully.
+[2019_01_04__18_22_37] :GSPR [INFO   ] ../shaders/basic_texture.frag compiled succesfully.
+[2019_01_04__18_22_37] :GSPR [INFO   ] Program linked succesfully.
+[2019_01_04__18_22_37] :GSPR [INFO   ] Loaded GShaderProgram 3 succesfully.
+[2019_01_04__18_22_37] :GSVR [INFO   ] GShaderProgram Id 3, linking u_m to GShaderVariableHandleId 0
+[2019_01_04__18_22_37] :GSVR [INFO   ] GShaderProgram Id 3, linking u_v to GShaderVariableHandleId 1
+[2019_01_04__18_22_37] :GSVR [INFO   ] GShaderProgram Id 3, linking u_p to GShaderVariableHandleId 2
+[2019_01_04__18_22_37] :GSPM [INFO   ] GShaderProgram added to GShaderProgramManager.
+[2019_01_04__18_22_37] :GMSH [INFO   ] Loading new Mesh...
+[2019_01_04__18_22_37] :GMSH [INFO   ] Buffered into VAO
+[2019_01_04__18_22_37] :GENG [INFO   ] GEngine initialisation succesful.
+[2019_01_04__18_22_37] :GENG [INFO   ] Initialised content succesfully.
+[2019_01_04__18_22_37] :GENG [INFO   ] Running GL loop...
+[2019_01_04__18_22_37] :GENG [INFO   ] ==================
+[2019_01_04__18_22_38] :GENG [INFO   ] FPS 9
+[2019_01_04__18_22_40] :GENG [INFO   ] FPS 11
+[2019_01_04__18_22_40] :GENG [INFO   ] FPS 12
+[2019_01_04__18_22_42] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_42] :GENG [INFO   ] FPS 62
+[2019_01_04__18_22_43] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_44] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_45] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_46] :GENG [INFO   ] FPS 55
+[2019_01_04__18_22_46] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_47] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_48] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_49] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_50] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_51] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_52] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_53] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_54] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_55] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_56] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_57] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_58] :GENG [INFO   ] FPS 58
+[2019_01_04__18_22_59] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_00] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_01] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_01] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_02] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_03] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_04] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_05] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_06] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_07] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_08] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_09] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_10] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_11] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_12] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_13] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_14] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_15] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_16] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_17] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_18] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_19] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_20] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_21] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_22] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_23] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_24] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_25] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_26] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_27] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_28] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_29] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_30] :GENG [INFO   ] FPS 58
+[2019_01_04__18_23_30] :GENG [INFO   ] ==================
+[2019_01_04__18_23_30] :GENG [INFO   ] Window has closed. Application will now exit.
+[2019_01_04__18_23_30] :GENG [INFO   ] GEngine terminated succesfully.
+[2019_01_04__18_23_30] :MAIN [INFO   ] Program exit.

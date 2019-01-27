@@ -1,0 +1,64 @@
+	{
+		//content.clearAll();
+		//content.loadOrtho();
+		//program_manager.load_program(BLUR_PROGRAM);
+		//model_mat_handle = program_manager.get_current_program()->get_model_mat4_handle();
+		//texture_handle = program_manager.get_current_program()->get_tex_handle();
+		//blur_fbo.bind();
+		//basic_fbo.activate_texture(texture_handle);
+		//screen_texture.draw(0, model_mat_handle, nullptr);
+		//basic_fbo.deactivate_texture();
+		//blur_fbo.unbind();
+
+		//basic_fbo.bind();
+		//content.clearAll();
+		//content.loadOrtho();
+		//program_manager.load_program(RENDER_PROGRAM);
+		//model_mat_handle = program_manager.get_current_program()->get_model_mat4_handle();
+		//texture_handle = program_manager.get_current_program()->get_tex_handle();
+		//blur_fbo.activate_texture(texture_handle);
+		//screen_texture.draw(0, model_mat_handle, nullptr);
+		//blur_fbo.deactivate_texture();
+
+		//content.clearDepthBuffer();
+		//content.loadPerspective();
+		//program_manager.load_program(PHONG_TEXTURE_PROGRAM);
+		//model_mat_handle = program_manager.get_current_program()->get_model_mat4_handle();
+		//texture_handle = program_manager.get_current_program()->get_tex_handle();
+		//blur_fbo.draw_objects(model_mat_handle, texture_handle);
+		//basic_fbo.unbind();
+
+		//motionblur_fbo0.bind();
+		//content.clearAll();
+		//content.loadOrtho();
+		//program_manager.load_program(MIX_PROGRAM);
+		//model_mat_handle = program_manager.get_current_program()->get_model_mat4_handle();
+		//texture_handle = program_manager.get_current_program()->get_tex_handle();
+		//texture1_handle = program_manager.get_current_program()->get_tex1_handle();
+		//basic_fbo.activate_texture(texture_handle);
+		//motionblur_fbo1.activate_texture(texture1_handle);
+		//screen_texture.draw(0, model_mat_handle, nullptr);
+		//basic_fbo.deactivate_texture();
+		//motionblur_fbo1.deactivate_texture();
+		//motionblur_fbo0.unbind();
+
+		//motionblur_fbo1.bind();
+		//content.clearAll();
+		//content.loadOrtho();
+		//program_manager.load_program(RENDER_PROGRAM);
+		//model_mat_handle = program_manager.get_current_program()->get_model_mat4_handle();
+		//texture_handle = program_manager.get_current_program()->get_tex_handle();
+		//motionblur_fbo0.activate_texture(texture_handle);
+		//screen_texture.draw(0, model_mat_handle, nullptr);
+		//motionblur_fbo0.deactivate_texture();
+		//motionblur_fbo1.unbind();
+
+		//content.clearAll();
+		//content.loadOrtho();
+		//program_manager.load_program(RENDER_PROGRAM);
+		//model_mat_handle = program_manager.get_current_program()->get_model_mat4_handle();
+		//texture_handle = program_manager.get_current_program()->get_tex_handle();
+		//motionblur_fbo1.activate_texture(texture_handle);
+		//screen_texture.draw(0, model_mat_handle, nullptr);
+		//motionblur_fbo1.deactivate_texture();
+	}

@@ -1,0 +1,32 @@
+[2019_01_19__20_26_48] :MAIN [INFO   ] Program started.
+[2019_01_19__20_26_48] :GENG [INFO   ] Constructing default GEngine.
+[2019_01_19__20_26_48] :GENG [INFO   ] Initialising new GEngine...
+[2019_01_19__20_26_49] :GENG [INFO   ] GLFW Initialised.
+[2019_01_19__20_26_49] :GENG [INFO   ] Created GLFW window.
+[2019_01_19__20_26_49] :GENG [INFO   ] GLFW window context set.
+[2019_01_19__20_26_49] :GENG [INFO   ] GLEW Initialised.
+[2019_01_19__20_26_49] :GENG [INFO   ] GEngine initialisation started...
+[2019_01_19__20_26_49] :MAIN [INFO   ] Initialising GLSL shader programs...
+[2019_01_19__20_26_49] :GSPR [INFO   ] Creating new program...
+[2019_01_19__20_26_49] :GSPR [INFO   ] ../shaders/basic_texture.vert compiled succesfully.
+[2019_01_19__20_26_49] :GSPR [INFO   ] ../shaders/basic_texture.frag compiled succesfully.
+[2019_01_19__20_26_49] :GSPR [INFO   ] Program linked succesfully.
+[2019_01_19__20_26_49] :GSPR [INFO   ] Loaded GShaderProgram 3 succesfully.
+[2019_01_19__20_26_49] :GSVR [INFO   ] GShaderProgram Id 3, linking u_m to GShaderVariableHandleId 0
+[2019_01_19__20_26_49] :GSVR [INFO   ] GShaderProgram Id 3, linking u_v to GShaderVariableHandleId 1
+[2019_01_19__20_26_49] :GSVR [INFO   ] GShaderProgram Id 3, linking u_p to GShaderVariableHandleId 2
+[2019_01_19__20_26_49] :GSPM [INFO   ] GShaderProgram added to GShaderProgramManager.
+[2019_01_19__20_26_49] :GSPR [INFO   ] Creating new program...
+[2019_01_19__20_26_49] :GSPR [INFO   ] ../shaders/phong.vert compiled succesfully.
+[2019_01_19__20_26_49] :GSPR [ERROR  ] (GShaderProgram::GShaderProgram) Fragment shader compilation failed: 
+0:51(2): error: initializer of type float cannot be assigned to variable of type vec3
+ <GShaderProgram.cpp:117>
+[2019_01_19__20_26_49] :GSPR [ERROR  ] (GShaderProgram::GShaderProgram) Linking failed:
+error: linking with uncompiled/unspecialized shader
+ <GShaderProgram.cpp:136>
+[2019_01_19__20_26_49] :GSPR [ERROR  ] (GShaderProgram::GShaderProgram) Loaded GShaderProgram 6 unsuccessfully. <GShaderProgram.cpp:154>
+[2019_01_19__20_26_49] :GSPM [ERROR  ] (GShaderProgramManager::addProgram) GShaderProgram not added to GShaderProgramManager. <GShaderProgramManager.cpp:69>
+[2019_01_19__20_26_49] :GENG [ERROR  ] (GEngine::initWindow) GEngine initialisation failed. <GEngine.cpp:558>
+[2019_01_19__20_26_49] :GENG [ERROR  ] (GEngine::run) Failed to initialise content. <GEngine.cpp:113>
+[2019_01_19__20_26_49] :GENG [WARNING] (GEngine::run) GEngine terminated with errors, check logs for trace. <GEngine.cpp:132>
+[2019_01_19__20_26_49] :MAIN [INFO   ] Program exit.

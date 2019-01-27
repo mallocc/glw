@@ -1,0 +1,28 @@
+[2019_01_04__18_04_31] :MAIN [INFO   ] Program started.
+[2019_01_04__18_04_31] :GENG [INFO   ] Constructing default GEngine.
+[2019_01_04__18_04_31] :GENG [INFO   ] Initialising new GEngine...
+[2019_01_04__18_04_32] :GENG [INFO   ] GLFW Initialised.
+[2019_01_04__18_04_32] :GENG [INFO   ] Created GLFW window.
+[2019_01_04__18_04_32] :GENG [INFO   ] GLFW window context set.
+[2019_01_04__18_04_32] :GENG [INFO   ] GLEW Initialised.
+[2019_01_04__18_04_32] :MAIN [INFO   ] Initialising GLSL shader programs...
+[2019_01_04__18_04_32] :GSPR [INFO   ] Creating new program...
+[2019_01_04__18_04_32] :GSPR [INFO   ] ../shaders/basic_texture.vert compiled succesfully.
+[2019_01_04__18_04_32] :GSPR [INFO   ] ../shaders/basic_texture.frag compiled succesfully.
+[2019_01_04__18_04_32] :GSPR [INFO   ] Program linked succesfully.
+[2019_01_04__18_04_32] :GSPR [INFO   ] Loaded GShaderProgram 3 succesfully.
+[2019_01_04__18_04_32] :GSVR [INFO   ] GShaderProgram Id 3, linking u_m to GShaderVariableHandleId 0
+[2019_01_04__18_04_32] :GSVR [INFO   ] GShaderProgram Id 3, linking u_v to GShaderVariableHandleId 1
+[2019_01_04__18_04_32] :GSVR [INFO   ] GShaderProgram Id 3, linking u_p to GShaderVariableHandleId 2
+[2019_01_04__18_04_32] :GSPM [INFO   ] GShaderProgram added to GShaderProgramManager.
+[2019_01_04__18_04_40] :GMSH [INFO   ] Loading new Mesh...
+[2019_01_04__18_04_41] :GMSH [INFO   ] Buffered into VAO
+[2019_01_04__18_04_41] :GENG [INFO   ] GEngine initialisation succesful.
+[2019_01_04__18_04_41] :GENG [INFO   ] Initialised content succesfully.
+[2019_01_04__18_04_41] :GENG [INFO   ] Running GL loop...
+[2019_01_04__18_04_41] :GENG [INFO   ] ==================
+[2019_01_04__18_04_44] :MAIN [INFO   ] User triggered terminatation.
+[2019_01_04__18_04_44] :GENG [INFO   ] ==================
+[2019_01_04__18_04_44] :GENG [INFO   ] Window has closed. Application will now exit.
+[2019_01_04__18_04_44] :GENG [INFO   ] GEngine terminated succesfully.
+[2019_01_04__18_04_44] :MAIN [INFO   ] Program exit.
