@@ -29,8 +29,8 @@ namespace
   const char * TRG = "MAIN";
   const char * __CLASSNAME__ = "main";
 
-  GEngine * engine;
-  GShaderProgramManager * shaderProgramManager;
+  GEngine engine;
+  GShaderProgramManager shaderProgramManager;
   GShaderProgramId TEXTURE_PROGRAM;
   GVertexBufferObject vbo;
 
@@ -46,23 +46,23 @@ GReturnCode loop()
   camera.update(0.1f, 0.9f);
 
   // Update the engine with the camera
-  engine->setCamera(camera);
+  engine.setCamera(camera);
 
   // Rotate the sphere
   vbo.m_theta += 0.01f;
 
 
   // Clear the scene
-  engine->clearAll();
+  engine.clearAll();
 
   // Set the 3D perspective
-  engine->load3DPerspective();
+  engine.load3DPerspective();
 
   // Load the shader program we want to draw with
-  shaderProgramManager->loadProgram(TEXTURE_PROGRAM);
+  shaderProgramManager.loadProgram(TEXTURE_PROGRAM);
 
   // Draw the sphere VBO
-  shaderProgramManager->drawVBO(vbo);
+  shaderProgramManager.drawVBO(vbo);
 
   return GLW_SUCCESS;
 }
@@ -73,37 +73,25 @@ GReturnCode initShaderPrograms()
 
   LINFO(TRG, "Initialising GLSL shader programs...");
 
-  // Create new shader program manager
-  shaderProgramManager = new GShaderProgramManager();
-
-  if (NULL != shaderProgramManager)
+  // Add a new program to the manager
+  if (GLW_SUCCESS == shaderProgramManager.addNewProgram(
+        "../shaders/basic_texture.vert",  // Vertex shader
+        "../shaders/basic_texture.frag",  // Fragment shader
+        engine.getModelMat(),            // Pass the engine's model matrix
+        engine.getViewMat(),             // Pass the engine's view matrix
+        engine.getProjMat(),             // Pass the engine's proj. matrix
+        TEXTURE_PROGRAM))                   // Supply the id container
   {
-    // Add a new program to the manager
-    if (GLW_SUCCESS == shaderProgramManager->addNewProgram(
-          "../shaders/basic_texture.vert",  // Vertex shader
-          "../shaders/basic_texture.frag",  // Fragment shader
-          engine->getModelMat(),            // Pass the engine's model matrix
-          engine->getViewMat(),             // Pass the engine's view matrix
-          engine->getProjMat(),             // Pass the engine's proj. matrix
-          TEXTURE_PROGRAM))                   // Supply the id container
-    {
-      // Get the shader program we have just created
-      GShaderProgram * shaderProgram = shaderProgramManager->getProgram(TEXTURE_PROGRAM);
+    // Get the shader program we have just created
+    GShaderProgram * shaderProgram = shaderProgramManager.getProgram(TEXTURE_PROGRAM);
 
-      // Check the program has been created
-      if (NULL != shaderProgram)
+    // Check the program has been created
+    if (NULL != shaderProgram)
+    {
+      if(shaderProgram->isValid())
       {
-        if(shaderProgram->isValid())
-        {
-          // Set the variable handle for our textures
-          if (GLW_FAIL == shaderProgram->setTexHandle())
-          {
-            success = GLW_FAIL;
-            LERROR(TRG, "BASIC_PROGRAM is not valid",
-                   __FILE__, __LINE__, __CLASSNAME__, __func__);
-          }
-        }
-        else
+        // Set the variable handle for our textures
+        if (GLW_FAIL == shaderProgram->setTexHandle())
         {
           success = GLW_FAIL;
           LERROR(TRG, "BASIC_PROGRAM is not valid",
@@ -113,16 +101,22 @@ GReturnCode initShaderPrograms()
       else
       {
         success = GLW_FAIL;
-        LERROR(TRG, "BASIC_PROGRAM is NULL",
+        LERROR(TRG, "BASIC_PROGRAM is not valid",
                __FILE__, __LINE__, __CLASSNAME__, __func__);
       }
     }
     else
     {
       success = GLW_FAIL;
-      LERROR(TRG, "Failed to add BASIC_PROGRAM",
+      LERROR(TRG, "BASIC_PROGRAM is NULL",
              __FILE__, __LINE__, __CLASSNAME__, __func__);
     }
+  }
+  else
+  {
+    success = GLW_FAIL;
+    LERROR(TRG, "Failed to add BASIC_PROGRAM",
+           __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
 
   return success;
@@ -232,23 +226,12 @@ int main()
 
   LINFO(TRG, "Program started.");
 
-  // Create a new engine
-  engine = new GEngine();
-
-  if (NULL != engine)
-  {
-    // Set the clear colour of the scene
-    engine->setClearColor(glw::GREY_A);
-    // Set the window size
-    engine->setWindowSize(glm::vec2(1280,720));
-    // Set the callbacks for the engine, and run
-    engine->run(loop, init, key_callback, mouse_button_callback);
-  }
-  else
-  {
-    LERROR(TRG, "Failed to create engine",
-           __FILE__, __LINE__, __CLASSNAME__, __func__);
-  }
+  // Set the clear colour of the scene
+  engine.setClearColor(glw::GREY_A);
+  // Set the window size
+  engine.setWindowSize(glm::vec2(1280,720));
+  // Set the callbacks for the engine, and run
+  engine.run(loop, init, key_callback, mouse_button_callback);
 
   LINFO(TRG, "Program exit.");
 
