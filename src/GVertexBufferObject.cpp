@@ -150,7 +150,7 @@ void GVertexBufferObject::drawArray(int wireFrame)
 
   // unload the texture
   glActiveTexture(GL_TEXTURE0 + m_tex);
-  glBindTexture(GL_TEXTURE_2D, NULL);
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 // Get the model matrix

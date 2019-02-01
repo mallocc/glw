@@ -49,7 +49,7 @@ namespace glw
       private:
         GFrameBufferObjectId m_id;
 
-        GLuint m_tex = NULL, m_depth = NULL;
+        GLuint m_tex = 0, m_depth = 0;
 
         int m_width = 0, m_height = 0;
 

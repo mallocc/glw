@@ -68,7 +68,7 @@ namespace glw
       	GLuint
 				  m_vao,
 				  m_buffer,
-          m_tex = NULL;
+          m_tex = 0;
 			  int
 				  m_dataSize = 0;
 

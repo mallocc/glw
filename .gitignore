@@ -37,4 +37,4 @@
 
 # Build directory
 
-build/
+/build/**

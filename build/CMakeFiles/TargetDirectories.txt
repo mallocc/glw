@@ -1,3 +1,0 @@
-/home/alex/projects/opengl/glw/build/CMakeFiles/rebuild_cache.dir
-/home/alex/projects/opengl/glw/build/CMakeFiles/glw.dir
-/home/alex/projects/opengl/glw/build/CMakeFiles/edit_cache.dir
