@@ -118,6 +118,10 @@ vector
 glm.h
 ../inc/glm.h
 
+../inc/ImageLoader.h
+opengl.h
+../inc/opengl.h
+
 ../inc/StringFormat.h
 string
 -
@@ -215,6 +219,8 @@ GVertexBufferObject.h
 /home/alex/projects/opengl/glw/src/GVertexBufferObject.h
 CLog.h
 /home/alex/projects/opengl/glw/src/CLog.h
+StringFormat.h
+/home/alex/projects/opengl/glw/src/StringFormat.h
 GVertex_T.h
 /home/alex/projects/opengl/glw/src/GVertex_T.h
 StringFormat.h
@@ -223,6 +229,16 @@ GReturnCode.h
 /home/alex/projects/opengl/glw/src/GReturnCode.h
 GShaderHandle_T.h
 /home/alex/projects/opengl/glw/src/GShaderHandle_T.h
+string
+-
+ImageLoader.h
+/home/alex/projects/opengl/glw/src/ImageLoader.h
+
+/home/alex/projects/opengl/glw/src/ImageLoader.cpp
+ImageLoader.h
+/home/alex/projects/opengl/glw/src/ImageLoader.h
+stb_image/stb_image.h
+-
 
 /home/alex/projects/opengl/glw/src/main.cpp
 stdio.h
@@ -249,4 +265,6 @@ GLight_T.h
 /home/alex/projects/opengl/glw/src/GLight_T.h
 GFrameBufferObject.h
 /home/alex/projects/opengl/glw/src/GFrameBufferObject.h
+StringFormat.h
+/home/alex/projects/opengl/glw/src/StringFormat.h
 

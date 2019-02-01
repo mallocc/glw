@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/glw.dir/src/ImageLoader.cpp.o"
   "CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o"
   "CMakeFiles/glw.dir/src/GCamera.cpp.o"
   "CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o"

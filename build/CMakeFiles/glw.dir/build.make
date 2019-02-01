@@ -57,9 +57,33 @@ include CMakeFiles/glw.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/glw.dir/flags.make
 
+CMakeFiles/glw.dir/src/ImageLoader.cpp.o: CMakeFiles/glw.dir/flags.make
+CMakeFiles/glw.dir/src/ImageLoader.cpp.o: ../src/ImageLoader.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/glw.dir/src/ImageLoader.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glw.dir/src/ImageLoader.cpp.o -c /home/alex/projects/opengl/glw/src/ImageLoader.cpp
+
+CMakeFiles/glw.dir/src/ImageLoader.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/glw.dir/src/ImageLoader.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/alex/projects/opengl/glw/src/ImageLoader.cpp > CMakeFiles/glw.dir/src/ImageLoader.cpp.i
+
+CMakeFiles/glw.dir/src/ImageLoader.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/glw.dir/src/ImageLoader.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/alex/projects/opengl/glw/src/ImageLoader.cpp -o CMakeFiles/glw.dir/src/ImageLoader.cpp.s
+
+CMakeFiles/glw.dir/src/ImageLoader.cpp.o.requires:
+
+.PHONY : CMakeFiles/glw.dir/src/ImageLoader.cpp.o.requires
+
+CMakeFiles/glw.dir/src/ImageLoader.cpp.o.provides: CMakeFiles/glw.dir/src/ImageLoader.cpp.o.requires
+	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/ImageLoader.cpp.o.provides.build
+.PHONY : CMakeFiles/glw.dir/src/ImageLoader.cpp.o.provides
+
+CMakeFiles/glw.dir/src/ImageLoader.cpp.o.provides.build: CMakeFiles/glw.dir/src/ImageLoader.cpp.o
+
+
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: CMakeFiles/glw.dir/flags.make
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o: ../src/GFrameBufferObject.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o -c /home/alex/projects/opengl/glw/src/GFrameBufferObject.cpp
 
 CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.i: cmake_force
@@ -83,7 +107,7 @@ CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o.provides.build: CMakeFiles/glw.d
 
 CMakeFiles/glw.dir/src/GCamera.cpp.o: CMakeFiles/glw.dir/flags.make
 CMakeFiles/glw.dir/src/GCamera.cpp.o: ../src/GCamera.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/glw.dir/src/GCamera.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/glw.dir/src/GCamera.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glw.dir/src/GCamera.cpp.o -c /home/alex/projects/opengl/glw/src/GCamera.cpp
 
 CMakeFiles/glw.dir/src/GCamera.cpp.i: cmake_force
@@ -107,7 +131,7 @@ CMakeFiles/glw.dir/src/GCamera.cpp.o.provides.build: CMakeFiles/glw.dir/src/GCam
 
 CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o: CMakeFiles/glw.dir/flags.make
 CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o: ../src/GPrimativeFactory.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o -c /home/alex/projects/opengl/glw/src/GPrimativeFactory.cpp
 
 CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.i: cmake_force
@@ -131,7 +155,7 @@ CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o.provides.build: CMakeFiles/glw.di
 
 CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: CMakeFiles/glw.dir/flags.make
 CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../src/GVertexBufferObject.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o -c /home/alex/projects/opengl/glw/src/GVertexBufferObject.cpp
 
 CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.i: cmake_force
@@ -155,7 +179,7 @@ CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o.provides.build: CMakeFiles/glw.
 
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: CMakeFiles/glw.dir/flags.make
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o: ../src/GShaderProgramManager.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o -c /home/alex/projects/opengl/glw/src/GShaderProgramManager.cpp
 
 CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.i: cmake_force
@@ -179,7 +203,7 @@ CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o.provides.build: CMakeFiles/gl
 
 CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o: CMakeFiles/glw.dir/flags.make
 CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o: ../src/GShaderVariableHandle.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o -c /home/alex/projects/opengl/glw/src/GShaderVariableHandle.cpp
 
 CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.i: cmake_force
@@ -203,7 +227,7 @@ CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o.provides.build: CMakeFiles/gl
 
 CMakeFiles/glw.dir/src/GShaderProgram.cpp.o: CMakeFiles/glw.dir/flags.make
 CMakeFiles/glw.dir/src/GShaderProgram.cpp.o: ../src/GShaderProgram.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/glw.dir/src/GShaderProgram.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/glw.dir/src/GShaderProgram.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glw.dir/src/GShaderProgram.cpp.o -c /home/alex/projects/opengl/glw/src/GShaderProgram.cpp
 
 CMakeFiles/glw.dir/src/GShaderProgram.cpp.i: cmake_force
@@ -227,7 +251,7 @@ CMakeFiles/glw.dir/src/GShaderProgram.cpp.o.provides.build: CMakeFiles/glw.dir/s
 
 CMakeFiles/glw.dir/src/GEngine.cpp.o: CMakeFiles/glw.dir/flags.make
 CMakeFiles/glw.dir/src/GEngine.cpp.o: ../src/GEngine.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/glw.dir/src/GEngine.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/glw.dir/src/GEngine.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glw.dir/src/GEngine.cpp.o -c /home/alex/projects/opengl/glw/src/GEngine.cpp
 
 CMakeFiles/glw.dir/src/GEngine.cpp.i: cmake_force
@@ -251,7 +275,7 @@ CMakeFiles/glw.dir/src/GEngine.cpp.o.provides.build: CMakeFiles/glw.dir/src/GEng
 
 CMakeFiles/glw.dir/src/main.cpp.o: CMakeFiles/glw.dir/flags.make
 CMakeFiles/glw.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/glw.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/glw.dir/src/main.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glw.dir/src/main.cpp.o -c /home/alex/projects/opengl/glw/src/main.cpp
 
 CMakeFiles/glw.dir/src/main.cpp.i: cmake_force
@@ -275,6 +299,7 @@ CMakeFiles/glw.dir/src/main.cpp.o.provides.build: CMakeFiles/glw.dir/src/main.cp
 
 # Object files for target glw
 glw_OBJECTS = \
+"CMakeFiles/glw.dir/src/ImageLoader.cpp.o" \
 "CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o" \
 "CMakeFiles/glw.dir/src/GCamera.cpp.o" \
 "CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o" \
@@ -288,6 +313,7 @@ glw_OBJECTS = \
 # External object files for target glw
 glw_EXTERNAL_OBJECTS =
 
+glw: CMakeFiles/glw.dir/src/ImageLoader.cpp.o
 glw: CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o
 glw: CMakeFiles/glw.dir/src/GCamera.cpp.o
 glw: CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o
@@ -299,7 +325,7 @@ glw: CMakeFiles/glw.dir/src/GEngine.cpp.o
 glw: CMakeFiles/glw.dir/src/main.cpp.o
 glw: CMakeFiles/glw.dir/build.make
 glw: CMakeFiles/glw.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable glw"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/alex/projects/opengl/glw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable glw"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/glw.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -307,6 +333,7 @@ CMakeFiles/glw.dir/build: glw
 
 .PHONY : CMakeFiles/glw.dir/build
 
+CMakeFiles/glw.dir/requires: CMakeFiles/glw.dir/src/ImageLoader.cpp.o.requires
 CMakeFiles/glw.dir/requires: CMakeFiles/glw.dir/src/GFrameBufferObject.cpp.o.requires
 CMakeFiles/glw.dir/requires: CMakeFiles/glw.dir/src/GCamera.cpp.o.requires
 CMakeFiles/glw.dir/requires: CMakeFiles/glw.dir/src/GPrimativeFactory.cpp.o.requires

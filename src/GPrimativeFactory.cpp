@@ -484,11 +484,28 @@ void GPrimativeFactory::preRotate(GArrayVec3& v, glm::vec3& rotate)
 // creates a vector of Vertices to pass to Obj
 void GPrimativeFactory::packObject(GArrayVertex& o, GArrayVec3& v)
 {
-  GArrayVec3 c, n, t;
   GArrayVec2 uv;
+  packObject(o, v, uv);
+}
+
+void GPrimativeFactory::packObject(GArrayVertex& o, GArrayVec3& v, GArrayVec2& uv)
+{
+  if(o.size() > 0)
+  {
+    o.clear();
+  }
+
+  GArrayVec3 c, n, t;
   glm::vec3 color = glm::vec3(0.5f);
 
-  randomColourBuffer(c, color, v.size());
+  if(uv.size() == 0)
+  {
+    randomColourBuffer(c, color, v.size());
+  }
+  else
+  {
+    colourBuffer(c, glm::vec3(0), v.size());
+  }
   normals(n, v);
   tangents(t, v);
 

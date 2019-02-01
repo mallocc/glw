@@ -12,6 +12,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/alex/projects/opengl/glw/src/GShaderProgramManager.cpp" "/home/alex/projects/opengl/glw/build/CMakeFiles/glw.dir/src/GShaderProgramManager.cpp.o"
   "/home/alex/projects/opengl/glw/src/GShaderVariableHandle.cpp" "/home/alex/projects/opengl/glw/build/CMakeFiles/glw.dir/src/GShaderVariableHandle.cpp.o"
   "/home/alex/projects/opengl/glw/src/GVertexBufferObject.cpp" "/home/alex/projects/opengl/glw/build/CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o"
+  "/home/alex/projects/opengl/glw/src/ImageLoader.cpp" "/home/alex/projects/opengl/glw/build/CMakeFiles/glw.dir/src/ImageLoader.cpp.o"
   "/home/alex/projects/opengl/glw/src/main.cpp" "/home/alex/projects/opengl/glw/build/CMakeFiles/glw.dir/src/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

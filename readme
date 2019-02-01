@@ -4,6 +4,8 @@
 #
 ##### Dependancies #####
 #
+#  Found this link extremely helpful: https://stackoverflow.com/questions/17768008/how-to-build-install-glfw-3-and-use-it-in-a-linux-project
+#
 #  This was built on Linux Xubuntu 18.04
 #
 #  cmake

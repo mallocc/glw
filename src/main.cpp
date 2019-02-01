@@ -10,8 +10,10 @@
 #include "GShaderHandle_T.h"
 #include "GLight_T.h"
 #include "GFrameBufferObject.h"
+#include "StringFormat.h"
 
 
+using util::StringFormat;
 using glw::engine::GEngine;
 using glw::engine::glsl::GShaderVariableHandle;
 using glw::engine::glsl::GShaderProgram;
@@ -23,6 +25,7 @@ using glw::GReturnCode::GLW_FAIL;
 using glw::engine::buffers::GVertexBufferObject;
 using glw::engine::buffers::GPrimativeFactory;
 using glw::engine::buffers::GArrayVertex;
+using glw::engine::buffers::GArrayVec2;
 using glw::engine::buffers::GArrayVec3;
 using glw::engine::glsl::GLight_T;
 using glw::engine::buffers::GFrameBufferObject;
@@ -42,9 +45,9 @@ namespace
   GShaderProgramId BLUR_PROGRAM;
   GFrameBufferObject fbo;
   GFrameBufferObject fboBlur;
-  GVertexBufferObject vbo;
+  GVertexBufferObject vbo, vbo2, vbo3;
   GCamera camera(glm::vec3(0, 0, 5), glm::vec3(), glm::vec3(0,0,-1), glm::vec3(0, 1, 0));
-  GLight_T light = { glm::vec3(0,5,0), glw::RED, glm::vec3(2,25,100) };
+  GLight_T light = { glm::vec3(0,5,0), glw::WHITE, glm::vec3(2,25,100) };
 
   glm::vec3 blurProperties(0.06f,0.06f,0.02f);
 
@@ -59,8 +62,8 @@ GReturnCode loop()
   // Calculate some maths //
   color += 0.001f;
   color = fmod(color, 1.0f);
-  ambientColor = glm::vec3(color, fmod(color + 0.3f, 1.0f), fmod(color + 0.6f, 1.0f));
-  ambientColor /= 5.0f;
+  //ambientColor = glm::vec3(color, fmod(color + 0.3f, 1.0f), fmod(color + 0.6f, 1.0f));
+  //ambientColor /= 5.0f;
   engine->setClearColor(ambientColor);
 
   vbo.m_theta += 0.05f;
@@ -77,7 +80,6 @@ GReturnCode loop()
   camera.update(0.1f, 0.9f);
   engine->setCamera(camera);
 
-
   // Draw vbo to blur FBO //
 
   // Setup 3D perspective
@@ -91,6 +93,8 @@ GReturnCode loop()
   fboBlur.bind();
   // Draw the vbo
   shaderProgramManager->drawVBO(vbo);
+  shaderProgramManager->drawVBO(vbo2);
+    shaderProgramManager->drawVBO(vbo3);
   // Unbind the bound FBO
   fboBlur.unbind();
 
@@ -101,6 +105,8 @@ GReturnCode loop()
   engine->setClearColor(glw::BLACK);
   engine->clearAll();
   engine->loadOrtho();
+
+  fbo.bind();
 
   // Load the shader program to draw with
   shaderProgramManager->loadProgram(BLUR_PROGRAM);
@@ -118,6 +124,15 @@ GReturnCode loop()
   fboBlur.setTopLeft(windowSize * glm::vec2(-1, 1) * 0.25f);
   shaderProgramManager->drawFBO(fboBlur);
 
+  fbo.unbind();
+
+  // Setup ortho perspective
+  engine->setClearColor(glw::BLACK);
+  engine->clearAll();
+  engine->loadOrtho();
+
+  shaderProgramManager->loadProgram(BLUR_PROGRAM);
+  shaderProgramManager->drawFBO(fbo);
 
   // Draw the vbo on its own //
 
@@ -130,7 +145,8 @@ GReturnCode loop()
   shaderProgramManager->loadProgram(PHONG_PROGRAM);
   // Draw the vbo
   shaderProgramManager->drawVBO(vbo);
-
+  shaderProgramManager->drawVBO(vbo2);
+  shaderProgramManager->drawVBO(vbo3);
 
   return GLW_SUCCESS;
 }
@@ -176,6 +192,7 @@ GReturnCode initShaderPrograms()
      shaderProgram = shaderProgramManager->loadProgram(PHONG_PROGRAM);
      if(NULL != shaderProgram)
      {
+       shaderProgram->setTexHandle();
        shaderProgram->addHandle(GShaderVariableHandle(VAR_LIGHT_POSITION, &light.pos));
        shaderProgram->addHandle(GShaderVariableHandle(VAR_LIGHT_COLOR, &light.color));
        shaderProgram->addHandle(GShaderVariableHandle(VAR_LIGHT_PROPERTIES, &light.brightness_specscale_shinniness));
@@ -226,8 +243,8 @@ GReturnCode initFBOs()
 
     glm::vec2 windowSize;
     engine->getWindowSize(windowSize);
-    fbo = GFrameBufferObject(windowSize);
 
+    fbo = GFrameBufferObject(windowSize);
     fboBlur = GFrameBufferObject(windowSize);
   }
 
@@ -241,17 +258,40 @@ GReturnCode initVBOs()
   if (GLW_SUCCESS == success)
   {
     GArrayVertex o;
-    GArrayVec3 v;
+    GArrayVec3 v, c, n, t;
 
     CINFO(TRG, "Generating Sphere...");
     GPrimativeFactory::sphere(v, 200, 200);
     GPrimativeFactory::packObject(o, v);
 
     vbo = GVertexBufferObject(
-             o,
-             glm::vec3(0, 0, 0),
-             glm::vec3(-1, 1, 0.5), glm::radians(0.0f),
-             glm::vec3(1, 0, 0), glm::radians(90.0f));
+            o,
+            glm::vec3(0, 0, 0),
+            glm::vec3(-1, 1, 0.5), glm::radians(0.0f),
+            glm::vec3(1, 0, 0), glm::radians(90.0f));
+
+
+    GArrayVec2 uv;
+    GPrimativeFactory::sphereicalUVs(uv, v);
+    GPrimativeFactory::packObject(o, v, uv);
+
+
+    vbo2 = GVertexBufferObject(
+                    o,
+                    glm::vec3(2, 0, 0),
+                    glm::vec3(-1, 1, 0.5), glm::radians(0.0f),
+                    glm::vec3(1, 0, 0), glm::radians(90.0f),
+                    glm::vec3(1),
+                    "../textures/mars.jpg");
+
+
+    vbo3 = GVertexBufferObject(
+                    o,
+                    glm::vec3(-2, 0, 0),
+                    glm::vec3(-1, 1, 0.5), glm::radians(0.0f),
+                    glm::vec3(1, 0, 0), glm::radians(90.0f),
+                    glm::vec3(1),
+                    "../textures/151.bmp");
   }
 
   return success;
@@ -263,7 +303,7 @@ GReturnCode init()
 
   // SHADER PROGRAM SETUP //
   success = initShaderPrograms();
-  
+
   // FBO SETUP //
   if (GLW_SUCCESS == success)
   {

@@ -15,6 +15,7 @@ inc/GShaderProgramManager.h
 inc/GShaderVariableHandle.h
 inc/GVertexBufferObject.h
 inc/GVertex_T.h
+inc/ImageLoader.h
 inc/StringFormat.h
 inc/colors.h
 inc/glm.h
@@ -223,6 +224,7 @@ src/GShaderProgram.cpp
 src/GShaderProgramManager.cpp
 src/GShaderVariableHandle.cpp
 src/GVertexBufferObject.cpp
+src/ImageLoader.cpp
 src/main.cpp
 textures/151.bmp
 textures/151.jpg

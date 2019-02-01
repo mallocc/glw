@@ -40,21 +40,21 @@ namespace glw
 				    glm::vec3 preRotation,
 				    GLfloat preTheta,
             glm::vec3 scale = glm::vec3(1),
-            const char * texfilename = "");
+            const char * texfilename = "NULL");
         
         ~GVertexBufferObject();
         
         // Buffers Vertex data into the VBO
 			  GReturnCode init(std::vector<GVertex_T> * d);
 
-			  // Loads image file into a texture
-			  void loadTextures(const char * texfilename);
+        // Loads image file into a texture
+        void loadTextures(const char * texfilename);
 
         // Draws the vbo including linking the model matrix
         void draw(int wireFrame, GShaderHandle_T handles);
 
 			  // Draws just the VBO and activating the texture
-			  void drawArray(int wireFrame, GShaderVariableHandle * textureHandle);
+        void drawArray(int wireFrame);
 
 			  // Override the texture handle seperately
 			  void loadTextureHandle(GShaderVariableHandle * handle);
@@ -68,7 +68,7 @@ namespace glw
       	GLuint
 				  m_vao,
 				  m_buffer,
-				  m_tex = GL_TEXTURE0;
+          m_tex = NULL;
 			  int
 				  m_dataSize = 0;
 

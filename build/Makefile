@@ -339,6 +339,33 @@ src/GVertexBufferObject.cpp.s:
 	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.s
 .PHONY : src/GVertexBufferObject.cpp.s
 
+src/ImageLoader.o: src/ImageLoader.cpp.o
+
+.PHONY : src/ImageLoader.o
+
+# target to build an object file
+src/ImageLoader.cpp.o:
+	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/ImageLoader.cpp.o
+.PHONY : src/ImageLoader.cpp.o
+
+src/ImageLoader.i: src/ImageLoader.cpp.i
+
+.PHONY : src/ImageLoader.i
+
+# target to preprocess a source file
+src/ImageLoader.cpp.i:
+	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/ImageLoader.cpp.i
+.PHONY : src/ImageLoader.cpp.i
+
+src/ImageLoader.s: src/ImageLoader.cpp.s
+
+.PHONY : src/ImageLoader.s
+
+# target to generate assembly for a file
+src/ImageLoader.cpp.s:
+	$(MAKE) -f CMakeFiles/glw.dir/build.make CMakeFiles/glw.dir/src/ImageLoader.cpp.s
+.PHONY : src/ImageLoader.cpp.s
+
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -399,6 +426,9 @@ help:
 	@echo "... src/GVertexBufferObject.o"
 	@echo "... src/GVertexBufferObject.i"
 	@echo "... src/GVertexBufferObject.s"
+	@echo "... src/ImageLoader.o"
+	@echo "... src/ImageLoader.i"
+	@echo "... src/ImageLoader.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

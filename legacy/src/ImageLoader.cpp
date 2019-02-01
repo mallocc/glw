@@ -8,42 +8,42 @@ using alib::ImageLoader;
 // loads an image into a gl texture
 GLuint ImageLoader::loadTextureFromImage(const char *fname)
 {
-	int w, h, n;
-	unsigned char *data = stbi_load(fname, &w, &h, &n, STBI_rgb_alpha);
-	if (data == NULL) {
-		fprintf(stderr, "Image not loaded: %s\n", fname);
-		const char *error = stbi_failure_reason();
-		fprintf(stderr, "Failure reason %s\n", error);
-		return GL_TEXTURE0;
-	}
+  int w, h, n;
+  unsigned char *data = stbi_load(fname, &w, &h, &n, STBI_rgb_alpha);
+  if (data == NULL) {
+    fprintf(stderr, "Image not loaded: %s\n", fname);
+    const char *error = stbi_failure_reason();
+    fprintf(stderr, "Failure reason %s\n", error);
+    return GL_TEXTURE0;
+  }
 
-	if (n == 1)
-	{
-		unsigned char *data2 = new unsigned char[w*h * 3];
-		for (int i = 0; i < w*h; ++i)
-			for (int j = 0; j < 3; ++j)
-				data2[i * 3 + j] = data[i];
-		delete data;
-		data = data2;
-	}
+  if (n == 1)
+  {
+    unsigned char *data2 = new unsigned char[w*h * 3];
+    for (int i = 0; i < w*h; ++i)
+      for (int j = 0; j < 3; ++j)
+        data2[i * 3 + j] = data[i];
+    delete data;
+    data = data2;
+  }
 
 
-	GLuint tex = 1;
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
-	// set the texture wrapping parameters
-	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  GLuint tex = 1;
+  glGenTextures(1, &tex);
+  glBindTexture(GL_TEXTURE_2D, tex);
+  // set the texture wrapping parameters
+  // set texture wrapping to GL_REPEAT (default wrapping method)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(GL_TEXTURE_2D);
+  // set texture filtering parameters
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  glGenerateMipmap(GL_TEXTURE_2D);
 
-	delete data;
-	return tex;
+  delete data;
+  return tex;
 }
 
 // loads an image into a gl texture

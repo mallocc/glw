@@ -50,21 +50,8 @@ GFrameBufferObject::~GFrameBufferObject()
 
 void GFrameBufferObject::draw(GShaderHandle_T handles)
 {
-  if (NULL != handles.textureHandle)
-  {
-    handles.textureHandle->load(m_tex);
-    glActiveTexture(GL_TEXTURE0 + m_tex);
-    glBindTexture(GL_TEXTURE_2D, m_tex);
-
-    m_vbo.draw(0, handles);
-
-    glActiveTexture(GL_TEXTURE0 + m_tex);
-    glBindTexture(GL_TEXTURE_2D, GL_TEXTURE0);
-  }
-  else
-  {
-    CERROR(TRG, StringFormat("NULL textureHandle").str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
-  }
+  m_vbo.m_tex = m_tex;
+  m_vbo.draw(0, handles);
 }
 
 // Binds FBO for render
@@ -82,10 +69,6 @@ void GFrameBufferObject::bind()
   glOrtho(0.0, m_width, 0.0, m_height, -1.0, 1.0);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-
-  //glDisable(GL_TEXTURE_2D);
-  //glDisable(GL_BLEND);
-  //glEnable(GL_DEPTH_TEST);
 }
 
 // Unbinds all FBOs
@@ -147,7 +130,9 @@ GReturnCode GFrameBufferObject::createFBO()
   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_width, m_height);
   //Attach depth buffer to FBO
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
+
   //Does the GPU support current FBO configuration?
+
   GLenum status;
   status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
   switch (status)
@@ -158,8 +143,6 @@ GReturnCode GFrameBufferObject::createFBO()
     retCode = GLW_FAIL;
     CERROR(TRG, StringFormat("Error creating FBO").str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
-
-  glFlush();
 
   CINFO(TRG, StringFormat("Successfully created FBO = %0").arg(m_id).str());
 

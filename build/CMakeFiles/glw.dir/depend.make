@@ -69,10 +69,15 @@ CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/GShaderHandle_T.h
 CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/GShaderVariableHandle.h
 CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/GVertexBufferObject.h
 CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/GVertex_T.h
+CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/ImageLoader.h
 CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/StringFormat.h
 CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/glm.h
 CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../inc/opengl.h
 CMakeFiles/glw.dir/src/GVertexBufferObject.cpp.o: ../src/GVertexBufferObject.cpp
+
+CMakeFiles/glw.dir/src/ImageLoader.cpp.o: ../inc/ImageLoader.h
+CMakeFiles/glw.dir/src/ImageLoader.cpp.o: ../inc/opengl.h
+CMakeFiles/glw.dir/src/ImageLoader.cpp.o: ../src/ImageLoader.cpp
 
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/CLog.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GCamera.h
@@ -87,6 +92,7 @@ CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GShaderProgramManager.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GShaderVariableHandle.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GVertexBufferObject.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/GVertex_T.h
+CMakeFiles/glw.dir/src/main.cpp.o: ../inc/StringFormat.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/colors.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/glm.h
 CMakeFiles/glw.dir/src/main.cpp.o: ../inc/opengl.h

@@ -61,6 +61,7 @@ namespace glw
 			
 				// creates a vector of Vertices to pass to Obj
 			  static void packObject(GArrayVertex& o, GArrayVec3& v);
+        static void packObject(GArrayVertex& o, GArrayVec3& v, GArrayVec2& uv);
         static void packObject(GArrayVertex& o, GArrayVec3& v, GArrayVec3& n);
 			  static void packObject(GArrayVertex& o, GArrayVec3& v, 
 			                         GArrayVec3& c, GArrayVec3& n, 

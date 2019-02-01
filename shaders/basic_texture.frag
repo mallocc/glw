@@ -13,7 +13,7 @@ uniform mat4 u_p;
 
 uniform sampler2D u_tex;
 
-out vec4 out_color;
+layout(location = 0) out vec4 out_color;
 
 void main() 
 {	

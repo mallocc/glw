@@ -29,6 +29,7 @@ set(SRC ${PROJECT_SOURCE_DIR}/src)
 # specifiy each source file to be compiled 
 set(SRC_FILES
 #files
+${SRC}/ImageLoader.cpp
 ${SRC}/GFrameBufferObject.cpp
 ${SRC}/GCamera.cpp
 ${SRC}/GPrimativeFactory.cpp
@@ -44,4 +45,4 @@ ${SRC}/main.cpp
 add_executable(glw ${SRC_FILES})
 
 # link libraries to the project to compile
-target_link_libraries(glw GL GLU GLEW glfw3 X11 Xxf86vm Xrandr pthread Xi dl Xinerama Xcursor)
+target_link_libraries(glw PUBLIC GL GLU GLEW glfw3 X11 Xxf86vm Xrandr pthread Xi dl Xinerama Xcursor)

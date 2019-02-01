@@ -14,6 +14,8 @@ uniform mat4 u_m;
 uniform mat4 u_v;
 uniform mat4 u_p;
 
+uniform sampler2D u_tex;
+
 uniform vec3 u_light_pos;
 uniform vec3 u_eye_pos;
 
@@ -21,9 +23,9 @@ uniform vec3 u_light_properties;
 uniform vec3 u_ambient_color;
 uniform vec3 u_light_color;
 
-uniform sampler2D u_tex;
 
-out vec4 out_color;
+
+layout(location = 0) out vec4 out_color;
 
 void main() 
 {
@@ -51,7 +53,7 @@ void main()
 
     // calculate final phong color
     //vec3 final_color        = (o_color + vec3(texture2D(u_tex, o_uv))) * (diffuse + specular);
-    vec3 final_color        = (o_color) * (diffuse + specular) + u_ambient_color;
+    vec3 final_color        = (o_color + vec3(texture2D(u_tex, o_uv))) * (diffuse + specular) + u_ambient_color;
     //final_color = final_color / 2.0f;
 
     //final_color = dif;

@@ -1,10 +1,16 @@
 #include "GVertexBufferObject.h"
 #include "CLog.h"
+#include "StringFormat.h"
 
 #include "GVertex_T.h"
 #include "StringFormat.h"
 #include "GReturnCode.h"
 #include "GShaderHandle_T.h"
+
+#include <string>
+
+#include "ImageLoader.h"
+using util::ImageLoader;
 
 
 using glw::engine::buffers::GVertexBufferObject;
@@ -12,6 +18,7 @@ using glw::engine::buffers::GVertex_T;
 using glw::GReturnCode::GLW_FAIL;
 using glw::GReturnCode::GLW_SUCCESS;
 using glw::engine::glsl::GShaderHandle_T;
+using util::StringFormat;
 
 
 namespace
@@ -37,7 +44,7 @@ GVertexBufferObject::GVertexBufferObject(
     GLfloat preTheta,
     glm::vec3 scale,
     const char * texfilename)
-    :
+  :
     m_pos(pos),
     m_rotation(rotation),
     m_theta(theta),
@@ -47,11 +54,9 @@ GVertexBufferObject::GVertexBufferObject(
 {
   CINFO(TRG, "Loading new GVertexBufferObject...");
 
-#ifdef USE_TEXTURES
-  load_textures(texfilename);
-#endif
+  loadTextures(texfilename);
 
-	if (GLW_SUCCESS != init(&data))
+  if (GLW_SUCCESS != init(&data))
 	{
     CERROR(TRG, "Failed it initialise GVertexBufferObject.",
 	      __FILE__, __LINE__, __CLASSNAME__, __func__);
@@ -87,49 +92,65 @@ GReturnCode GVertexBufferObject::init(std::vector<GVertex_T> * d)
 		(const GLvoid*)offsetof(struct GVertex_T, tangent));
 	glEnableVertexAttribArray(4);
 	glBindVertexArray(0);
-	glFlush();
 
 	CINFO(TRG, "Buffered into VAO");
 	
 	return GLW_SUCCESS;
 }
 
+// Loads image file into a texture
+void GVertexBufferObject::loadTextures(const char *texfilename)
+{
+  const std::string filename(texfilename);
+  if (filename.compare("NULL") != 0)
+  {
+    m_tex = ImageLoader::loadTextureFromImage(texfilename);
+    CINFO(TRG, StringFormat("%0 -> Texture Id %1").arg(texfilename).arg(m_tex).str());
+  }
+  else
+  {
+//    m_tex = ImageLoader::loadBlankTexture();
+    CINFO(TRG, "No texture file loaded");
+  }
+}
+
 // Draws the mesh including linking the model matrix
 void GVertexBufferObject::draw(int wireFrame, GShaderHandle_T handles)
 {
-	handles.modelMatHandle->load(getModelMat());
-	drawArray(wireFrame, handles.textureHandle);
+  if(NULL != 	handles.modelMatHandle)
+  {
+    handles.modelMatHandle->load(getModelMat());
+  }
+  else
+  {
+    CINFO(TRG, "NULL model");
+  }
+  if(NULL != handles.textureHandle)
+  {
+     handles.textureHandle->load(m_tex);
+  }
+  else
+  {
+    CINFO(TRG, "NULL texture");
+  }
+  drawArray(wireFrame);
 }
 
 // Draws just the VBO and activating the texture
-void GVertexBufferObject::drawArray(int wireFrame, GShaderVariableHandle * textureHandle)
+void GVertexBufferObject::drawArray(int wireFrame)
 {
-#ifdef USE_TEXTURES
-	// load the textures
-  if (m_tex != GL_TEXTURE0)
-  {
-    load_texture_handle(texture_handle);
-    glActiveTexture(GL_TEXTURE0 + m_tex);
-    glBindTexture(GL_TEXTURE_2D, m_tex);
-  }
-#endif
+  // load the texture
+  glActiveTexture(GL_TEXTURE0 + m_tex);
+  glBindTexture(GL_TEXTURE_2D, m_tex);
 
 	// draw the data
 	glBindVertexArray(m_vao);
 	glDrawArrays(wireFrame ? GL_LINE_LOOP : GL_TRIANGLES, 0, m_dataSize);
 	glBindVertexArray(0);
 
-#ifdef USE_TEXTURES
   // unload the texture
-  if (m_tex != GL_TEXTURE0)
-  {
-    glActiveTexture(GL_TEXTURE0 + m_tex);
-    glBindTexture(GL_TEXTURE_2D, GL_TEXTURE0);
-  }
-  glActiveTexture(GL_TEXTURE0);
-#endif
-
-	glFinish();
+  glActiveTexture(GL_TEXTURE0 + m_tex);
+  glBindTexture(GL_TEXTURE_2D, NULL);
 }
 
 // Get the model matrix
