@@ -1,7 +1,5 @@
 #version 400 core
 
-
-
 // ins
 layout(location = 0) in vec3 i_vert;
 layout(location = 1) in vec3 i_color;
@@ -20,15 +18,15 @@ out vec2 o_uv;
 
 void main()
 {
-// calculate world position of vertex
-	vec4 world_pos = u_m * vec4(i_vert, 1.0f);
+    // calculate world position of vertex
+    vec4 world_pos  = u_m * vec4(i_vert, 1.0f);
 
-// color of vertex
-	o_color        = i_color;
+    // color of vertex
+    o_color         = i_color;
 
-// uv tex coord
-	o_uv		       = i_uv;
+    // uv tex coord
+    o_uv            = i_uv;
 
-// set projected point
-	gl_Position    = u_p * u_v * world_pos;	
+    // set projected point
+    gl_Position     = u_p * u_v * world_pos;
 }

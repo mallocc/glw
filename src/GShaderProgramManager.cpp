@@ -31,7 +31,7 @@ GShaderProgram * GShaderProgramManager::loadProgram(GShaderProgramId id)
 	return getProgram(id);
 }
 
-GReturnCode GShaderProgramManager::addProgram(
+GReturnCode GShaderProgramManager::addNewProgram(
   const char * vertexFilePath,
   const char * fragmentFilePath
 )
@@ -51,7 +51,7 @@ GReturnCode GShaderProgramManager::addProgram(
 	return success;
 }
 
-GReturnCode GShaderProgramManager::addProgram(
+GReturnCode GShaderProgramManager::addNewProgram(
   const char * vertexFilePath,
   const char * fragmentFilePath,
   glm::mat4 * model_data,
@@ -92,7 +92,7 @@ GReturnCode GShaderProgramManager::addProgram(
   return success;
 }
 
-GReturnCode GShaderProgramManager::addProgram(GShaderProgram program)
+GReturnCode GShaderProgramManager::addNewProgram(GShaderProgram program)
 {
   GReturnCode success = program.isValid() ? GLW_SUCCESS : GLW_FAIL;
   if (GLW_SUCCESS != success)
@@ -131,17 +131,14 @@ void GShaderProgramManager::drawVBO(GVertexBufferObject& vbo)
   }
 }
 
-void GShaderProgramManager::drawVBOs(std::vector<GVertexBufferObject*>& vbos)
+void GShaderProgramManager::drawVBOs(std::vector<GVertexBufferObject>& vbos)
 {
   GShaderProgram * shaderProgram = getCurrentProgram();
   if(NULL != shaderProgram)
   {
-    for (GVertexBufferObject * vbo : vbos)
+    for (GVertexBufferObject& vbo : vbos)
     {
-      if (NULL != vbo)
-      {
-        vbo->draw(0, shaderProgram->getShaderHandle());
-      }
+      vbo.draw(0, shaderProgram->getShaderHandle());
     }
   }
 }

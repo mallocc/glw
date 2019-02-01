@@ -135,7 +135,7 @@ GReturnCode GEngine::run(
   return success;
 }
 
-void GEngine::loadPerspective()
+void GEngine::load3DPerspective()
 {
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
@@ -160,9 +160,9 @@ void GEngine::loadExternalOrtho()
 void GEngine::loadOrtho()
 {
 	// Enable depth test
-	glDisable(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
 	// Cull triangles which normal is not towards the camera
-	glDisable(GL_CULL_FACE);
+  glDisable(GL_CULL_FACE);
 
 	m_view = getOrthoView();
 	m_projection = getOrtho();

@@ -44,7 +44,7 @@ namespace glw
         GLFWkeyfun key_func, 
         GLFWmousebuttonfun mouse_func);
 
-			void loadPerspective();
+      void load3DPerspective();
 			void loadExternalOrtho();
 			void loadOrtho();
 			void loadPseudoIsometric();

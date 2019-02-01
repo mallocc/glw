@@ -81,6 +81,8 @@ namespace glw
 				  m_theta,
 				  m_preTheta;
       };
+
+      typedef std::vector<GVertexBufferObject> GArrayVBO;
     }
   }
 }

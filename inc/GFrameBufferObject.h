@@ -46,6 +46,12 @@ namespace glw
         void setTopLeft(glm::vec2 topLeft);
         void setSize(glm::vec2 size);
 
+        void setZ(float z);
+
+        void rotation(float rotation);
+
+        void setTex(GLuint tex);
+
       private:
         GFrameBufferObjectId m_id;
 

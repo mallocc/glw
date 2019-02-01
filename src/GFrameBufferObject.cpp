@@ -89,6 +89,20 @@ void GFrameBufferObject::setSize(glm::vec2 size)
   m_vbo.m_scale.y = size.y;
 }
 
+void GFrameBufferObject::setZ(float z)
+{
+  m_vbo.m_pos.z = z;
+}
+
+void GFrameBufferObject::rotation(float rotation)
+{
+  m_vbo.m_theta = rotation;
+}
+
+void GFrameBufferObject::setTex(GLuint tex)
+{
+  m_tex = tex;
+}
 
 GReturnCode GFrameBufferObject::createFBO()
 {
@@ -163,6 +177,6 @@ void GFrameBufferObject::createVBO()
   m_vbo = GVertexBufferObject(o,
                 glm::vec3(0, 0, 0),
                 glm::vec3(0, 0, 1),	glm::radians(0.0f),
-                glm::vec3(1, 0, 0),	glm::radians(0.0f),
+                glm::vec3(0, 1, 0),	glm::radians(0.0f),
                 glm::vec3(m_width, m_height, 1));
 }

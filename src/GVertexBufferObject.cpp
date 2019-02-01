@@ -121,17 +121,9 @@ void GVertexBufferObject::draw(int wireFrame, GShaderHandle_T handles)
   {
     handles.modelMatHandle->load(getModelMat());
   }
-  else
-  {
-    LINFO(TRG, "NULL model");
-  }
   if(NULL != handles.textureHandle)
   {
      handles.textureHandle->load(m_tex);
-  }
-  else
-  {
-    LINFO(TRG, "NULL texture");
   }
   drawArray(wireFrame);
 }

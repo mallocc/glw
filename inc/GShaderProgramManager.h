@@ -31,12 +31,12 @@ namespace glw
         
         GShaderProgram * loadProgram(GShaderProgramId id);
 
-			  GReturnCode addProgram(
+			  GReturnCode addNewProgram(
 				  const char * vertex_file_path,
 				  const char * fragment_file_path
 			  );
 			  
-			  GReturnCode addProgram(
+			  GReturnCode addNewProgram(
 				  const char * vertex_file_path,
 				  const char * fragment_file_path,
 				  glm::mat4 * model_data,
@@ -45,7 +45,7 @@ namespace glw
 				  GShaderProgramId& shaderProgramId
 			  );
 
-			  GReturnCode addProgram(GShaderProgram program);
+			  GReturnCode addNewProgram(GShaderProgram program);
 
 			  GShaderProgram * getProgram(GShaderProgramId id);
 
@@ -53,7 +53,7 @@ namespace glw
 
         void drawVBO(GVertexBufferObject& vbo);
 
-        void drawVBOs(std::vector<GVertexBufferObject*>& vbos);
+        void drawVBOs(std::vector<GVertexBufferObject>& vbos);
 
         void drawFBO(GFrameBufferObject& fbo);
 
