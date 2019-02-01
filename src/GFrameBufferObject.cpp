@@ -1,7 +1,7 @@
 #include "GFrameBufferObject.h"
 #include "GPrimativeFactory.h"
 
-#include "CLog.h"
+#include "Logger.h"
 #include "StringFormat.h"
 
 #include "GReturnCode.h"
@@ -94,7 +94,7 @@ GReturnCode GFrameBufferObject::createFBO()
 {
   GReturnCode retCode = GLW_SUCCESS;
 
-  CINFO(TRG, "Creating new FBO...");
+  LINFO(TRG, "Creating new FBO...");
 
   glGenFramebuffers(1, &m_id);
   glBindFramebuffer(GL_FRAMEBUFFER, m_id);
@@ -141,10 +141,10 @@ GReturnCode GFrameBufferObject::createFBO()
     break;
   default:
     retCode = GLW_FAIL;
-    CERROR(TRG, StringFormat("Error creating FBO").str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(TRG, StringFormat("Error creating FBO").str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
 
-  CINFO(TRG, StringFormat("Successfully created FBO = %0").arg(m_id).str());
+  LINFO(TRG, StringFormat("Successfully created FBO = %0").arg(m_id).str());
 
   return retCode;
 }

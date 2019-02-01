@@ -1,5 +1,5 @@
 #include "GVertexBufferObject.h"
-#include "CLog.h"
+#include "Logger.h"
 #include "StringFormat.h"
 
 #include "GVertex_T.h"
@@ -52,13 +52,13 @@ GVertexBufferObject::GVertexBufferObject(
     m_preRotation(preRotation),
     m_preTheta(preTheta)
 {
-  CINFO(TRG, "Loading new GVertexBufferObject...");
+  LINFO(TRG, "Loading new GVertexBufferObject...");
 
   loadTextures(texfilename);
 
   if (GLW_SUCCESS != init(&data))
 	{
-    CERROR(TRG, "Failed it initialise GVertexBufferObject.",
+    LERROR(TRG, "Failed it initialise GVertexBufferObject.",
 	      __FILE__, __LINE__, __CLASSNAME__, __func__);
 	}
 }
@@ -93,7 +93,7 @@ GReturnCode GVertexBufferObject::init(std::vector<GVertex_T> * d)
 	glEnableVertexAttribArray(4);
 	glBindVertexArray(0);
 
-	CINFO(TRG, "Buffered into VAO");
+  LINFO(TRG, "Buffered into VAO");
 	
 	return GLW_SUCCESS;
 }
@@ -105,12 +105,12 @@ void GVertexBufferObject::loadTextures(const char *texfilename)
   if (filename.compare("NULL") != 0)
   {
     m_tex = ImageLoader::loadTextureFromImage(texfilename);
-    CINFO(TRG, StringFormat("%0 -> Texture Id %1").arg(texfilename).arg(m_tex).str());
+    LINFO(TRG, StringFormat("%0 -> Texture Id %1").arg(texfilename).arg(m_tex).str());
   }
   else
   {
 //    m_tex = ImageLoader::loadBlankTexture();
-    CINFO(TRG, "No texture file loaded");
+    LINFO(TRG, "No texture file loaded");
   }
 }
 
@@ -123,7 +123,7 @@ void GVertexBufferObject::draw(int wireFrame, GShaderHandle_T handles)
   }
   else
   {
-    CINFO(TRG, "NULL model");
+    LINFO(TRG, "NULL model");
   }
   if(NULL != handles.textureHandle)
   {
@@ -131,7 +131,7 @@ void GVertexBufferObject::draw(int wireFrame, GShaderHandle_T handles)
   }
   else
   {
-    CINFO(TRG, "NULL texture");
+    LINFO(TRG, "NULL texture");
   }
   drawArray(wireFrame);
 }

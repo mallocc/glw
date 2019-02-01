@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "CLog.h"
+#include "Logger.h"
 #include "GEngine.h"
 #include "colors.h"
 #include "GShaderVariableHandle.h"
@@ -158,7 +158,7 @@ GReturnCode initShaderPrograms()
 
   if (GLW_SUCCESS == success)
   {
-    CINFO(TRG, "Initialising GLSL shader programs...");
+    LINFO(TRG, "Initialising GLSL shader programs...");
 
     shaderProgramManager = new GShaderProgramManager();
 
@@ -174,7 +174,7 @@ GReturnCode initShaderPrograms()
       }
       else
       {
-        CERROR(TRG, "shaderProgram is NULL",
+        LERROR(TRG, "shaderProgram is NULL",
             __FILE__, __LINE__, __CLASSNAME__, __func__);
       }
     }
@@ -201,7 +201,7 @@ GReturnCode initShaderPrograms()
      }
      else
      {
-       CERROR(TRG, "shaderProgram is NULL",
+       LERROR(TRG, "shaderProgram is NULL",
            __FILE__, __LINE__, __CLASSNAME__, __func__);
      }
     }
@@ -220,7 +220,7 @@ GReturnCode initShaderPrograms()
       }
       else
       {
-        CERROR(TRG, "shaderProgram is NULL",
+        LERROR(TRG, "shaderProgram is NULL",
                __FILE__, __LINE__, __CLASSNAME__, __func__);
       }
     }
@@ -239,7 +239,7 @@ GReturnCode initFBOs()
 
   if (GLW_SUCCESS == success)
   {
-    CINFO(TRG, "Creating FBOs...");
+    LINFO(TRG, "Creating FBOs...");
 
     glm::vec2 windowSize;
     engine->getWindowSize(windowSize);
@@ -260,7 +260,7 @@ GReturnCode initVBOs()
     GArrayVertex o;
     GArrayVec3 v, c, n, t;
 
-    CINFO(TRG, "Generating Sphere...");
+    LINFO(TRG, "Generating Sphere...");
     GPrimativeFactory::sphere(v, 200, 200);
     GPrimativeFactory::packObject(o, v);
 
@@ -326,7 +326,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		switch (button)
 		{
 		case GLFW_MOUSE_BUTTON_LEFT:		
-		  CINFO(TRG, "User left click");
+      LINFO(TRG, "User left click");
 			break;
 		}
 	}
@@ -366,7 +366,7 @@ static void	key_callback(GLFWwindow* window, int key, int scancode, int action, 
       break;
       
 		case GLFW_KEY_ESCAPE:	
-		  CINFO(TRG, "User triggered terminatation.");
+      LINFO(TRG, "User triggered terminatation.");
 			glfwSetWindowShouldClose(window, GL_TRUE);
 			break;
 		}
@@ -375,9 +375,9 @@ static void	key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 int main()
 {
-  CSTARTLOGGER("../logs/GLW");
+  LSTARTLOGGER("../logs/GLW");
 
-  CINFO(TRG, "Program started.");
+  LINFO(TRG, "Program started.");
 
   engine = new GEngine();
   engine->setClearColor(glw::GREY_A);
@@ -386,9 +386,9 @@ int main()
   engine->setWindowSize(glm::vec2(1280,720));
   engine->run(loop, init, key_callback, mouse_button_callback);
   
-  CINFO(TRG, "Program exit.");
+  LINFO(TRG, "Program exit.");
   
-  CENDLOGGER();
+  LENDLOGGER();
   
   return 0;
 }

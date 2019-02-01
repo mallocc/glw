@@ -1,5 +1,5 @@
 #include "GShaderProgramManager.h"
-#include "CLog.h"
+#include "Logger.h"
 
 
 using glw::engine::glsl::GShaderProgramManager;
@@ -40,13 +40,13 @@ GReturnCode GShaderProgramManager::addProgram(
 	GReturnCode success = program.isValid() ? GLW_SUCCESS : GLW_FAIL;
 	if (GLW_SUCCESS != success)
 	{
-	  CERROR(TRG, "GShaderProgram not added to GShaderProgramManager.",
+	  LERROR(TRG, "GShaderProgram not added to GShaderProgramManager.",
 	      __FILE__, __LINE__, __CLASSNAME__, __func__);
 	}
 	else
 	{
 	  m_shaderPrograms.insert({ program.getId(), program });	  
-	  CINFO(TRG, "GShaderProgram added to GShaderProgramManager.");
+	  LINFO(TRG, "GShaderProgram added to GShaderProgramManager.");
 	}
 	return success;
 }
@@ -65,7 +65,7 @@ GReturnCode GShaderProgramManager::addProgram(
 	if (GLW_SUCCESS != success)
 	{
 	  shaderProgramId = NULL_SHADER_PROGRAM_ID;
-	  CERROR(TRG, "GShaderProgram not added to GShaderProgramManager.",
+	  LERROR(TRG, "GShaderProgram not added to GShaderProgramManager.",
 	      __FILE__, __LINE__, __CLASSNAME__, __func__);
 	}
 	else
@@ -86,7 +86,7 @@ GReturnCode GShaderProgramManager::addProgram(
     {
 	    m_shaderPrograms.insert({ program.getId(), program });	  
       shaderProgramId = program.getId();
-  	  CINFO(TRG, "GShaderProgram added to GShaderProgramManager.");
+  	  LINFO(TRG, "GShaderProgram added to GShaderProgramManager.");
    	}
 	}
   return success;
@@ -97,13 +97,13 @@ GReturnCode GShaderProgramManager::addProgram(GShaderProgram program)
   GReturnCode success = program.isValid() ? GLW_SUCCESS : GLW_FAIL;
   if (GLW_SUCCESS != success)
   {
-    CERROR(TRG, "GShaderProgram not added to GShaderProgramManager.",
+    LERROR(TRG, "GShaderProgram not added to GShaderProgramManager.",
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
   else
   {
     m_shaderPrograms.insert({ program.getId(), program });	  
-    CINFO(TRG, "GShaderProgram added to GShaderProgramManager.");
+    LINFO(TRG, "GShaderProgram added to GShaderProgramManager.");
   }
   return success;
 }
@@ -127,7 +127,7 @@ void GShaderProgramManager::drawVBO(GVertexBufferObject& vbo)
   }
   else
   {
-    CINFO(TRG, "NULL shaderProgram");
+    LINFO(TRG, "NULL shaderProgram");
   }
 }
 

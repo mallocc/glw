@@ -1,5 +1,5 @@
 #include "GShaderVariableHandle.h"
-#include "CLog.h"
+#include "Logger.h"
 #include "StringFormat.h"
 
 using glw::engine::glsl::GShaderVariableHandle;
@@ -96,13 +96,13 @@ GReturnCode GShaderVariableHandle::init(const GLuint program)
 	if (NULL_UNIFORM_LOCATION == m_id)
 	{
 	  success = GLW_FAIL;
-	  CERROR(TRG, StringFormat("GShaderProgram Id %0, failed linking %1")
+	  LERROR(TRG, StringFormat("GShaderProgram Id %0, failed linking %1")
 	    .arg(program).arg(m_variableIdentifier).str(),
 	    __FILE__, __LINE__, __CLASSNAME__, __func__);
 	}
 	else
 	{
-	  CINFO(TRG, StringFormat("GShaderProgram Id %0, linking %1 to GShaderVariableHandleId %2")
+	  LINFO(TRG, StringFormat("GShaderProgram Id %0, linking %1 to GShaderVariableHandleId %2")
 	      .arg(program).arg(m_variableIdentifier).arg(m_id).str());
   }
   
@@ -133,7 +133,7 @@ void GShaderVariableHandle::load()
 	  break;
 	case NO_HANDLE:
   default:
-//    CERROR(TRG, StringFormat("GShaderVariableHandle %0 has not been constructed properly.")
+//    LERROR(TRG, StringFormat("GShaderVariableHandle %0 has not been constructed properly.")
 //        .arg(m_variableIdentifier).str(),
 //        __FILE__, __LINE__, __CLASSNAME__, __func__);
     break;

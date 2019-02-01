@@ -2,7 +2,6 @@ build/CMakeFiles/3.10.2/CompilerIdC/CMakeCCompilerId.c
 build/CMakeFiles/3.10.2/CompilerIdCXX/CMakeCXXCompilerId.cpp
 build/CMakeFiles/feature_tests.c
 build/CMakeFiles/feature_tests.cxx
-inc/CLog.h
 inc/GCamera.h
 inc/GEngine.h
 inc/GFrameBufferObject.h
@@ -16,6 +15,7 @@ inc/GShaderVariableHandle.h
 inc/GVertexBufferObject.h
 inc/GVertex_T.h
 inc/ImageLoader.h
+inc/Logger.h
 inc/StringFormat.h
 inc/colors.h
 inc/glm.h

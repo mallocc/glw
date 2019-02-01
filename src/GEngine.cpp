@@ -1,5 +1,5 @@
 #include "GEngine.h"
-#include "CLog.h"
+#include "Logger.h"
 #include "GReturnCode.h"
 #include <chrono>
 #include <thread>
@@ -21,7 +21,7 @@ namespace
 //Error callback  
 void glw::engine::error_callback(int error, const char* description)
 {
-  CERROR(TRG, description, __FILE__, __LINE__, "NULL", __func__);
+  LERROR(TRG, description, __FILE__, __LINE__, "NULL", __func__);
 }
 
 
@@ -38,7 +38,7 @@ GEngine::GEngine()
         m_isometricDepth(1.0f),
         m_frames(0)
 {
-  CINFO(TRG, "Constructing default GEngine.");
+  LINFO(TRG, "Constructing default GEngine.");
 }
 
 GEngine::GEngine(
@@ -62,7 +62,7 @@ GEngine::GEngine(
         m_isometricDepth(1.0f),
         m_frames(0)
 {
-  CINFO(TRG, "Constructing GEngine.");
+  LINFO(TRG, "Constructing GEngine.");
 }
 
 
@@ -81,22 +81,22 @@ GReturnCode GEngine::run(
   if (NULL == loop)
   {
     success = GLW_FAIL;
-    CERROR(TRG, "GEngineLoop is NULL. GEngine is pointless without specifing a loop function.",
+    LERROR(TRG, "GEngineLoop is NULL. GEngine is pointless without specifing a loop function.",
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
   if (NULL == init)
   {
-    CWARNING(TRG, "GEngineInit is NULL.", 
+    LWARNING(TRG, "GEngineInit is NULL.", 
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
   if (NULL == key_func)
   {
-    CWARNING(TRG, "GLFWkeyfun is NULL.",
+    LWARNING(TRG, "GLFWkeyfun is NULL.",
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
   if (NULL == mouse_func)
   {
-    CWARNING(TRG, "GLFWmousebuttonfun is NULL.", 
+    LWARNING(TRG, "GLFWmousebuttonfun is NULL.", 
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
   
@@ -104,12 +104,12 @@ GReturnCode GEngine::run(
   {
     if (GLW_SUCCESS == initWindow(init, key_func, mouse_func, m_window))
     {
-      CINFO(TRG, "Initialised content succesfully.");
+      LINFO(TRG, "Initialised content succesfully.");
     }
     else
     {
       success = GLW_FAIL;
-      CERROR(TRG, "Failed to initialise content.",
+      LERROR(TRG, "Failed to initialise content.",
           __FILE__, __LINE__, __CLASSNAME__, __func__);
     }
   }
@@ -124,11 +124,11 @@ GReturnCode GEngine::run(
   
   if (GLW_SUCCESS == success)
   {
-    CINFO(TRG, "GEngine terminated succesfully.");
+    LINFO(TRG, "GEngine terminated succesfully.");
   }
   else
   {
-    CWARNING(TRG, "GEngine terminated with errors, check logs for trace.", 
+    LWARNING(TRG, "GEngine terminated with errors, check logs for trace.", 
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
   
@@ -411,8 +411,8 @@ GReturnCode GEngine::glLoop(
         glw::engine::GEngineLoop loop, 
         GLFWwindow * window)
 {
-	CINFO(TRG, "Running GL loop...");
-	CINFO(TRG, "==================");
+	LINFO(TRG, "Running GL loop...");
+	LINFO(TRG, "==================");
 	
 
 	
@@ -451,13 +451,13 @@ GReturnCode GEngine::glLoop(
 		int totalFrameMs = frameMs+leftOverWaitMs+1;
     if(m_printFps && !(m_frames % (1000/totalFrameMs)))
 		{
-		  CINFO(TRG, StringFormat("FPS %0").arg(1000/totalFrameMs).str());
+		  LINFO(TRG, StringFormat("FPS %0").arg(1000/totalFrameMs).str());
 		}
 	} //Check if the ESC or Q key had been pressed or if the window had been closed  
 	while (!glfwWindowShouldClose(window));
 
-	CINFO(TRG, "==================");
-	CINFO(TRG, "Window has closed. Application will now exit.");
+	LINFO(TRG, "==================");
+	LINFO(TRG, "Window has closed. Application will now exit.");
 
 	//Close OpenGL window and terminate GLFW  
 	glfwDestroyWindow(window);
@@ -476,7 +476,7 @@ GReturnCode GEngine::initWindow(
 {
   GReturnCode success = GLW_SUCCESS;
 
-	CINFO(TRG, "Initialising new GEngine...");
+	LINFO(TRG, "Initialising new GEngine...");
 
 	//Set the error callback  
 	glfwSetErrorCallback(error_callback);
@@ -484,7 +484,7 @@ GReturnCode GEngine::initWindow(
 	//Initialize GLFW
 	if (!glfwInit())
 	{
-		CERROR(TRG, "Failed to init GLFW", __FILE__, __LINE__, __CLASSNAME__, __func__);
+		LERROR(TRG, "Failed to init GLFW", __FILE__, __LINE__, __CLASSNAME__, __func__);
 	  success = GLW_FAIL;
 	}
 	else
@@ -493,7 +493,7 @@ GReturnCode GEngine::initWindow(
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		CINFO(TRG, "GLFW Initialised.");
+		LINFO(TRG, "GLFW Initialised.");
 	}
 	
 	if(GLW_SUCCESS == success)	
@@ -503,17 +503,17 @@ GReturnCode GEngine::initWindow(
 	  //If the window couldn't be created  
 	  if (!window)
 	  {
-		  CERROR(TRG, "Failed to open GLFW", __FILE__, __LINE__, __CLASSNAME__, __func__);
+		  LERROR(TRG, "Failed to open GLFW", __FILE__, __LINE__, __CLASSNAME__, __func__);
 		  glfwTerminate();
       success = GLW_FAIL;
 	  }
 	  m_window = window;
-	  CINFO(TRG, "Created GLFW window.");
+	  LINFO(TRG, "Created GLFW window.");
 
 
 	  //This function makes the context of the specified window current on the calling thread.   
 	  glfwMakeContextCurrent(window);
-	  CINFO(TRG, "GLFW window context set.");
+	  LINFO(TRG, "GLFW window context set.");
 
 	  //Sets the key callback  
 	  glfwSetKeyCallback(window, key_func);
@@ -527,12 +527,12 @@ GReturnCode GEngine::initWindow(
 	  //If GLEW hasn't initialized  
 	  if (err != GLEW_OK)
 	  {
-		  CERROR(TRG, "Failed to to init GLEW.", __FILE__, __LINE__, __CLASSNAME__, __func__);
+		  LERROR(TRG, "Failed to to init GLEW.", __FILE__, __LINE__, __CLASSNAME__, __func__);
 		  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		  glfwTerminate();
       success = GLW_FAIL;
 	  }
-	  CINFO(TRG, "GLEW Initialised.");
+	  LINFO(TRG, "GLEW Initialised.");
 
 	  // Enable depth test
 	  glEnable(GL_DEPTH_TEST);
@@ -552,15 +552,15 @@ GReturnCode GEngine::initWindow(
     // init
     if (NULL != init)
     {
-      CINFO(TRG, "GEngine initialisation started...");  
+      LINFO(TRG, "GEngine initialisation started...");  
       if (GLW_SUCCESS == init())
       {
-        CINFO(TRG, "GEngine initialisation succesful.");        
+        LINFO(TRG, "GEngine initialisation succesful.");        
       }
       else
       {
         success = GLW_FAIL;
-        CERROR(TRG, "GEngine initialisation failed.", 
+        LERROR(TRG, "GEngine initialisation failed.", 
             __FILE__, __LINE__, __CLASSNAME__, __func__);
       }
     }
