@@ -38,3 +38,11 @@
 # Build directory
 
 /build/**
+
+# QtCreator files
+
+GLW.config
+GLW.creator
+GLW.creator.user
+GLW.files
+GLW.includes

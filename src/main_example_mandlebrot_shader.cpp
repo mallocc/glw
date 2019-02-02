@@ -119,21 +119,21 @@ GReturnCode initShaderPrograms()
         else
         {
           success = GLW_FAIL;
-          LERROR(TRG, "BASIC_PROGRAM is not valid",
+          LERROR(TRG, "MANDLE_PROGRAM is not valid",
                  __FILE__, __LINE__, __CLASSNAME__, __func__);
         }
       }
       else
       {
         success = GLW_FAIL;
-        LERROR(TRG, "BASIC_PROGRAM is NULL",
+        LERROR(TRG, "MANDLE_PROGRAM is NULL",
                __FILE__, __LINE__, __CLASSNAME__, __func__);
       }
     }
     else
     {
       success = GLW_FAIL;
-      LERROR(TRG, "Failed to add BASIC_PROGRAM",
+      LERROR(TRG, "Failed to add MANDLE_PROGRAM",
              __FILE__, __LINE__, __CLASSNAME__, __func__);
     }
   }
