@@ -13,8 +13,6 @@ namespace glw
       struct GShaderHandle_T
       {
         GShaderVariableHandle * textureHandle;
-        GShaderVariableHandle * colorHandle;
-        GShaderVariableHandle * flagHandle;
         GShaderVariableHandle * modelMatHandle;
         GShaderVariableHandle * viewMatHandle;
         GShaderVariableHandle * projMatHandle;

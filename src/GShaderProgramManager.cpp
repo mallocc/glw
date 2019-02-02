@@ -123,7 +123,7 @@ void GShaderProgramManager::drawVBO(GVertexBufferObject& vbo)
   GShaderProgram * shaderProgram = getCurrentProgram();
   if(NULL != shaderProgram)
   {
-    vbo.draw(0, shaderProgram->getShaderHandle());
+    vbo.draw(shaderProgram->getShaderHandle());
   }
   else
   {
@@ -138,7 +138,7 @@ void GShaderProgramManager::drawVBOs(std::vector<GVertexBufferObject>& vbos)
   {
     for (GVertexBufferObject& vbo : vbos)
     {
-      vbo.draw(0, shaderProgram->getShaderHandle());
+      vbo.draw(shaderProgram->getShaderHandle());
     }
   }
 }

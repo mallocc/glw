@@ -159,8 +159,8 @@ GReturnCode initShaderPrograms()
 
     // Add a new program to the manager
     if (GLW_SUCCESS == shaderProgramManager.addNewProgram(
-          "../shaders/basic_texture.vert",          // Vertex shader
-          "../shaders/basic_texture.frag",          // Fragment shader
+          "../shaders/basic.vert",          // Vertex shader
+          "../shaders/basic.frag",          // Fragment shader
           engine.getModelMat(),                     // Pass the engine's model matrix
           engine.getViewMat(),                      // Pass the engine's view matrix
           engine.getProjMat(),                      // Pass the engine's proj. matrix

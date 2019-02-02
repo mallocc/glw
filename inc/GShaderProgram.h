@@ -55,12 +55,7 @@ namespace glw
 
 			  GReturnCode setProjMat4Handle(glm::mat4 * mat);
 
-			  GReturnCode setColorHandle();
-
-			  GReturnCode setFlagHandle();
-
 			  GReturnCode setTexHandle();
-			  GReturnCode setTex1Handle();
 
 			  GShaderVariableHandle * getModelMat4Handle();
 
@@ -68,13 +63,7 @@ namespace glw
 
 			  GShaderVariableHandle * getProjMat4Handle();
 
-			  GShaderVariableHandle * getColorHandle();
-
-			  GShaderVariableHandle * getFlagHandle();
-
 			  GShaderVariableHandle * getTexHandle();
-
-			  GShaderVariableHandle * getTex1Handle();
 
         GShaderHandle_T getShaderHandle();
         void getShaderHandle(GShaderHandle_T& shaderHandle);

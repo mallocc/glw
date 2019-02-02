@@ -115,11 +115,17 @@ void GVertexBufferObject::loadTextures(const char *texfilename)
 }
 
 // Draws the mesh including linking the model matrix
-void GVertexBufferObject::draw(int wireFrame, GShaderHandle_T handles)
+void GVertexBufferObject::draw(GShaderHandle_T handles, bool wireFrame)
+{
+  draw(handles, glm::mat4(1), wireFrame);
+}
+
+// Draws the vbo relative to a parent matrix including linking the model matrix
+void GVertexBufferObject::draw(GShaderHandle_T handles, glm::mat4 parentMatrix, bool wireFrame)
 {
   if(NULL != 	handles.modelMatHandle)
   {
-    handles.modelMatHandle->load(getModelMat());
+    handles.modelMatHandle->load(parentMatrix * getModelMat());
   }
   if(NULL != handles.textureHandle)
   {
@@ -129,7 +135,7 @@ void GVertexBufferObject::draw(int wireFrame, GShaderHandle_T handles)
 }
 
 // Draws just the VBO and activating the texture
-void GVertexBufferObject::drawArray(int wireFrame)
+void GVertexBufferObject::drawArray(bool wireFrame)
 {
   // load the texture
   glActiveTexture(GL_TEXTURE0 + m_tex);

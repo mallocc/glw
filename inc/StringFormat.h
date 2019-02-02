@@ -41,7 +41,12 @@ namespace util
 		{
 			m_args.push_back(ARG(str));
 			return *this;
-		}
+    }
+    StringFormat arg(unsigned char * str)
+    {
+      m_args.push_back(ARG(str));
+      return *this;
+    }
 
 		std::string str()
 		{
@@ -83,6 +88,9 @@ namespace util
 						case ARG::ARG_SIZE_T:
 							ss << m_args[pos].data_st;
 							break;
+            case ARG::ARG_CHAR:
+              ss << m_args[pos].data_c;
+              break;
 						}
 					}
 					break;
@@ -109,7 +117,8 @@ namespace util
 				ARG_INT,
 				ARG_UINT,
 				ARG_LONG,
-				ARG_SIZE_T
+        ARG_SIZE_T,
+        ARG_CHAR
 			};
 
 			int TYPE = ARG_NULL;
@@ -120,6 +129,7 @@ namespace util
 			unsigned int data_u;
 			long data_l;
 			size_t data_st;
+      unsigned char * data_c;
 
 			ARG(std::string data)
 			{
@@ -151,6 +161,11 @@ namespace util
 				TYPE = ARG_SIZE_T;
 				data_st = data;
 			}
+      ARG(unsigned char * data)
+      {
+        TYPE = ARG_CHAR;
+        data_c = data;
+      }
 		};
 
 		std::string m_str;

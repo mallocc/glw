@@ -254,40 +254,6 @@ GReturnCode GShaderProgram::setProjMat4Handle(glm::mat4 * mat)
 	return success;
 }
 
-GReturnCode GShaderProgram::setColorHandle()
-{
-	GShaderVariableHandle handle = GShaderVariableHandle(VAR_NAME_COLOR_VEC);
-	GReturnCode success = handle.init(m_id);
-	if(GLW_SUCCESS == success)
-	{
-	  m_color = handle.getHandleId();
-	  m_handles.insert({ handle.getHandleId(), handle });
-	}
-	else
-	{
-	  LERROR(TRG, StringFormat("Failed to set ColorHandle.").str(),
-	       __FILE__, __LINE__, __CLASSNAME__, __func__);
-	}
-	return success;
-}
-
-GReturnCode GShaderProgram::setFlagHandle()
-{
-	GShaderVariableHandle handle = GShaderVariableHandle(VAR_NAME_FLAG);
-	GReturnCode success = handle.init(m_id);
-	if(GLW_SUCCESS == success)
-	{
-	  m_flag = handle.getHandleId();
-	  m_handles.insert({ handle.getHandleId(), handle });
-	}
-	else
-	{
-	  LERROR(TRG, StringFormat("Failed to set FlagHandle.").str(),
-	       __FILE__, __LINE__, __CLASSNAME__, __func__);
-	}
-	return success;
-}
-
 GReturnCode GShaderProgram::setTexHandle()
 {
 	GShaderVariableHandle handle = GShaderVariableHandle(VAR_NAME_TEX0);
@@ -300,22 +266,6 @@ GReturnCode GShaderProgram::setTexHandle()
 	else
 	{
 	  LERROR(TRG, StringFormat("Failed to set TexHandle.").str(),
-	       __FILE__, __LINE__, __CLASSNAME__, __func__);
-	}
-	return success;
-}
-GReturnCode GShaderProgram::setTex1Handle()
-{
-	GShaderVariableHandle handle = GShaderVariableHandle(VAR_NAME_TEX1);
-	GReturnCode success = handle.init(m_id);
-	if(GLW_SUCCESS == success)
-	{
-	  m_tex1 = handle.getHandleId();
-	  m_handles.insert({ handle.getHandleId(), handle });
-	}
-	else
-	{
-	  LERROR(TRG, StringFormat("Failed to set Tex1Handle.").str(),
 	       __FILE__, __LINE__, __CLASSNAME__, __func__);
 	}
 	return success;
@@ -336,43 +286,23 @@ GShaderVariableHandle * GShaderProgram::getProjMat4Handle()
 	return getHandle(m_projMat);
 }
 
-GShaderVariableHandle * GShaderProgram::getColorHandle()
-{
-	return getHandle(m_color);
-}
-
-GShaderVariableHandle * GShaderProgram::getFlagHandle()
-{
-	return getHandle(m_flag);
-}
-
 GShaderVariableHandle * GShaderProgram::getTexHandle()
 {
 	return getHandle(m_tex);
 }
 
-GShaderVariableHandle * GShaderProgram::getTex1Handle()
-{
-	return getHandle(m_tex1);
-}
-
 GShaderHandle_T GShaderProgram::getShaderHandle()
 {
-  return { 
-      getTexHandle(), 
-      getColorHandle(), 
-      getFlagHandle(), 
-      getModelMat4Handle(), 
-      getViewMat4Handle(), 
-      getProjMat4Handle()
-    };
+  return {
+    getTexHandle(),
+        getModelMat4Handle(),
+        getViewMat4Handle(),
+        getProjMat4Handle()};
 }
 
 void GShaderProgram::getShaderHandle(GShaderHandle_T& shaderHandle)
 {
   shaderHandle.textureHandle = getTexHandle();
-  shaderHandle.colorHandle = getColorHandle();
-  shaderHandle.flagHandle = getFlagHandle();
   shaderHandle.modelMatHandle = getModelMat4Handle();
   shaderHandle.viewMatHandle = getViewMat4Handle();
   shaderHandle.projMatHandle = getProjMat4Handle();

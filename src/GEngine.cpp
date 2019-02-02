@@ -5,6 +5,7 @@
 #include <thread>
 #include "GCamera.h"
 #include "StringFormat.h"
+#include <sstream>
 
 using glw::engine::GEngine;
 using glw::GReturnCode::GLW_SUCCESS;
@@ -71,10 +72,11 @@ GEngine::~GEngine()
 }
 
 GReturnCode GEngine::run(
-        GEngineLoop loop, 
-        GEngineInit init,
-        GLFWkeyfun key_func, 
-        GLFWmousebuttonfun mouse_func)
+    GEngineLoop loop,
+    GEngineInit init,
+    GLFWkeyfun key_func,
+    GLFWmousebuttonfun mouse_func,
+    GLFWcharfun char_func)
 {
   GReturnCode success = GLW_SUCCESS;
   
@@ -99,10 +101,16 @@ GReturnCode GEngine::run(
     LWARNING(TRG, "GLFWmousebuttonfun is NULL.", 
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
+  if (NULL == char_func)
+  {
+    LWARNING(TRG, "GLFWcharfun is NULL.",
+        __FILE__, __LINE__, __CLASSNAME__, __func__);
+  }
+
   
   if (GLW_SUCCESS == success)
   {
-    if (GLW_SUCCESS == initWindow(init, key_func, mouse_func, m_window))
+    if (GLW_SUCCESS == initWindow(init, key_func, mouse_func, char_func, m_window))
     {
       LINFO(TRG, "Initialised content succesfully.");
     }
@@ -469,10 +477,11 @@ GReturnCode GEngine::glLoop(
 
 //GL window initialise
 GReturnCode GEngine::initWindow(
-        glw::engine::GEngineInit init, 
-        GLFWkeyfun key_func, 
-        GLFWmousebuttonfun mouse_func,
-        GLFWwindow * window)
+    glw::engine::GEngineInit init,
+    GLFWkeyfun key_func,
+    GLFWmousebuttonfun mouse_func,
+    GLFWcharfun char_func,
+    GLFWwindow * window)
 {
   GReturnCode success = GLW_SUCCESS;
 
@@ -518,6 +527,7 @@ GReturnCode GEngine::initWindow(
 	  //Sets the key callback  
 	  glfwSetKeyCallback(window, key_func);
 	  glfwSetMouseButtonCallback(window, mouse_func);
+    glfwSetCharCallback(window, char_func);
 	}
 	
 	if (GLW_SUCCESS == success)
@@ -569,3 +579,7 @@ GReturnCode GEngine::initWindow(
 	return success;
 }
 
+bool GEngine::isKeyDown(int key)
+{
+  return GKeyboard::isKeyDown(m_window, key);
+}

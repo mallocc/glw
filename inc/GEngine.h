@@ -4,23 +4,25 @@
 #include "glm.h"
 #include "GReturnCode.h"
 #include "GCamera.h"
+#include "GKeyboard.h"
 
+#include <string>
 
 using glw::GReturnCode;
 using glw::engine::GCamera;
-
+using glw::engine::GKeyboard;
 
 namespace glw
 {
   namespace engine
   {
     //Error callback  
-	  static void		error_callback(int error, const char* description);
+    static void error_callback(int error, const char* description);
 
 		typedef GReturnCode(*GEngineLoop)();
 		typedef GReturnCode(*GEngineInit)();
 
-    class GEngine
+    class GEngine : public GKeyboard
     {
     public:
       
@@ -40,9 +42,10 @@ namespace glw
       
       GReturnCode run(
         GEngineLoop loop, 
-        GEngineInit init, 
-        GLFWkeyfun key_func, 
-        GLFWmousebuttonfun mouse_func);
+        GEngineInit init = NULL,
+        GLFWkeyfun key_func = NULL,
+        GLFWmousebuttonfun mouse_func = NULL,
+        GLFWcharfun char_func = NULL);
 
       void load3DPerspective();
 			void loadExternalOrtho();
@@ -86,7 +89,9 @@ namespace glw
 			void setFpsCap(int fpsCap);
 			int getFpsCap();
 			
-    private:
+      bool isKeyDown(int key);
+
+     private:
       glm::mat4 getExternalOrtho() const;
 		  glm::mat4 getExternalOrthoView() const;
 
@@ -112,9 +117,11 @@ namespace glw
           glw::engine::GEngineInit init,
           GLFWkeyfun key_func,
           GLFWmousebuttonfun mouse_func,
+          GLFWcharfun char_func,
           GLFWwindow * window);
 
-  
+
+
 		  GLFWwindow * m_window;
 
 		  glm::vec2 m_windowSize;
@@ -142,6 +149,7 @@ namespace glw
 		  
 		  bool m_printFps = false;
 		  int m_fpsCap = 62;
+
     };
   }
 }

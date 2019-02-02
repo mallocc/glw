@@ -51,10 +51,13 @@ namespace glw
         void loadTextures(const char * texfilename);
 
         // Draws the vbo including linking the model matrix
-        void draw(int wireFrame, GShaderHandle_T handles);
+        void draw(GShaderHandle_T handles, bool wireFrame = false);
+
+        // Draws the vbo relative to a parent matrix including linking the model matrix
+        void draw(GShaderHandle_T handles, glm::mat4 parentMatrix, bool wireFrame = false);
 
 			  // Draws just the VBO and activating the texture
-        void drawArray(int wireFrame);
+        void drawArray(bool wireFrame = false);
 
 			  // Override the texture handle seperately
 			  void loadTextureHandle(GShaderVariableHandle * handle);

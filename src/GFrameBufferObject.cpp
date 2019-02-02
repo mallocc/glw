@@ -51,7 +51,7 @@ GFrameBufferObject::~GFrameBufferObject()
 void GFrameBufferObject::draw(GShaderHandle_T handles)
 {
   m_vbo.m_tex = m_tex;
-  m_vbo.draw(0, handles);
+  m_vbo.draw(handles);
 }
 
 // Binds FBO for render
