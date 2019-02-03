@@ -24,54 +24,54 @@ namespace glw
     //Error callback  
     static void error_callback(int error, const char* description);
 
-		typedef GReturnCode(*GEngineLoop)();
-		typedef GReturnCode(*GEngineInit)();
+    typedef GReturnCode(*GContentLoop)();
+    typedef GReturnCode(*GContentInit)();
 
-    class GEngine
+    class GContent
     {
     public:
       
-      static GEngine& getInstance()
+      static GContent& getInstance()
       {
-          static GEngine instance;
+          static GContent instance;
           return instance;
       }
 
-      static GEngine * getInstancePtr()
+      static GContent * getInstancePtr()
       {
-          static GEngine instance;
+          static GContent instance;
           return &instance;
       }
 
       static void KEY_CALLBACK(GLFWwindow* window, int key, int scancode, int action, int mods)
       {
-        glw::engine::GEngine::getInstancePtr()->getKeyboard()->updateKey(key);
-        (*glw::engine::GEngine::getInstancePtr()->getKeyfunc())(window, key, scancode, action, mods);
+        glw::engine::GContent::getInstancePtr()->getKeyboard()->updateKey(key);
+        (*glw::engine::GContent::getInstancePtr()->getKeyfunc())(window, key, scancode, action, mods);
       }
 
       static void CHARACTER_CALLBACK(GLFWwindow* window, unsigned int codepoint)
       {
-        glw::engine::GEngine::getInstancePtr()->getKeyboard()->updateChar(codepoint);
+        glw::engine::GContent::getInstancePtr()->getKeyboard()->updateChar(codepoint);
       }
 
       static void CURSOR_POSITION_CALLBACK(GLFWwindow* window, double xpos, double ypos)
       {
-        glw::engine::GEngine::getInstancePtr()->getMouse()->updatePosition(xpos, ypos);
+        glw::engine::GContent::getInstancePtr()->getMouse()->updatePosition(xpos, ypos);
       }
 
       static void SCROLL_CALLBACK(GLFWwindow* window, double xoffset, double yoffset)
       {
-        glw::engine::GEngine::getInstancePtr()->getMouse()->updateScroll(xoffset, yoffset);
+        glw::engine::GContent::getInstancePtr()->getMouse()->updateScroll(xoffset, yoffset);
       }
 
       static void MOUSE_BUTTON_CALLBACK(GLFWwindow* window, int button, int action, int mods)
       {
-        (*glw::engine::GEngine::getInstancePtr()->getMousebuttonfunc())(window, button, action, mods);
+        (*glw::engine::GContent::getInstancePtr()->getMousebuttonfunc())(window, button, action, mods);
       }
 
-      GEngine();
+      GContent();
       
-      GEngine(
+      GContent(
         const glm::vec3& windowSize, 
         const glm::vec3& eyePos, 
         const glm::vec3& eyeLookPos, 
@@ -81,11 +81,11 @@ namespace glw
         const float nearZ, 
         const float farZ);
       
-      ~GEngine();
+      ~GContent();
       
       GReturnCode run(
-          GEngineLoop loop,
-          GEngineInit init = NULL,
+          GContentLoop loop,
+          GContentInit init = NULL,
           GLFWkeyfun key_callback = NULL,
           GLFWmousebuttonfun mouse_button_callback = NULL);
 
@@ -159,10 +159,10 @@ namespace glw
 		  glm::mat4 getHyperPerspectiveView() const;
 
 		  //GL graphics loop
-		  GReturnCode glLoop(GEngineLoop loop, GLFWwindow * window);
+      GReturnCode glLoop(GContentLoop loop, GLFWwindow * window);
 		  //GL window initialise
 		  GReturnCode initWindow(
-          glw::engine::GEngineInit init,
+          glw::engine::GContentInit init,
           GLFWwindow * window);
 
       // Attributes //

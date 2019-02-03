@@ -37,7 +37,7 @@ ${SRC}/GVertexBufferObject.cpp
 ${SRC}/GShaderProgramManager.cpp
 ${SRC}/GShaderVariableHandle.cpp
 ${SRC}/GShaderProgram.cpp
-${SRC}/GEngine.cpp
+${SRC}/GContent.cpp
 ${SRC}/main.cpp
 )
 

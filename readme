@@ -72,7 +72,7 @@ sudo apt-get install cmake build-essential xorg-dev libglew-dev libglm-dev libx1
 #
 # General class structure for the graphics wrapper:
 # 
-#  GEngine
+#  GContent
 #    
 #    - This is essentially your GL content.
 #    - It will create a GLFW window and link your specified functions: 

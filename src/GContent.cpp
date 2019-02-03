@@ -1,4 +1,4 @@
-#include "GEngine.h"
+#include "GContent.h"
 #include "Logger.h"
 #include "GReturnCode.h"
 #include <chrono>
@@ -7,9 +7,9 @@
 #include "StringFormat.h"
 #include <sstream>
 
-using glw::engine::GEngine;
-using glw::engine::GEngineLoop;
-using glw::engine::GEngineInit;
+using glw::engine::GContent;
+using glw::engine::GContentLoop;
+using glw::engine::GContentInit;
 using glw::GReturnCode::GLW_SUCCESS;
 using glw::GReturnCode::GLW_FAIL;
 using glw::engine::GCamera;
@@ -17,8 +17,8 @@ using util::StringFormat;
 
 namespace
 {
-  const char * TRG = "GENG";
-  const char * __CLASSNAME__ = "GEngine";
+  const char * TRG = "GCON";
+  const char * __CLASSNAME__ = "GContent";
 }
 
 //Error callback  
@@ -28,7 +28,7 @@ void glw::engine::error_callback(int error, const char* description)
 }
 
 
-GEngine::GEngine()
+GContent::GContent()
         :
         m_windowSize(glm::vec2(800, 800)),
         m_eyePos(glm::vec3(0, 0, -5)),
@@ -41,10 +41,10 @@ GEngine::GEngine()
         m_isometricDepth(1.0f),
         m_frames(0)
 {
-  LINFO(TRG, "Constructing default GEngine.");
+  LINFO(TRG, "Constructing default GContent.");
 }
 
-GEngine::GEngine(
+GContent::GContent(
         const glm::vec3& windowSize, 
         const glm::vec3& eyePos, 
         const glm::vec3& eyeLookPos, 
@@ -65,17 +65,17 @@ GEngine::GEngine(
         m_isometricDepth(1.0f),
         m_frames(0)
 {
-  LINFO(TRG, "Constructing GEngine.");
+  LINFO(TRG, "Constructing GContent.");
 }
 
 
-GEngine::~GEngine()
+GContent::~GContent()
 {
 }
 
-GReturnCode GEngine::run(
-    GEngineLoop loop,
-    GEngineInit init,
+GReturnCode GContent::run(
+    GContentLoop loop,
+    GContentInit init,
     GLFWkeyfun key_callback,
     GLFWmousebuttonfun mouse_button_callback)
 {
@@ -84,12 +84,12 @@ GReturnCode GEngine::run(
   if (NULL == loop)
   {
     success = GLW_FAIL;
-    LERROR(TRG, "GEngineLoop is NULL. GEngine is pointless without specifing a loop function.",
+    LERROR(TRG, "GContentLoop is NULL. GContent is pointless without specifing a loop function.",
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
   if (NULL == init)
   {
-    LWARNING(TRG, "GEngineInit is NULL.", 
+    LWARNING(TRG, "GContentInit is NULL.",
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
   if (NULL == (m_keyfunc = key_callback))
@@ -128,18 +128,18 @@ GReturnCode GEngine::run(
   
   if (GLW_SUCCESS == success)
   {
-    LINFO(TRG, "GEngine terminated succesfully.");
+    LINFO(TRG, "GContent terminated succesfully.");
   }
   else
   {
-    LWARNING(TRG, "GEngine terminated with errors, check logs for trace.", 
+    LWARNING(TRG, "GContent terminated with errors, check logs for trace.",
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
   
   return success;
 }
 
-void GEngine::load3DPerspective()
+void GContent::load3DPerspective()
 {
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
@@ -150,7 +150,7 @@ void GEngine::load3DPerspective()
 	m_projection = getPerspective();
 }
 
-void GEngine::loadExternalOrtho()
+void GContent::loadExternalOrtho()
 {
 	// Enable depth test
 	glDisable(GL_DEPTH_TEST);
@@ -161,7 +161,7 @@ void GEngine::loadExternalOrtho()
 	m_projection = getExternalOrtho();
 }
 
-void GEngine::loadOrtho()
+void GContent::loadOrtho()
 {
 	// Enable depth test
   glDisable(GL_DEPTH_TEST);
@@ -172,7 +172,7 @@ void GEngine::loadOrtho()
 	m_projection = getOrtho();
 }
 
-void GEngine::loadPseudoIsometric()
+void GContent::loadPseudoIsometric()
 {
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
@@ -183,7 +183,7 @@ void GEngine::loadPseudoIsometric()
 	m_projection = getPseudoIsometric();
 }
 
-void GEngine::loadHyperPerspective()
+void GContent::loadHyperPerspective()
 {
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
@@ -194,164 +194,164 @@ void GEngine::loadHyperPerspective()
 	m_projection = getHyperPerspective();
 }
 
-glm::vec3 * GEngine::getEyePos()
+glm::vec3 * GContent::getEyePos()
 {
   return &m_eyePos;
 }
 
-glm::vec3 * GEngine::getEyeLookPos()
+glm::vec3 * GContent::getEyeLookPos()
 {
   return &m_eyeLookPos;
 }
 
-glm::vec3 * GEngine::getUp()
+glm::vec3 * GContent::getUp()
 {
   return &m_up;
 }
 
-glm::mat4 * GEngine::getModelMat()
+glm::mat4 * GContent::getModelMat()
 {
   return &m_model;
 }
 
-glm::mat4 * GEngine::getViewMat()
+glm::mat4 * GContent::getViewMat()
 {
   return &m_view;
 }
 
-glm::mat4 * GEngine::getProjMat()
+glm::mat4 * GContent::getProjMat()
 {
   return &m_projection;
 }
 
-void GEngine::setClearColor(const glm::vec3& color)
+void GContent::setClearColor(const glm::vec3& color)
 {
   m_clearColor = glm::vec4(color, 1.0f);
 }
 
-void GEngine::setClearColor(const glm::vec4& color)
+void GContent::setClearColor(const glm::vec4& color)
 {
   m_clearColor = color;
 }
 
-void GEngine::clearAlpha()
+void GContent::clearAlpha()
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-void GEngine::clearDepthBuffer()
+void GContent::clearDepthBuffer()
 {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void GEngine::clearColorBuffer()
+void GContent::clearColorBuffer()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void GEngine::clearColor()
+void GContent::clearColor()
 {
 	glClearColor(m_clearColor.x, m_clearColor.y, m_clearColor.z, m_clearColor.w);
 }
 
-void GEngine::clearBuffers()
+void GContent::clearBuffers()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void GEngine::clearAll()
+void GContent::clearAll()
 {
   clearColor();
 	clearBuffers();
 }
 
-void GEngine::getWindowSize(glm::vec2& windowSize) const
+void GContent::getWindowSize(glm::vec2& windowSize) const
 {
   windowSize = m_windowSize;
 }
 
-void GEngine::setWindowSize(glm::vec2 windowSize)
+void GContent::setWindowSize(glm::vec2 windowSize)
 {
   m_windowSize = windowSize;
   m_aspectRatio = windowSize.x/windowSize.y;
 }
 
-void GEngine::setEyePos(const glm::vec3& pos)
+void GContent::setEyePos(const glm::vec3& pos)
 {
   m_eyePos = pos;
 }
 
-void GEngine::setEyeLookPos(const glm::vec3& pos)
+void GContent::setEyeLookPos(const glm::vec3& pos)
 {
   m_eyeLookPos = pos;
 }
 
-void GEngine::setUp(const glm::vec3& up)
+void GContent::setUp(const glm::vec3& up)
 {
   m_up = up;
 }
 
-void GEngine::setCamera(GCamera& camera)
+void GContent::setCamera(GCamera& camera)
 {
 	m_eyePos = camera.getPosition();
 	m_eyeLookPos = camera.getLookPosition();
 	m_up = camera.getUp();
 }
 
-float GEngine::getIsometricDepth() const
+float GContent::getIsometricDepth() const
 {
   return m_isometricDepth;
 }
 
-void GEngine::setIsometricDepth(const float depth)
+void GContent::setIsometricDepth(const float depth)
 {
   m_isometricDepth = depth;
 }
 
-int GEngine::getFrames() const
+int GContent::getFrames() const
 {
   return m_frames;
 }
 
-void GEngine::setPrintFps(bool print)
+void GContent::setPrintFps(bool print)
 {
   m_printFps = print;
 }
 
-void GEngine::setFpsCap(int fpsCap)
+void GContent::setFpsCap(int fpsCap)
 {
   m_fpsCap = fpsCap;
 }
 
-int GEngine::getFpsCap()
+int GContent::getFpsCap()
 {
   return m_fpsCap;
 }
 
-GKeyboard * GEngine::getKeyboard()
+GKeyboard * GContent::getKeyboard()
 {
   return &m_keyboard;
 }
-GMouse * GEngine::getMouse()
+GMouse * GContent::getMouse()
 {
   return &m_mouse;
 }
 
-GLFWkeyfun GEngine::getKeyfunc()
+GLFWkeyfun GContent::getKeyfunc()
 {
   return m_keyfunc;
 }
-GLFWmousebuttonfun GEngine::getMousebuttonfunc()
+GLFWmousebuttonfun GContent::getMousebuttonfunc()
 {
   return m_mousebuttonfunc;
 }
 
-void GEngine::exit()
+void GContent::exit()
 {
   glfwSetWindowShouldClose(m_window, GL_TRUE);
 }
 
-glm::mat4 GEngine::getExternalOrtho() const
+glm::mat4 GContent::getExternalOrtho() const
 {
 	return glm::ortho(
 		0.0f,
@@ -362,7 +362,7 @@ glm::mat4 GEngine::getExternalOrtho() const
 	//return glm::perspective(glm::radians(1.0f), 1.0f, 0.1f, 100.0f * window_size.x);
 }
 
-glm::mat4 GEngine::getExternalOrthoView() const
+glm::mat4 GContent::getExternalOrthoView() const
 {
 	return glm::mat4(1.0f);
 	/*return glm::lookAt(
@@ -371,7 +371,7 @@ glm::mat4 GEngine::getExternalOrthoView() const
 	glm::vec3(0, 1, 0));*/
 }
 
-glm::mat4 GEngine::getOrtho() const
+glm::mat4 GContent::getOrtho() const
 {
 	return glm::ortho(
 		0.0f + m_eyePos.x - m_windowSize.x / 2.0f,
@@ -382,7 +382,7 @@ glm::mat4 GEngine::getOrtho() const
 	//return glm::perspective(glm::radians(1.0f), 1.0f, 0.1f, 100.0f * window_size.x);
 }
 
-glm::mat4 GEngine::getOrthoView() const
+glm::mat4 GContent::getOrthoView() const
 {
 	return glm::mat4(1.0f);
 	/*return glm::lookAt(
@@ -391,51 +391,51 @@ glm::mat4 GEngine::getOrthoView() const
 	glm::vec3(0, 1, 0));*/
 }
 
-glm::mat4 GEngine::getOrthoIsometric() const
+glm::mat4 GContent::getOrthoIsometric() const
 {
 	return glm::ortho(0.0f, m_windowSize.x, 0.0f, m_windowSize.y, -m_farZ, m_farZ);
 	//return glm::perspective(glm::radians(1.0f), 1.0f, 0.1f, 100.0f * window_size.x);
 }
 
-glm::mat4 GEngine::getOrthoIsometricView() const
+glm::mat4 GContent::getOrthoIsometricView() const
 {
 	return glm::lookAt(m_eyePos, m_eyeLookPos, m_up);
 }
 
-glm::mat4 GEngine::getPseudoIsometric() const
+glm::mat4 GContent::getPseudoIsometric() const
 {
 	return glm::perspective(glm::radians(2.864f), m_aspectRatio, m_nearZ, m_farZ);
 }
 
-glm::mat4 GEngine::getPseudoIsometricView() const
+glm::mat4 GContent::getPseudoIsometricView() const
 {
 	return glm::lookAt(m_eyePos + (m_isometricDepth * 20.0f) * glm::vec3(1, 1, 1), m_eyePos, m_up);
 }
 
-glm::mat4 GEngine::getPerspective() const
+glm::mat4 GContent::getPerspective() const
 {
 	return glm::perspective(glm::radians(m_fov), m_aspectRatio, m_nearZ, m_farZ);
 }
 
-glm::mat4 GEngine::getPerspectiveView() const
+glm::mat4 GContent::getPerspectiveView() const
 {
 	return glm::lookAt(m_eyePos, m_eyeLookPos, m_up);
 }
 
-glm::mat4 GEngine::getHyperPerspective() const
+glm::mat4 GContent::getHyperPerspective() const
 {
 	return glm::perspective(glm::radians(160.0f), m_aspectRatio, m_nearZ, m_farZ);
 }
 
-glm::mat4 GEngine::getHyperPerspectiveView() const 
+glm::mat4 GContent::getHyperPerspectiveView() const
 {
 	return glm::lookAt(m_eyePos, m_eyeLookPos, m_up);
 }
 
 
 //GL graphics loop
-GReturnCode GEngine::glLoop(
-        glw::engine::GEngineLoop loop, 
+GReturnCode GContent::glLoop(
+        glw::engine::GContentLoop loop,
         GLFWwindow * window)
 {
 	LINFO(TRG, "Running GL loop...");
@@ -493,13 +493,13 @@ GReturnCode GEngine::glLoop(
 }
 
 //GL window initialise
-GReturnCode GEngine::initWindow(
-    glw::engine::GEngineInit init,
+GReturnCode GContent::initWindow(
+    glw::engine::GContentInit init,
     GLFWwindow * window)
 {
   GReturnCode success = GLW_SUCCESS;
 
-	LINFO(TRG, "Initialising new GEngine...");
+  LINFO(TRG, "Initialising new GContent...");
 
 	//Set the error callback  
 	glfwSetErrorCallback(error_callback);
@@ -579,15 +579,15 @@ GReturnCode GEngine::initWindow(
     // init
     if (NULL != init)
     {
-      LINFO(TRG, "GEngine initialisation started...");
+      LINFO(TRG, "GContent initialisation started...");
       if (GLW_SUCCESS == init())
       {
-        LINFO(TRG, "GEngine initialisation succesful.");
+        LINFO(TRG, "GContent initialisation succesful.");
       }
       else
       {
         success = GLW_FAIL;
-        LERROR(TRG, "GEngine initialisation failed.",
+        LERROR(TRG, "GContent initialisation failed.",
             __FILE__, __LINE__, __CLASSNAME__, __func__);
       }
     }
