@@ -8,6 +8,8 @@
 #include <sstream>
 
 using glw::engine::GEngine;
+using glw::engine::GEngineLoop;
+using glw::engine::GEngineInit;
 using glw::GReturnCode::GLW_SUCCESS;
 using glw::GReturnCode::GLW_FAIL;
 using glw::engine::GCamera;
@@ -22,7 +24,7 @@ namespace
 //Error callback  
 void glw::engine::error_callback(int error, const char* description)
 {
-  LERROR(TRG, description, __FILE__, __LINE__, "NULL", __func__);
+  LERROR(TRG, description, __FILE__, __LINE__, "GLFW", __func__);
 }
 
 
@@ -74,9 +76,8 @@ GEngine::~GEngine()
 GReturnCode GEngine::run(
     GEngineLoop loop,
     GEngineInit init,
-    GLFWkeyfun key_func,
-    GLFWmousebuttonfun mouse_func,
-    GLFWcharfun char_func)
+    GLFWkeyfun key_callback,
+    GLFWmousebuttonfun mouse_button_callback)
 {
   GReturnCode success = GLW_SUCCESS;
   
@@ -91,26 +92,21 @@ GReturnCode GEngine::run(
     LWARNING(TRG, "GEngineInit is NULL.", 
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
-  if (NULL == key_func)
+  if (NULL == (m_keyfunc = key_callback))
   {
     LWARNING(TRG, "GLFWkeyfun is NULL.",
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
-  if (NULL == mouse_func)
+  if (NULL == (m_mousebuttonfunc = mouse_button_callback))
   {
     LWARNING(TRG, "GLFWmousebuttonfun is NULL.", 
-        __FILE__, __LINE__, __CLASSNAME__, __func__);
-  }
-  if (NULL == char_func)
-  {
-    LWARNING(TRG, "GLFWcharfun is NULL.",
         __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
 
   
   if (GLW_SUCCESS == success)
   {
-    if (GLW_SUCCESS == initWindow(init, key_func, mouse_func, char_func, m_window))
+    if (GLW_SUCCESS == initWindow(init, m_window))
     {
       LINFO(TRG, "Initialised content succesfully.");
     }
@@ -332,6 +328,29 @@ int GEngine::getFpsCap()
   return m_fpsCap;
 }
 
+GKeyboard * GEngine::getKeyboard()
+{
+  return &m_keyboard;
+}
+GMouse * GEngine::getMouse()
+{
+  return &m_mouse;
+}
+
+GLFWkeyfun GEngine::getKeyfunc()
+{
+  return m_keyfunc;
+}
+GLFWmousebuttonfun GEngine::getMousebuttonfunc()
+{
+  return m_mousebuttonfunc;
+}
+
+void GEngine::exit()
+{
+  glfwSetWindowShouldClose(m_window, GL_TRUE);
+}
+
 glm::mat4 GEngine::getExternalOrtho() const
 {
 	return glm::ortho(
@@ -422,8 +441,6 @@ GReturnCode GEngine::glLoop(
 	LINFO(TRG, "Running GL loop...");
 	LINFO(TRG, "==================");
 	
-
-	
 	//Main Loop  
 	do
 	{
@@ -478,9 +495,6 @@ GReturnCode GEngine::glLoop(
 //GL window initialise
 GReturnCode GEngine::initWindow(
     glw::engine::GEngineInit init,
-    GLFWkeyfun key_func,
-    GLFWmousebuttonfun mouse_func,
-    GLFWcharfun char_func,
     GLFWwindow * window)
 {
   GReturnCode success = GLW_SUCCESS;
@@ -525,9 +539,9 @@ GReturnCode GEngine::initWindow(
 	  LINFO(TRG, "GLFW window context set.");
 
 	  //Sets the key callback  
-	  glfwSetKeyCallback(window, key_func);
-	  glfwSetMouseButtonCallback(window, mouse_func);
-    glfwSetCharCallback(window, char_func);
+    m_keyboard = GKeyboard(window, KEY_CALLBACK, CHARACTER_CALLBACK);
+    m_mouse = GMouse(window, MOUSE_BUTTON_CALLBACK, CURSOR_POSITION_CALLBACK, SCROLL_CALLBACK);
+
 	}
 	
 	if (GLW_SUCCESS == success)
@@ -558,28 +572,26 @@ GReturnCode GEngine::initWindow(
 	  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	  glClearDepth(1.0f);
-	  
+	}
+
+  if (GLW_SUCCESS == success)
+  {
     // init
     if (NULL != init)
     {
-      LINFO(TRG, "GEngine initialisation started...");  
+      LINFO(TRG, "GEngine initialisation started...");
       if (GLW_SUCCESS == init())
       {
-        LINFO(TRG, "GEngine initialisation succesful.");        
+        LINFO(TRG, "GEngine initialisation succesful.");
       }
       else
       {
         success = GLW_FAIL;
-        LERROR(TRG, "GEngine initialisation failed.", 
+        LERROR(TRG, "GEngine initialisation failed.",
             __FILE__, __LINE__, __CLASSNAME__, __func__);
       }
     }
-	}
+  }
 	
 	return success;
-}
-
-bool GEngine::isKeyDown(int key)
-{
-  return GKeyboard::isKeyDown(m_window, key);
 }

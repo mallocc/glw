@@ -2,18 +2,13 @@
 #include "Logger.h"
 #include "GEngine.h"
 #include "colors.h"
-
 #include "GShaderProgram.h"
 #include "GShaderProgramManager.h"
-#include "GShaderVariableHandle.h"
-
 #include "GVertexBufferObject.h"
 #include "GPrimativeFactory.h"
+#include "StringFormat.h"
 
-#include "GLight_T.h"
-
-#include "GFrameBufferObject.h"
-
+using util::StringFormat;
 
 using glw::GReturnCode::GLW_SUCCESS;
 using glw::GReturnCode::GLW_FAIL;
@@ -23,17 +18,11 @@ using glw::engine::GEngine;
 using glw::engine::glsl::GShaderProgram;
 using glw::engine::glsl::GShaderProgramId;
 using glw::engine::glsl::GShaderProgramManager;
-using glw::engine::glsl::GLight_T;
-using glw::engine::glsl::GShaderVariableHandle;
 
 using glw::engine::buffers::GVertexBufferObject;
 using glw::engine::buffers::GPrimativeFactory;
 using glw::engine::buffers::GArrayVertex;
 using glw::engine::buffers::GArrayVec3;
-using glw::engine::buffers::GArrayVec2;
-using glw::engine::buffers::GArrayVBO;
-
-using glw::engine::buffers::GFrameBufferObject;
 
 
 namespace
@@ -41,105 +30,54 @@ namespace
   const char * TRG = "MAIN";
   const char * __CLASSNAME__ = "main";
 
-  GEngine engine;
-
+  GEngine * engine;
   GShaderProgramManager shaderProgramManager;
-  GShaderProgramId MANDLE_PROGRAM, BASIC_PROGRAM;
+  GShaderProgramId BASIC_PROGRAM;
+  GVertexBufferObject vbo;
 
   GCamera camera(glm::vec3(0, 0, 5), glm::vec3(), glm::vec3(0,0,-1), glm::vec3(0, 1, 0));
-
-  GFrameBufferObject fboMandle, fbo;
-
-  glm::vec3 mandleProperties = glm::vec3(100.0f, 0.25f, 0.0f);
-  glm::vec3 mandleTarget;
-
-  bool update = true;
 }
 
-void handleContinuousKeys()
+
+void handleInput()
 {
-  if (engine.isKeyDown(GLFW_KEY_UP))
+  if(engine->getKeyboard()->isKeyDown(GLFW_KEY_LEFT_SHIFT))
   {
-    mandleTarget.y -= 0.01f / mandleProperties.y;
-    update = true;
+    camera.applyForceUp(engine->getMouse()->popScrollDelta().y);
   }
-  if (engine.isKeyDown(GLFW_KEY_DOWN))
+  else
   {
-    mandleTarget.y += 0.01f / mandleProperties.y;
-    update = true;
-  }
-  if (engine.isKeyDown(GLFW_KEY_RIGHT))
-  {
-    mandleTarget.x += 0.01f / mandleProperties.y;
-    update = true;
-  }
-  if (engine.isKeyDown(GLFW_KEY_LEFT))
-  {
-    mandleTarget.x -= 0.01f / mandleProperties.y;
-    update = true;
-  }
-  if (engine.isKeyDown(GLFW_KEY_O))
-  {
-    mandleProperties.y *= 1.1f;
-    update = true;
-  }
-  if (engine.isKeyDown(GLFW_KEY_P))
-  {
-    mandleProperties.y /= 1.1f;
-    update = true;
-  }
-  if (engine.isKeyDown(GLFW_KEY_K))
-  {
-    mandleProperties.x += 10.0f;
-    update = true;
-  }
-  if (engine.isKeyDown(GLFW_KEY_L))
-  {
-    mandleProperties.x -= 10.0f;
-    update = true;
+    camera.applyForceForward(engine->getMouse()->popScrollDelta().y);
   }
 }
 
 GReturnCode loop()
 {
-  // Handle continuous input
-  handleContinuousKeys();
+  handleInput();
+
+  // (calculations should be done in a different thread)
+
+  // Update the camera
+  camera.update(0.1f, 0.9f);
 
   // Update the engine with the camera
-  engine.setCamera(camera);
+  engine->setCamera(camera);
 
-  // Draw the Mandlebrot through an FBO on a shader//
+  // Rotate the sphere
+  vbo.m_theta += 0.01f;
+
 
   // Clear the scene
-  engine.clearAll();
-  // Set the ortho perspective
-  engine.loadOrtho();
+  engine->clearAll();
 
-  // Draw Mandlebrot generation to another FBO
-  // to be drawn later, means that it only generates
-  // when the user inputs something
-  if(update)
-  {
-    // Bind the FBO to draw to
-    fbo.bind();
-    // Load the shader program we want to draw with
-    shaderProgramManager.loadProgram(MANDLE_PROGRAM);
-    // Draw the FBO
-    shaderProgramManager.drawFBO(fboMandle);
-    // When finised with the FBO, unbind
-    fbo.unbind();
-
-    // Reset update flag
-    update = false;
-  }
+  // Set the 3D perspective
+  engine->load3DPerspective();
 
   // Load the shader program we want to draw with
   shaderProgramManager.loadProgram(BASIC_PROGRAM);
-  // Draw the FBO
-  shaderProgramManager.drawFBO(fbo);
 
-  // The shader will draw over the texture that the FBO holds
-  // as its generating the texture dynamically
+  // Draw the sphere VBO
+  shaderProgramManager.drawVBO(vbo);
 
   return GLW_SUCCESS;
 }
@@ -150,122 +88,72 @@ GReturnCode initShaderPrograms()
 
   LINFO(TRG, "Initialising GLSL shader programs...");
 
-  if(GLW_SUCCESS == success)
+  // Add a new program to the manager
+  if (GLW_SUCCESS == shaderProgramManager.addNewProgram(
+        "../shaders/basic.vert",  // Vertex shader
+        "../shaders/basic.frag",  // Fragment shader
+        engine->getModelMat(),            // Pass the engine's model matrix
+        engine->getViewMat(),             // Pass the engine's view matrix
+        engine->getProjMat(),             // Pass the engine's proj. matrix
+        BASIC_PROGRAM))                   // Supply the id container
   {
-    // Add a new program to the manager
-    if (GLW_SUCCESS == shaderProgramManager.addNewProgram(
-          "../shaders/mandle.vert",                 // Vertex shader
-          "../shaders/mandle.frag",                 // Fragment shader
-          engine.getModelMat(),                     // Pass the engine's model matrix
-          engine.getViewMat(),                      // Pass the engine's view matrix
-          engine.getProjMat(),                      // Pass the engine's proj. matrix
-          MANDLE_PROGRAM))                          // Supply the id container
-    {
-      // Get the shader program we have just created
-      GShaderProgram * shaderProgram = shaderProgramManager.getProgram(MANDLE_PROGRAM);
+    // Get the shader program we have just created
+    GShaderProgram * shaderProgram = shaderProgramManager.getProgram(BASIC_PROGRAM);
 
-      // Check the program has been created
-      if (NULL != shaderProgram)
-      {
-        if(shaderProgram->isValid())
-        {
-          // Create custom variable link
-          if (GLW_FAIL == shaderProgram->addHandle(GShaderVariableHandle("u_mandle_properties",
-                                                                         &mandleProperties)))
-          {
-            success = GLW_FAIL;
-          }
-          // Create custom variable link
-          if (GLW_FAIL == shaderProgram->addHandle(GShaderVariableHandle("u_target",
-                                                                         &mandleTarget)))
-          {
-            success = GLW_FAIL;
-          }
-        }
-        else
-        {
-          success = GLW_FAIL;
-          LERROR(TRG, "MANDLE_PROGRAM is not valid",
-                 __FILE__, __LINE__, __CLASSNAME__, __func__);
-        }
-      }
-      else
+    // Check the program has been created
+    if (NULL != shaderProgram)
+    {
+      if(!shaderProgram->isValid())
       {
         success = GLW_FAIL;
-        LERROR(TRG, "MANDLE_PROGRAM is NULL",
+        LERROR(TRG, "BASIC_PROGRAM is not valid",
                __FILE__, __LINE__, __CLASSNAME__, __func__);
       }
     }
     else
     {
       success = GLW_FAIL;
-      LERROR(TRG, "Failed to add MANDLE_PROGRAM",
+      LERROR(TRG, "BASIC_PROGRAM is NULL",
              __FILE__, __LINE__, __CLASSNAME__, __func__);
     }
-
-    // Add a new program to the manager
-    if (GLW_SUCCESS == shaderProgramManager.addNewProgram(
-          "../shaders/basic_texture.vert",          // Vertex shader
-          "../shaders/basic_texture.frag",          // Fragment shader
-          engine.getModelMat(),                     // Pass the engine's model matrix
-          engine.getViewMat(),                      // Pass the engine's view matrix
-          engine.getProjMat(),                      // Pass the engine's proj. matrix
-          BASIC_PROGRAM))                           // Supply the id container
-    {
-      // Get the shader program we have just created
-      GShaderProgram * shaderProgram = shaderProgramManager.getProgram(BASIC_PROGRAM);
-
-      // Check the program has been created
-      if (NULL != shaderProgram)
-      {
-        if(shaderProgram->isValid())
-        {
-          // Create custom variable link
-          if (GLW_FAIL == shaderProgram->setTexHandle())
-          {
-            success = GLW_FAIL;
-          }
-        }
-        else
-        {
-          success = GLW_FAIL;
-          LERROR(TRG, "BASIC_PROGRAM is not valid",
-                 __FILE__, __LINE__, __CLASSNAME__, __func__);
-        }
-      }
-      else
-      {
-        success = GLW_FAIL;
-        LERROR(TRG, "BASIC_PROGRAM is NULL",
-               __FILE__, __LINE__, __CLASSNAME__, __func__);
-      }
-    }
-    else
-    {
-      success = GLW_FAIL;
-      LERROR(TRG, "Failed to add BASIC_PROGRAM",
-             __FILE__, __LINE__, __CLASSNAME__, __func__);
-    }
+  }
+  else
+  {
+    success = GLW_FAIL;
+    LERROR(TRG, "Failed to add BASIC_PROGRAM",
+           __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
 
   return success;
 }
 
-GReturnCode initFBOs()
+GReturnCode initVBOs()
 {
   GReturnCode success = GLW_SUCCESS;
 
-  LINFO(TRG, "Creating FBOs...");
+  LINFO(TRG, "Initialising VBOs...");
 
-  // Get the engine window size
-  glm::vec2 windowSize;
-  engine.getWindowSize(windowSize);
+  // Create array containers
+  GArrayVertex o;
+  GArrayVec3 v, c, n, t;
 
-  // Create a new FBO the size of the window
-  fboMandle = GFrameBufferObject(windowSize);
+  LINFO(TRG, "Generating Sphere...");
 
-  // Create a new FBO the size of the window
-  fbo = GFrameBufferObject(windowSize);
+  // Generate an array of vec3s for a sphere
+  GPrimativeFactory::sphere(v, 200, 200);
+
+  // Pack the vec3s into a vertex array
+  GPrimativeFactory::packObject(o, v);
+
+  // Create a new VBO with our new vertex array
+  vbo = GVertexBufferObject(
+          o,                      // Supply the vertex array
+          glm::vec3(),            // World position
+          glm::vec3(0, 1, 0),     // Rotation axis
+          glm::radians(0.0f),     // Rotation angle
+          glm::vec3(1, 0, 0),     // Pre-rotation axis
+          glm::radians(90.0f),    // Pre-rotation angle
+          glm::vec3(1));          // Scale vector
 
   return success;
 }
@@ -277,10 +165,10 @@ GReturnCode init()
   // SHADER PROGRAM SETUP //
   success = initShaderPrograms();
 
-  // FBO SETUP //
+  // MESH SETUP //
   if (GLW_SUCCESS == success)
   {
-    success = initFBOs();
+    success = initVBOs();
   }
 
   return success;
@@ -301,23 +189,16 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-  if (action == GLFW_PRESS || action == GLFW_RELEASE)
+  if (action == GLFW_PRESS || action == GLFW_REPEAT)
   {
     switch (key)
     {
     case GLFW_KEY_ESCAPE:
       LINFO(TRG, "User triggered terminatation.");
-      glfwSetWindowShouldClose(window, GL_TRUE);
+      engine->exit();
       break;
     }
-
-    engine.queueKey(key);
   }
-}
-
-void character_callback(GLFWwindow* window, unsigned int codepoint)
-{
-  engine.queueChar(codepoint);
 }
 
 int main()
@@ -326,10 +207,15 @@ int main()
 
   LINFO(TRG, "Program started.");
 
+  // Get instance pointer
+  engine = GEngine::getInstancePtr();
+
+  // Set the clear colour of the scene
+  engine->setClearColor(glw::GREY_A);
   // Set the window size
-  engine.setWindowSize(glm::vec2(800, 800));
+  engine->setWindowSize(glm::vec2(1280,720));
   // Set the callbacks for the engine, and run
-  engine.run(loop, init, key_callback, mouse_button_callback, character_callback);
+  engine->run(loop, init, key_callback, mouse_button_callback);
 
   LINFO(TRG, "Program exit.");
 

@@ -29,7 +29,6 @@ set(SRC ${PROJECT_SOURCE_DIR}/src)
 # specifiy each source file to be compiled 
 set(SRC_FILES
 #files
-${SRC}/GKeyboard.cpp
 ${SRC}/ImageLoader.cpp
 ${SRC}/GFrameBufferObject.cpp
 ${SRC}/GCamera.cpp

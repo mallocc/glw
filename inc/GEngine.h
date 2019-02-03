@@ -5,12 +5,17 @@
 #include "GReturnCode.h"
 #include "GCamera.h"
 #include "GKeyboard.h"
+#include "GMouse.h"
 
 #include <string>
+
+#include <stdio.h>
 
 using glw::GReturnCode;
 using glw::engine::GCamera;
 using glw::engine::GKeyboard;
+using glw::engine::GMouse;
+
 
 namespace glw
 {
@@ -22,10 +27,48 @@ namespace glw
 		typedef GReturnCode(*GEngineLoop)();
 		typedef GReturnCode(*GEngineInit)();
 
-    class GEngine : public GKeyboard
+    class GEngine
     {
     public:
       
+      static GEngine& getInstance()
+      {
+          static GEngine instance;
+          return instance;
+      }
+
+      static GEngine * getInstancePtr()
+      {
+          static GEngine instance;
+          return &instance;
+      }
+
+      static void KEY_CALLBACK(GLFWwindow* window, int key, int scancode, int action, int mods)
+      {
+        glw::engine::GEngine::getInstancePtr()->getKeyboard()->updateKey(key);
+        (*glw::engine::GEngine::getInstancePtr()->getKeyfunc())(window, key, scancode, action, mods);
+      }
+
+      static void CHARACTER_CALLBACK(GLFWwindow* window, unsigned int codepoint)
+      {
+        glw::engine::GEngine::getInstancePtr()->getKeyboard()->updateChar(codepoint);
+      }
+
+      static void CURSOR_POSITION_CALLBACK(GLFWwindow* window, double xpos, double ypos)
+      {
+        glw::engine::GEngine::getInstancePtr()->getMouse()->updatePosition(xpos, ypos);
+      }
+
+      static void SCROLL_CALLBACK(GLFWwindow* window, double xoffset, double yoffset)
+      {
+        glw::engine::GEngine::getInstancePtr()->getMouse()->updateScroll(xoffset, yoffset);
+      }
+
+      static void MOUSE_BUTTON_CALLBACK(GLFWwindow* window, int button, int action, int mods)
+      {
+        (*glw::engine::GEngine::getInstancePtr()->getMousebuttonfunc())(window, button, action, mods);
+      }
+
       GEngine();
       
       GEngine(
@@ -41,11 +84,10 @@ namespace glw
       ~GEngine();
       
       GReturnCode run(
-        GEngineLoop loop, 
-        GEngineInit init = NULL,
-        GLFWkeyfun key_func = NULL,
-        GLFWmousebuttonfun mouse_func = NULL,
-        GLFWcharfun char_func = NULL);
+          GEngineLoop loop,
+          GEngineInit init = NULL,
+          GLFWkeyfun key_callback = NULL,
+          GLFWmousebuttonfun mouse_button_callback = NULL);
 
       void load3DPerspective();
 			void loadExternalOrtho();
@@ -88,8 +130,14 @@ namespace glw
 			void setPrintFps(bool print);
 			void setFpsCap(int fpsCap);
 			int getFpsCap();
-			
-      bool isKeyDown(int key);
+
+      GKeyboard * getKeyboard();
+      GMouse * getMouse();
+
+      GLFWkeyfun getKeyfunc();
+      GLFWmousebuttonfun getMousebuttonfunc();
+
+      void exit();
 
      private:
       glm::mat4 getExternalOrtho() const;
@@ -115,14 +163,17 @@ namespace glw
 		  //GL window initialise
 		  GReturnCode initWindow(
           glw::engine::GEngineInit init,
-          GLFWkeyfun key_func,
-          GLFWmousebuttonfun mouse_func,
-          GLFWcharfun char_func,
           GLFWwindow * window);
 
-
+      // Attributes //
 
 		  GLFWwindow * m_window;
+
+      GLFWkeyfun m_keyfunc;
+      GLFWmousebuttonfun m_mousebuttonfunc;
+
+      GKeyboard m_keyboard;
+      GMouse m_mouse;
 
 		  glm::vec2 m_windowSize;
 
@@ -148,8 +199,10 @@ namespace glw
 		  int m_frames = 0;
 		  
 		  bool m_printFps = false;
-		  int m_fpsCap = 62;
+      int m_fpsCap = 62;
 
     };
   }
 }
+
+

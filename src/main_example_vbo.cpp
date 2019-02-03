@@ -6,7 +6,9 @@
 #include "GShaderProgramManager.h"
 #include "GVertexBufferObject.h"
 #include "GPrimativeFactory.h"
+#include "StringFormat.h"
 
+using util::StringFormat;
 
 using glw::GReturnCode::GLW_SUCCESS;
 using glw::GReturnCode::GLW_FAIL;
@@ -27,8 +29,8 @@ namespace
 {
   const char * TRG = "MAIN";
   const char * __CLASSNAME__ = "main";
-  
-  GEngine engine;
+
+  GEngine * engine;
   GShaderProgramManager shaderProgramManager;
   GShaderProgramId BASIC_PROGRAM;
   GVertexBufferObject vbo;
@@ -37,25 +39,39 @@ namespace
 }
 
 
+void handleInput()
+{
+  if(engine->getKeyboard()->isKeyDown(GLFW_KEY_LEFT_SHIFT))
+  {
+    camera.applyForceUp(engine->getMouse()->popScrollDelta().y);
+  }
+  else
+  {
+    camera.applyForceForward(engine->getMouse()->popScrollDelta().y);
+  }
+}
+
 GReturnCode loop()
 {
+  handleInput();
+
   // (calculations should be done in a different thread)
 
   // Update the camera
   camera.update(0.1f, 0.9f);
 
   // Update the engine with the camera
-  engine.setCamera(camera);
+  engine->setCamera(camera);
 
   // Rotate the sphere
   vbo.m_theta += 0.01f;
 
 
   // Clear the scene
-  engine.clearAll();
+  engine->clearAll();
 
   // Set the 3D perspective
-  engine.load3DPerspective();
+  engine->load3DPerspective();
 
   // Load the shader program we want to draw with
   shaderProgramManager.loadProgram(BASIC_PROGRAM);
@@ -76,9 +92,9 @@ GReturnCode initShaderPrograms()
   if (GLW_SUCCESS == shaderProgramManager.addNewProgram(
         "../shaders/basic.vert",  // Vertex shader
         "../shaders/basic.frag",  // Fragment shader
-        engine.getModelMat(),            // Pass the engine's model matrix
-        engine.getViewMat(),             // Pass the engine's view matrix
-        engine.getProjMat(),             // Pass the engine's proj. matrix
+        engine->getModelMat(),            // Pass the engine's model matrix
+        engine->getViewMat(),             // Pass the engine's view matrix
+        engine->getProjMat(),             // Pass the engine's proj. matrix
         BASIC_PROGRAM))                   // Supply the id container
   {
     // Get the shader program we have just created
@@ -171,34 +187,15 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
   }
 }
 
-void	key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{	
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
   if (action == GLFW_PRESS || action == GLFW_REPEAT)
   {
     switch (key)
     {
-    case GLFW_KEY_A:
-      camera.applyForceLeft();
-      break;
-    case GLFW_KEY_D:
-      camera.applyForceRight();
-      break;
-    case GLFW_KEY_W:
-      camera.applyForceForward();
-      break;
-    case GLFW_KEY_S:
-      camera.applyForceBackward();
-      break;
-    case GLFW_KEY_Q:
-      camera.applyForceDown();
-      break;
-    case GLFW_KEY_E:
-      camera.applyForceUp();
-      break;
-      
     case GLFW_KEY_ESCAPE:
       LINFO(TRG, "User triggered terminatation.");
-      glfwSetWindowShouldClose(window, GL_TRUE);
+      engine->exit();
       break;
     }
   }
@@ -210,16 +207,20 @@ int main()
 
   LINFO(TRG, "Program started.");
 
+  // Get instance pointer
+  engine = GEngine::getInstancePtr();
+
   // Set the clear colour of the scene
-  engine.setClearColor(glw::GREY_A);
+  engine->setClearColor(glw::GREY_A);
   // Set the window size
-  engine.setWindowSize(glm::vec2(1280,720));
+  engine->setWindowSize(glm::vec2(1280,720));
   // Set the callbacks for the engine, and run
-  engine.run(loop, init, key_callback, mouse_button_callback);
+  engine->run(loop, init, key_callback, mouse_button_callback);
 
   LINFO(TRG, "Program exit.");
-  
+
   LENDLOGGER();
-  
+
   return 0;
 }
+
