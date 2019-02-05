@@ -53,6 +53,7 @@ namespace glw
 
         void drawVBO(GVertexBufferObject& vbo);
 
+        void drawVBOs(std::vector<GVertexBufferObject*>& vbos);
         void drawVBOs(std::vector<GVertexBufferObject>& vbos);
 
         void drawFBO(GFrameBufferObject& fbo);

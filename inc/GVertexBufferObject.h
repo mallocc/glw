@@ -33,7 +33,7 @@ namespace glw
         // dynamic axis of rotation, and amount, static axis of rotation, 
         // and amount, scale vector. 
         GVertexBufferObject(
-				    std::vector<GVertex_T>& data,
+            std::vector<GVertex_T>& data,
 				    glm::vec3 pos,
 				    glm::vec3 rotation,
 				    GLfloat theta,
@@ -45,7 +45,7 @@ namespace glw
         ~GVertexBufferObject();
         
         // Buffers Vertex data into the VBO
-			  GReturnCode init(std::vector<GVertex_T> * d);
+        GReturnCode init();
 
         // Loads image file into a texture
         void loadTextures(const char * texfilename);
@@ -68,6 +68,7 @@ namespace glw
 			  // Get the model matrix
 			  glm::mat4 getModelMat();
         
+        std::vector<GVertex_T> m_data;
       	GLuint
 				  m_vao,
 				  m_buffer,
@@ -86,6 +87,7 @@ namespace glw
       };
 
       typedef std::vector<GVertexBufferObject> GArrayVBO;
+      typedef std::vector<GVertexBufferObject*> GArrayVBOPtr;
     }
   }
 }

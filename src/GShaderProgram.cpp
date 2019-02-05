@@ -178,6 +178,22 @@ GReturnCode GShaderProgram::addHandle(GShaderVariableHandle handle)
 	return success;
 }
 
+GReturnCode GShaderProgram::addHandle(GShaderVariableHandle handle, GShaderVariableHandleId& id)
+{
+  GReturnCode success = handle.init(m_id);
+  if(GLW_SUCCESS == success)
+  {
+    id = handle.getHandleId();
+    m_handles.insert({ handle.getHandleId(), handle });
+  }
+  else
+  {
+    LERROR(TRG, StringFormat("Failed to add handle.").str(),
+         __FILE__, __LINE__, __CLASSNAME__, __func__);
+  }
+  return success;
+}
+
 void GShaderProgram::load()
 {
 	glUseProgram(m_id);

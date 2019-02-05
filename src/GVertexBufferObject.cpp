@@ -50,13 +50,14 @@ GVertexBufferObject::GVertexBufferObject(
     m_theta(theta),
     m_scale(scale),
     m_preRotation(preRotation),
-    m_preTheta(preTheta)
+    m_preTheta(preTheta),
+    m_data(data)
 {
   LINFO(TRG, "Loading new GVertexBufferObject...");
 
   loadTextures(texfilename);
 
-  if (GLW_SUCCESS != init(&data))
+  if (GLW_SUCCESS != init())
 	{
     LERROR(TRG, "Failed it initialise GVertexBufferObject.",
 	      __FILE__, __LINE__, __CLASSNAME__, __func__);
@@ -68,14 +69,14 @@ GVertexBufferObject::~GVertexBufferObject()
 }
 
 // Buffers Vertex data into the VBO
-GReturnCode GVertexBufferObject::init(std::vector<GVertex_T> * d)
+GReturnCode GVertexBufferObject::init()
 {
-  m_dataSize = d->size();
-	glGenVertexArrays(1, &m_vao);
+  m_dataSize = m_data.size();
+  glGenVertexArrays(1, &m_vao);
 	glBindVertexArray(m_vao);
 	glGenBuffers(1, &m_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_dataSize * sizeof(struct GVertex_T), d->data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, m_dataSize * sizeof(struct GVertex_T), m_data.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, sizeof(struct GVertex_T),
 		(const GLvoid*)offsetof(struct GVertex_T, position));
 	glEnableVertexAttribArray(0);

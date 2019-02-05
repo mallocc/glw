@@ -42,6 +42,7 @@ namespace glw
         ~GShaderProgram();
         
         GReturnCode addHandle(GShaderVariableHandle handle);
+        GReturnCode addHandle(GShaderVariableHandle handle, GShaderVariableHandleId& id);
 
 			  void load();
 

@@ -131,6 +131,22 @@ void GShaderProgramManager::drawVBO(GVertexBufferObject& vbo)
   }
 }
 
+void GShaderProgramManager::drawVBOs(std::vector<GVertexBufferObject*>& vbos)
+{
+  GShaderProgram * shaderProgram = getCurrentProgram();
+  if(NULL != shaderProgram)
+  {
+    for (GVertexBufferObject * vbo : vbos)
+    {
+      vbo->draw(shaderProgram->getShaderHandle());
+    }
+  }
+  else
+  {
+    LINFO(TRG, "NULL shaderProgram");
+  }
+}
+
 void GShaderProgramManager::drawVBOs(std::vector<GVertexBufferObject>& vbos)
 {
   GShaderProgram * shaderProgram = getCurrentProgram();
@@ -140,6 +156,10 @@ void GShaderProgramManager::drawVBOs(std::vector<GVertexBufferObject>& vbos)
     {
       vbo.draw(shaderProgram->getShaderHandle());
     }
+  }
+  else
+  {
+    LINFO(TRG, "NULL shaderProgram");
   }
 }
 

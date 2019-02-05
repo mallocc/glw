@@ -108,7 +108,7 @@ void GPrimativeFactory::circle(GArrayVec3& v, int k)
 	 float step = PI2 / float(k);
 	 float c = 0.0f, s = 0.0f;
 	 float len = 0.0f;
-	 for (float a = 0; a <= PI2; a += step)
+   for (float a = step; a <= PI2; a += step)
 	 {
 		 c = cos(a - step);
 		 s = sin(a - step);
@@ -182,9 +182,9 @@ void GPrimativeFactory::sphere(GArrayVec3& v, int lats, int longs)
 	float step_lats = PI2 / float(lats);
 	float step_longs = PI2 / float(longs);
 	float Radius = 1., x, y, z;
-	for (float a = -PI; a <= PI; a += step_lats)
+  for (float a = -PI; a <= PI; a += step_lats)
 	{
-		for (float b = -PI; b <= PI; b += step_longs)
+    for (float b = -PI; b <= PI; b += step_longs)
 		{
 			v.push_back(polar_cart(a, b));
 			v.push_back(polar_cart(a + step_lats, b));
