@@ -28,13 +28,14 @@ using glw::engine::buffers::GArrayVec3;
 using glw::engine::buffers::GArrayVBO;
 
 using glw::gui::GContext;
+using glw::gui::GButton;
 
 namespace
 {
   const char * TRG = "MAIN";
   const char * __CLASSNAME__ = "main";
 
-  GContent * engine;
+  GContent * content;
   GShaderProgramManager shaderProgramManager;
   GShaderProgramId BASIC_PROGRAM;
   GShaderProgramId GUI_PROGRAM;
@@ -51,13 +52,13 @@ namespace
 
 void handleInput()
 {
-  if(engine->getKeyboard()->isKeyDown(GLFW_KEY_LEFT_SHIFT))
+  if(content->getKeyboard()->isKeyDown(GLFW_KEY_LEFT_SHIFT))
   {
-    camera.applyForceUp(engine->getMouse()->popScrollDelta().y);
+    camera.applyForceUp(content->getMouse()->popScrollDelta().y);
   }
   else
   {
-    camera.applyForceForward(engine->getMouse()->popScrollDelta().y);
+    camera.applyForceForward(content->getMouse()->popScrollDelta().y);
   }
 }
 
@@ -71,17 +72,17 @@ GReturnCode loop()
   camera.update(0.1f, 0.9f);
 
   // Update the engine with the camera
-  engine->setCamera(camera);
+  content->setCamera(camera);
 
   // Rotate the sphere
   vbo.m_theta += 0.01f;
 
 
   // Clear the scene
-  engine->clearAll();
+  content->clearAll();
 
   // Set the 3D perspective
-  engine->load3DPerspective();
+  content->load3DPerspective();
 
   // Load the shader program we want to draw with
   shaderProgramManager.loadProgram(BASIC_PROGRAM);
@@ -91,10 +92,10 @@ GReturnCode loop()
 
 
   // Clear the scene
-  engine->clearDepthBuffer();
+  content->clearDepthBuffer();
 
   // Set the 3D perspective
-  engine->loadExternalOrtho();
+  content->loadExternalOrtho();
 
   context.draw();
 
@@ -112,9 +113,9 @@ GReturnCode initShaderPrograms()
   if (GLW_SUCCESS == shaderProgramManager.addNewProgram(
         "../shaders/basic.vert",  // Vertex shader
         "../shaders/basic.frag",  // Fragment shader
-        engine->getModelMat(),            // Pass the engine's model matrix
-        engine->getViewMat(),             // Pass the engine's view matrix
-        engine->getProjMat(),             // Pass the engine's proj. matrix
+        content->getModelMat(),            // Pass the engine's model matrix
+        content->getViewMat(),             // Pass the engine's view matrix
+        content->getProjMat(),             // Pass the engine's proj. matrix
         BASIC_PROGRAM))                   // Supply the id container
   {
     // Get the shader program we have just created
@@ -148,11 +149,21 @@ GReturnCode initShaderPrograms()
            __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
 
-  context.initShaderProgram(engine->getModelMat(),
-                            engine->getViewMat(),
-                            engine->getProjMat());
+  context.initShaderProgram(content->getModelMat(),
+                            content->getViewMat(),
+                            content->getProjMat());
 
   return success;
+}
+
+void onButtonPress()
+{
+  LINFO(TRG, "This is a test");
+}
+
+void onToggledOn()
+{
+  LINFO(TRG, "Toggled On");
 }
 
 GReturnCode initVBOs()
@@ -188,11 +199,19 @@ GReturnCode initVBOs()
           glm::vec3(1),
           "../textures/mars.jpg");          // Scale vector
 
-  context.addShape(glw::gui::createBox(glm::vec2(), glm::vec2(100), 0.1f));
-  context.addShape(glw::gui::createRectangle(glm::vec2(100), glm::vec2(100)));
-  context.addShape(glw::gui::createRectangle(glm::vec2(200), glm::vec2(100)));
-  context.addShape(glw::gui::createCircle(glm::vec2(300), glm::vec2(100)));
-  context.addShape(glw::gui::createCircle(glm::vec2(400), glm::vec2(100)));
+  glm::vec2 windowSize;
+  content->getWindowSize(windowSize);
+
+  context.addComponent(glw::gui::createLabel("This is some fucking text",  windowSize / 2.0f, 100.0f, glm::vec4(1.0f,0.0,0.0f,0.5f), true));
+
+  GButton * button = new GButton(glm::vec2(100), glm::vec2(500, 100), "Button");
+  LINK(TRIGGER(button, &GButton::onPressed), ACTION(onButtonPress));
+  LINK(TRIGGER(button, &GButton::onToggledOn), ACTION(onToggledOn));
+  context.addComponent(button);
+
+  context.setContent(content);
+  context.init();
+
 
   return success;
 }
@@ -215,6 +234,8 @@ GReturnCode init()
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+  context.checkGroupMouseEvents(button, action);
+
   if (action == GLFW_PRESS)
   {
     switch (button)
@@ -228,13 +249,14 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+  context.checkGroupKeyEvents(key, action);
   if (action == GLFW_PRESS || action == GLFW_REPEAT)
   {
     switch (key)
     {
     case GLFW_KEY_ESCAPE:
       LINFO(TRG, "User triggered terminatation.");
-      engine->exit();
+      content->exit();
       break;
     }
   }
@@ -247,14 +269,14 @@ int main()
   LINFO(TRG, "Program started.");
 
   // Get instance pointer
-  engine = GContent::getInstancePtr();
+  content = GContent::getInstancePtr();
 
   // Set the clear colour of the scene
-  engine->setClearColor(glw::GREY_A);
+  content->setClearColor(glw::GREY_A);
   // Set the window size
-  engine->setWindowSize(glm::vec2(1280,720));
+  content->setWindowSize(glm::vec2(1280,720));
   // Set the callbacks for the engine, and run
-  engine->run(loop, init, key_callback, mouse_button_callback);
+  content->run(loop, init, key_callback, mouse_button_callback);
 
   LINFO(TRG, "Program exit.");
 

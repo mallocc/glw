@@ -147,12 +147,22 @@ namespace glw
     {
       return new GMetaAction<T>(&object, func);
     }
+    template<typename T>
+    static GAction __action(T * object, GMemberFunc<T> func)
+    {
+      return new GMetaAction<T>(object, func);
+    }
 
     // static function to create a trigger
     template<typename T>
     static GTrigger __trigger(GLinker<T>& linker, GTriggerFunction<T> trigger)
     {
       return new GMetaTrigger<T>(&linker, trigger);
+    }
+    template<typename T>
+    static GTrigger __trigger(GLinker<T> * linker, GTriggerFunction<T> trigger)
+    {
+      return new GMetaTrigger<T>(linker, trigger);
     }
 
     // static function to link trigger and action
@@ -169,6 +179,8 @@ namespace glw
 
   }
 }
+
+#define triggers public
 
 #define TRIGGER(...) glw::meta::__trigger(__VA_ARGS__)
 #define ACTION(...) glw::meta::__action(__VA_ARGS__)

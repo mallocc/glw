@@ -118,11 +118,11 @@ void GVertexBufferObject::loadTextures(const char *texfilename)
 // Draws the mesh including linking the model matrix
 void GVertexBufferObject::draw(GShaderHandle_T handles, bool wireFrame)
 {
-  draw(handles, glm::mat4(1), wireFrame);
+  draw(glm::mat4(1), handles, wireFrame);
 }
 
 // Draws the vbo relative to a parent matrix including linking the model matrix
-void GVertexBufferObject::draw(GShaderHandle_T handles, glm::mat4 parentMatrix, bool wireFrame)
+void GVertexBufferObject::draw(glm::mat4 parentMatrix, GShaderHandle_T handles, bool wireFrame)
 {
   if(NULL != 	handles.modelMatHandle)
   {
@@ -142,10 +142,28 @@ void GVertexBufferObject::drawArray(bool wireFrame)
   glActiveTexture(GL_TEXTURE0 + m_tex);
   glBindTexture(GL_TEXTURE_2D, m_tex);
 
-	// draw the data
+  // draw the data
 	glBindVertexArray(m_vao);
-	glDrawArrays(wireFrame ? GL_LINE_LOOP : GL_TRIANGLES, 0, m_dataSize);
+  glDrawArrays(wireFrame ? GL_LINE_LOOP : GL_TRIANGLES, 0, m_dataSize);
 	glBindVertexArray(0);
+
+  // unload the texture
+  glActiveTexture(GL_TEXTURE0 + m_tex);
+  glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
+// Draws just the VBO and activating the texture
+void GVertexBufferObject::drawArray(int offset, int interval)
+{
+  // load the texture
+  glActiveTexture(GL_TEXTURE0 + m_tex);
+  glBindTexture(GL_TEXTURE_2D, m_tex);
+
+  // draw the data
+  glBindVertexArray(m_vao);
+  glDrawArrays(GL_TRIANGLES, offset, interval);
+  glBindVertexArray(0);
 
   // unload the texture
   glActiveTexture(GL_TEXTURE0 + m_tex);

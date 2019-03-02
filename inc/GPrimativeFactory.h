@@ -53,6 +53,7 @@ namespace glw
         static void sphereicalUVs(GArrayVec2& uv, GArrayVec3& v);
         static void rectUVs(GArrayVec2& uv, GArrayVec3& v);
         static void squareMeshUVs(GArrayVec2& uv, int w, int h);
+        static void squareMeshUVsGUI(GArrayVec2& uv, int w, int h);
         
         static void normals(GArrayVec3& n, GArrayVec3& v);
         static void tangents(GArrayVec3& t, GArrayVec3& v);

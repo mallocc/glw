@@ -450,6 +450,28 @@ void GPrimativeFactory::squareMeshUVs(GArrayVec2& uv, int w, int h)
     }
 }
 
+void GPrimativeFactory::squareMeshUVsGUI(GArrayVec2& uv, int w, int h)
+{
+  glm::vec2
+    s = glm::vec2(1 / (float)w, 1 / (float)h),
+    a = glm::vec2(0, 1) * s,
+    b = glm::vec2(0, 0) * s,
+    c = glm::vec2(1, 0) * s,
+    d = glm::vec2(1, 1) * s;
+
+  for (int y = 0; y < h; ++y)
+    for (int x = 0; x < w; ++x)
+    {
+      glm::vec2 t = s * glm::vec2(x, y);
+      uv.push_back(a + t);
+      uv.push_back(b + t);
+      uv.push_back(c + t);
+      uv.push_back(c + t);
+      uv.push_back(d + t);
+      uv.push_back(a + t);
+    }
+}
+
 void GPrimativeFactory::normals(GArrayVec3& n, GArrayVec3& v)
 {
 	for (int i = 0; i < v.size(); i += 3)
