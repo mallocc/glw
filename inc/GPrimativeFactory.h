@@ -67,11 +67,11 @@ namespace glw
 			  static void packObject(GArrayVertex& o, GArrayVec3& v, 
 			                         GArrayVec3& c, GArrayVec3& n, 
 			                         GArrayVec3& t, GArrayVec2& uv);
-			  
+        //Returns random float
+        static float pg_randf();
       private:
         
-			  //Returns random float
-			  static float pg_randf();
+
 			  // converts polar to cartesian
         static glm::vec3 polar_cart(float theta, float phi);
 			  // converts cartesian to polar

@@ -10,6 +10,7 @@
 
 #include "GGUI.h"
 
+
 using util::StringFormat;
 
 using glw::GReturnCode::GLW_SUCCESS;
@@ -29,6 +30,10 @@ using glw::engine::buffers::GArrayVBO;
 
 using glw::gui::GContext;
 using glw::gui::GButton;
+using glw::gui::GWindow;
+using glw::gui::GLabel;
+using glw::gui::GTextEdit;
+
 
 namespace
 {
@@ -47,7 +52,11 @@ namespace
   GCamera camera(glm::vec3(0, 0, 5), glm::vec3(), glm::vec3(0,0,-1), glm::vec3(0, 1, 0));
 
   GContext context;
+
+  GLabel * fpsLabel;
+
 }
+
 
 
 void handleInput()
@@ -66,6 +75,10 @@ GReturnCode loop()
 {
   handleInput();
 
+  fpsLabel->setText(StringFormat("%0 FPS").arg(content->getFps()).str());
+
+  context.update();
+
   // (calculations should be done in a different thread)
 
   // Update the camera
@@ -76,7 +89,6 @@ GReturnCode loop()
 
   // Rotate the sphere
   vbo.m_theta += 0.01f;
-
 
   // Clear the scene
   content->clearAll();
@@ -89,7 +101,6 @@ GReturnCode loop()
 
   // Draw the sphere VBO
   shaderProgramManager.drawVBO(vbo);
-
 
   // Clear the scene
   content->clearDepthBuffer();
@@ -159,6 +170,7 @@ GReturnCode initShaderPrograms()
 void onButtonPress()
 {
   LINFO(TRG, "This is a test");
+  context.validate();
 }
 
 void onToggledOn()
@@ -202,16 +214,29 @@ GReturnCode initVBOs()
   glm::vec2 windowSize;
   content->getWindowSize(windowSize);
 
-  context.addComponent(glw::gui::createLabel("This is some fucking text",  windowSize / 2.0f, 100.0f, glm::vec4(1.0f,0.0,0.0f,0.5f), true));
+  context.setColorStyle({glw::WHITE_A, glw::BLACK_A, glw::SKY_BLUE_A});
 
-  GButton * button = new GButton(glm::vec2(100), glm::vec2(500, 100), "Button");
+  context.addComponent(glw::gui::createLabel("fucking yeeeeeeeeeet",  windowSize / 2.0f, 100.0f, glm::vec4(1.0f,0.0,0.0f,0.5f), true));
+
+  fpsLabel = glw::gui::createLabel("fps", glm::vec2(), 20, glw::BLACK_A);
+  context.addComponent(fpsLabel);
+
+  GButton * button = new GButton(glm::vec2(100), glm::vec2(500, 100), "yeet me");
   LINK(TRIGGER(button, &GButton::onPressed), ACTION(onButtonPress));
   LINK(TRIGGER(button, &GButton::onToggledOn), ACTION(onToggledOn));
   context.addComponent(button);
 
+  GWindow * window = new GWindow(glm::vec2(125,250), glm::vec2(300,300), "yoteth");
+  context.addComponent(window);
+// window->addChildComponent(
+//  context.addComponent
+      window->addChildComponent(new GTextEdit(glm::vec2(300), glm::vec2(100,100),"this is some text", 20, glw::WHITE_A));
+
+
   context.setContent(content);
   context.init();
 
+  context.validate();
 
   return success;
 }
@@ -234,7 +259,7 @@ GReturnCode init()
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-  context.checkGroupMouseEvents(button, action);
+  context.checkMouseEvents(button, action);
 
   if (action == GLFW_PRESS)
   {
@@ -249,7 +274,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-  context.checkGroupKeyEvents(key, action);
+  context.checkKeyEvents(key, action);
+
   if (action == GLFW_PRESS || action == GLFW_REPEAT)
   {
     switch (key)
@@ -272,7 +298,7 @@ int main()
   content = GContent::getInstancePtr();
 
   // Set the clear colour of the scene
-  content->setClearColor(glw::GREY_A);
+  content->setClearColor(glw::GREY_A / 2.0f);
   // Set the window size
   content->setWindowSize(glm::vec2(1280,720));
   // Set the callbacks for the engine, and run

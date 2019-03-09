@@ -2,6 +2,10 @@
 
 #include "opengl.h"
 #include "glm.h"
+#include "StringFormat.h"
+#include "Logger.h"
+
+using util::StringFormat;
 
 namespace glw
 {
@@ -11,7 +15,8 @@ namespace glw
     {
     public:
       
-      GMouse() {}
+      GMouse()
+      {}
 
       GMouse(GLFWwindow * window,
              GLFWmousebuttonfun mouse_button_callback = NULL,
@@ -75,7 +80,8 @@ namespace glw
       void updatePosition(double xpos, double ypos)
       {
         glm::vec2 pos(xpos, ypos);
-        m_mouseDelta += pos - m_mousePosition;
+        glm::vec2 delta = pos - m_mousePosition;
+        m_mouseDelta = delta;
         m_mousePosition = pos;
       }
 
@@ -84,13 +90,23 @@ namespace glw
         m_scrollDelta += glm::vec2(xoffset, yoffset);
       }
 
+
+      void updateMouse()
+      {
+        double xpos, ypos;
+        glfwGetCursorPos(m_window, &xpos, &ypos);
+        glm::vec2 pos(xpos, ypos);
+        glm::vec2 delta = pos - m_mousePosition;
+        m_mouseDelta = delta;
+        m_mousePosition = pos;
+      }
+
     private:
       GLFWwindow * m_window;
 
       glm::vec2 m_mousePosition;
       glm::vec2 m_mouseDelta;
       glm::vec2 m_scrollDelta;
-
     };
   }
 }

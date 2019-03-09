@@ -328,6 +328,11 @@ int GContent::getFpsCap()
   return m_fpsCap;
 }
 
+float GContent::getFps()
+{
+  return m_fps;
+}
+
 GKeyboard * GContent::getKeyboard()
 {
   return &m_keyboard;
@@ -444,7 +449,7 @@ GReturnCode GContent::glLoop(
 	//Main Loop  
 	do
 	{
-		m_frames++;
+    m_frames++;
 
 		// start clock for this tick
 		auto start = std::chrono::high_resolution_clock::now();
@@ -458,8 +463,9 @@ GReturnCode GContent::glLoop(
 
 		//Swap buffers  
 		glfwSwapBuffers(window);
-		
-		glfwPollEvents();
+
+    getMouse()->updateMouse();
+    glfwPollEvents();
 
 		// stop clock
 		auto finish = std::chrono::high_resolution_clock::now();
@@ -474,9 +480,10 @@ GReturnCode GContent::glLoop(
 		
 		// log fps
 		int totalFrameMs = frameMs+leftOverWaitMs+1;
-    if(m_printFps && !(m_frames % (1000/totalFrameMs)))
+    m_fps = 1000/totalFrameMs;
+    if(m_printFps && !(m_frames % (int)m_fps))
 		{
-		  LINFO(TRG, StringFormat("FPS %0").arg(1000/totalFrameMs).str());
+      LINFO(TRG, StringFormat("FPS %0").arg(m_fps).str());
 		}
 	} //Check if the ESC or Q key had been pressed or if the window had been closed  
 	while (!glfwWindowShouldClose(window));

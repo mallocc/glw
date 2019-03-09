@@ -45,7 +45,8 @@ namespace glw
 
       static void KEY_CALLBACK(GLFWwindow* window, int key, int scancode, int action, int mods)
       {
-        glw::engine::GContent::getInstancePtr()->getKeyboard()->updateKey(key);
+        if(GLFW_PRESS == action || GLFW_REPEAT == action)
+          glw::engine::GContent::getInstancePtr()->getKeyboard()->updateKey(key);
         (*glw::engine::GContent::getInstancePtr()->getKeyfunc())(window, key, scancode, action, mods);
       }
 
@@ -56,7 +57,7 @@ namespace glw
 
       static void CURSOR_POSITION_CALLBACK(GLFWwindow* window, double xpos, double ypos)
       {
-        glw::engine::GContent::getInstancePtr()->getMouse()->updatePosition(xpos, ypos);
+//        glw::engine::GContent::getInstancePtr()->getMouse()->updatePosition(xpos, ypos, true);
       }
 
       static void SCROLL_CALLBACK(GLFWwindow* window, double xoffset, double yoffset)
@@ -131,6 +132,8 @@ namespace glw
 			void setFpsCap(int fpsCap);
 			int getFpsCap();
 
+      float getFps();
+
       GKeyboard * getKeyboard();
       GMouse * getMouse();
 
@@ -200,6 +203,7 @@ namespace glw
 		  
 		  bool m_printFps = false;
       int m_fpsCap = 62;
+      float m_fps = 0;
 
     };
   }

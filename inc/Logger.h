@@ -48,7 +48,7 @@ namespace util
       
       static std::string LDATE_TIME()
 		  {
-			  std::stringstream ss;
+        std::stringstream ss;
         ss << __FORMATED_DATE__ << "   " << __TIME__;
         std::string dateTime = ss.str();
         std::replace(dateTime.begin(), dateTime.end(), ' ', '_');
@@ -118,6 +118,17 @@ namespace util
         printf("%s", output);
 		  }
 
+      static void LTrace()
+      {
+        char output[MAX_LINE];
+        sprintf(output,
+            "[%s] :%s [TRACE  ] %s\n",
+            LDATE_TIME().c_str(), "NLL",
+            "");
+        LAppendFile(output);
+        printf("%s", output);
+      }
+
       // NON STATIC //
 
       void openFile(const std::string& filename)
@@ -156,6 +167,7 @@ namespace util
 #define LWARNING(...) util::log::Logger::LWarning(__VA_ARGS__)
 #define LDEBUG(...) util::log::Logger::LDebug__VA_ARGS__)
 #define LINFO(...) util::log::Logger::LInfo(__VA_ARGS__)
+#define LTRACE() util::log::Logger::LTrace()
 
 #define LSTARTLOGGER(...) util::log::Logger::LOpenFile(__VA_ARGS__)
 #define LENDLOGGER(...) util::log::Logger::LCloseFile()

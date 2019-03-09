@@ -95,6 +95,7 @@ echo >> $classfile
 echo "namespace" >> $classfile
 echo $ob >> $classfile
 addtab 
+echo "$tabs""const char * TRG = \"\""\; >> $classfile
 echo "$tabs""const char * __CLASSNAME__ = "\"$class\"\; >> $classfile
 echo $cb >> $classfile
 echo >> $classfile

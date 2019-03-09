@@ -46,7 +46,7 @@ namespace glw
           m_typedInput.append(ss.str());
           break;
         case GLFW_KEY_TAB:
-          ss << '\t';
+          ss << ' ' << ' ';
           m_typedInput.append(ss.str());
           break;
         }
