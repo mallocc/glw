@@ -41,6 +41,7 @@ using glw::meta::GLinker;
 #define GGUI_SHADER_TEXTURE 2
 #define GGUI_DEFAULT_FONT_SIZE 20
 #define GGUI_DEFAULT_PADDING 50
+#define GGUI_BUTTON_ROLLOVER 50
 #define GGUI_WINDOW_TITLBAR_HEIGHT 25
 #define GGUI_WINDOW_DEADZONE 10
 
@@ -351,7 +352,7 @@ namespace glw
       std::vector<IGComponent*> m_group;
     };
 
-    class GContext : public GGroup
+    class GContext : protected GGroup
     {
     public:
 
@@ -1000,6 +1001,11 @@ namespace glw
         }
       }
 
+      void setToggled(bool toggled)
+      {
+        m_toggleState = toggled;
+      }
+
       bool isToggled()
       {
         return m_toggleState;
@@ -1008,6 +1014,11 @@ namespace glw
       void setIsTogglable(bool isTogglable)
       {
         m_isTogglable = isTogglable;
+      }
+
+      virtual void updateCounters()
+      {
+        onClickableDown(isDown());
       }
 
     protected:
@@ -1020,7 +1031,7 @@ namespace glw
       bool m_toggleState = false;
 
       int m_heldCounter = 0;
-      int m_heldThreshold = 25;
+      int m_heldThreshold = GGUI_BUTTON_ROLLOVER;
     };
 
     class GButton : public GClickable, public GLinker<GButton>
@@ -1108,6 +1119,11 @@ namespace glw
       void setColor(glm::vec4 color)
       {
         m_back.setColor(color);
+      }
+
+      void setText(std::string text)
+      {
+        m_label->setText(text);
       }
 
       triggers:
@@ -1799,6 +1815,521 @@ namespace glw
                     glm::vec2(m_fontSize),
                     shaderHandle,
                     contextHandle);
+      }
+    };
+
+    class GScrollbar : public GGroup, public GClickable, public GLinker<GScrollbar>
+    {
+    public:
+      GScrollbar(glm::vec2 pos, glm::vec2 size, float value, float inc, float isVertical = false)
+        : GClickable(pos, size),
+          m_value(value),
+          m_inc(inc),
+          m_isVertical(isVertical)
+      {
+
+      }
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
+      }
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        bool eventHasHappened = false;
+
+        eventHasHappened |= checkGroupMouseEvents(button, action);
+
+        onUp();
+        onDown();
+        onBarMove();
+
+        return eventHasHappened;
+      }
+      virtual bool checkKeyEvents(int key, int action) { return false; }
+      virtual void init(GContext * context, IGComponent * parent)
+      {
+        setContext(context);
+        setParent(parent);
+        setId("scrollbar");
+        inheritColorStyle();
+
+        if (m_isVertical)
+        {
+          m_down = new GButton(glm::vec2(0, m_size.y - m_size.x), glm::vec2(m_size.x, m_size.x), "\\/");
+          addComponent(m_down);
+
+          m_up = new GButton(glm::vec2(), glm::vec2(m_size.x, m_size.x), "/\\");
+          addComponent(m_up);
+
+          m_bar = new GButton(glm::vec2(0, m_size.x), glm::vec2(m_size.x, m_size.x), "=");
+          addComponent(m_bar);
+        }
+        else
+        {
+          m_down = new GButton(glm::vec2(m_size.x - m_size.y, 0), glm::vec2(m_size.y, m_size.y), ">");
+          addComponent(m_down);
+
+          m_up = new GButton(glm::vec2(), glm::vec2(m_size.y, m_size.y), "<");
+          addComponent(m_up);
+
+          m_bar = new GButton(glm::vec2(m_size.y, 0), glm::vec2(m_size.y, m_size.y), "||");
+          addComponent(m_bar);
+        }
+
+        initGroup(context, this);
+      }
+      virtual void validate()
+      {
+        if (m_isVertical)
+        {
+          m_down->setPos(glm::vec2(0, m_size.y - m_size.x));
+          m_down->setSize(glm::vec2(m_size.x, m_size.x));
+          m_up->setPos(glm::vec2());
+          m_up->setSize(glm::vec2(m_size.x, m_size.x));
+          m_bar->setPos(glm::vec2(0, getValue() * (m_size.y - m_size.x * 3) + m_size.x));
+          m_bar->setSize(glm::vec2(m_size.x, m_size.x));
+        }
+        else
+        {
+          m_down->setPos(glm::vec2(m_size.x - m_size.y, 0));
+          m_down->setSize(glm::vec2(m_size.y, m_size.y));
+          m_up->setPos(glm::vec2());
+          m_up->setSize(glm::vec2(m_size.y, m_size.y));
+          m_bar->setPos(glm::vec2(getValue() * (m_size.x - m_size.y * 3) + m_size.y, 0));
+          m_bar->setSize(glm::vec2(m_size.y, m_size.y));
+        }
+
+        snapValue();
+
+        validateGroup();
+      }
+      virtual void update()
+      {
+        m_down->updateCounters();
+        m_up->updateCounters();
+
+        if(m_down->isHeldOver())
+        {
+          increment();
+          validate();
+        }
+
+        if(m_up->isHeldOver())
+        {
+          decrement();
+          validate();
+        }
+
+        if (m_bar->isDragging())
+        {
+          glm::vec2 delta = getContext()->getContent()->getMouse()->getMouseDelta();
+          if (m_isVertical)
+          {
+            setValue((m_bar->getPos().y + delta.y - m_size.x) / (m_size.y - m_size.x * 3));
+          }
+          else
+          {
+            setValue((m_bar->getPos().x + delta.x - m_size.y) / (m_size.x - m_size.y * 3));
+          }
+          validate();
+        }
+
+        if (m_bar->isReleased())
+        {
+          snapValue();
+        }
+
+        updateGroup();
+      }
+
+
+      void snapValue()
+      {
+        m_value = round(m_value / m_inc) / (1 / m_inc);
+      }
+      void setValue(float amount)
+      {
+        m_value = amount;
+        m_value = std::min(m_value, 1.0f);
+        m_value = std::max(m_value, 0.0f);
+        char number[24];
+        sprintf(number, "%.1f", m_value);
+      }
+      float getValue()
+      {
+        return m_value;
+      }
+
+      void increment()
+      {
+        m_value += m_inc;
+        m_value = std::min(m_value, 1.0f);
+        setValue(m_value);
+      }
+
+      void decrement()
+      {
+        m_value -= m_inc;
+        m_value = std::max(m_value, 0.0f);
+        setValue(m_value);
+      }
+
+      triggers:
+
+      void onDown()
+      {
+        if (m_down->isPressed() || m_down->isHeldOver())
+        {
+          increment();
+          validate();
+          callTrigger(&GScrollbar::onDown);
+        }
+      }
+      void onUp()
+      {
+        if (m_up->isPressed() || m_up->isHeldOver())
+        {
+          decrement();
+          validate();
+          callTrigger(&GScrollbar::onUp);
+        }
+      }
+      void onBarMove()
+      {
+        if (m_bar->isDragging())
+        {
+          validate();
+          callTrigger(&GScrollbar::onBarMove);
+        }
+      }
+
+
+    private:
+      float m_value;
+      float m_inc;
+
+      bool m_isVertical = false;
+
+      GButton * m_down;
+      GButton * m_up;
+      GButton * m_bar;
+
+    };
+
+    class GSpinner : public GGroup, public GClickable, public GLinker<GSpinner>
+    {
+    public:
+      GSpinner(glm::vec2 pos, glm::vec2 size, float value = 0.0f, float inc = 1.0f)
+        : GClickable(pos, size),
+          m_value(value),
+          m_inc(inc)
+      {
+      }
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
+      }
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        bool eventHasHappened = false;
+
+        eventHasHappened |= checkGroupMouseEvents(button, action);
+
+        onIncrease();
+        onDecrease();
+        onReset();
+
+        return eventHasHappened;
+      }
+      virtual bool checkKeyEvents(int key, int action) { return false; }
+      virtual void init(GContext * context, IGComponent * parent)
+      {
+        setContext(context);
+        setParent(parent);
+        setId("spinner");
+        inheritColorStyle();
+
+        m_label = new GButton(glm::vec2(m_size.x / 6, 0), glm::vec2(m_size.x / 6 * 4, m_size.y), "0");
+        addComponent(m_label);
+
+        m_plus = new GButton(glm::vec2(), glm::vec2(m_size.x / 6, m_size.y), "+");
+        addComponent(m_plus);
+
+        m_minus = new GButton(glm::vec2(m_size.x / 6 * 5, 0), glm::vec2(m_size.x / 6, m_size.y), "-");
+        addComponent(m_minus);
+
+        initGroup(context, this);
+      }
+      virtual void validate()
+      {
+        m_label->setPos(glm::vec2(m_size.x / 6, 0));
+        m_label->setSize(glm::vec2(m_size.x / 6*4, m_size.y));
+
+        m_plus->setPos(glm::vec2());
+        m_plus->setSize(glm::vec2(m_size.x / 6, m_size.y));
+
+        m_minus->setPos(glm::vec2(m_size.x / 6 * 5, 0));
+        m_minus->setSize(glm::vec2(m_size.x / 6, m_size.y));
+
+        validateGroup();
+      }
+      virtual void update()
+      {
+        m_plus->updateCounters();
+        m_minus->updateCounters();
+
+        if (m_plus->isHeldOver())
+        {
+          increase();
+        }
+
+        if (m_minus->isHeldOver())
+        {
+          decrease();
+        }
+
+        updateGroup();
+      }
+
+      void setValue(float amount)
+      {
+        m_value = amount;
+        char number[24];
+        sprintf(number, "%.1f", m_value);
+        m_label->setText(number);
+      }
+      float getValue()
+      {
+        return m_value;
+      }
+
+      void increase()
+      {
+        m_value += m_inc;
+        setValue(m_value);
+        validate();
+      }
+
+      void decrease()
+      {
+        m_value -= m_inc;
+        setValue(m_value);
+        validate();
+      }
+
+      triggers:
+
+      void onIncrease()
+      {
+        if (m_plus->isReleasedOver())
+        {
+          increase();
+          callTrigger(&GSpinner::onIncrease);
+        }
+      }
+      void onDecrease()
+      {
+        if (m_minus->isReleasedOver())
+        {
+          decrease();
+          callTrigger(&GSpinner::onDecrease);
+        }
+      }
+      void onReset()
+      {
+        if (m_label->isReleasedOver())
+        {
+          setValue(0);
+          validate();
+          callTrigger(&GSpinner::onReset);
+        }
+      }
+
+    private:
+      float m_value;
+      float m_inc;
+      GButton * m_plus;
+      GButton * m_minus;
+      GButton * m_label;
+    };
+
+    template <class T>
+    class GDropdown : public GGroup, public GClickable, public GLinker<GDropdown<T>>
+    {
+    public:
+
+      GDropdown(glm::vec2 pos, glm::vec2 size)
+        : GClickable(pos, size)
+      {
+      }
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
+
+        if (m_selected->isToggled())
+        {
+          for (Item& item : m_items)
+          {
+            item.m_button->draw(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
+          }
+        }
+      }
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        bool eventHasHappened = false;
+
+        for (int i = 0; i < m_items.size(); ++i)
+        {
+          if (m_items[i].m_button->checkMouseEvents(button, action))
+          {
+            if (m_selected->isToggled())
+            {
+              if (m_items[i].m_button->isPressed())
+              {
+                m_selected->toggle();
+                setSelectedId(i);
+                m_items[i].m_button->validate();
+                eventHasHappened |= true;
+                onSelect();
+              }
+            }
+          }
+        }
+
+        if (!eventHasHappened)
+        {
+          eventHasHappened |= checkGroupMouseEvents(button, action);
+        }
+
+        onDropdown();
+
+        return eventHasHappened;
+      }
+      virtual bool checkKeyEvents(int key, int action) {return false;}
+      virtual void init(GContext * context, IGComponent * parent)
+      {
+        setContext(context);
+        setParent(parent);
+        setId("dropdown");
+        inheritColorStyle();
+
+        m_selected = new GButton(glm::vec2(), getSize(), getSelectedName(), true);
+        addComponent(m_selected);
+
+        initGroup(context, this);
+      }
+      virtual void validate()
+      {
+        m_selected->setPos(glm::vec2());
+        m_selected->setSize(getSize());
+        m_selected->setText(getSelectedName());
+
+        for (int ix = 0; ix < m_items.size(); ++ix)
+        {
+          glm::vec2 pos(0, (ix + 1) * getSize().y);
+
+          m_items[ix].m_button->setPos(pos);
+          m_items[ix].m_button->setSize(getSize());
+          m_items[ix].m_button->validate();
+        }
+
+        validateGroup();
+      }
+      virtual void update()
+      {
+        if (!getContext()->isFocused(m_selected))
+        {
+          m_selected->setToggled(false);
+        }
+      }
+
+      std::string getSelectedName()
+      {
+        std::string name;
+
+        if (!m_items.empty())
+        {
+          name = m_items[m_selectedId].m_name;
+        }
+
+        return name;
+      }
+
+      T * getSelectedObj()
+      {
+        T * obj = NULL;
+
+        if (!m_items.empty())
+        {
+          obj = m_items[m_selectedId].m_obj;
+        }
+
+        return obj;
+      }
+
+      void add(T& obj, std::string name)
+      {
+        if (GNULLPTR != getContext())
+        {
+          GButton * button = new GButton(glm::vec2(), getSize(), name);
+          button->init(getContext(), this);
+
+          m_items.push_back({button, &obj, name});
+        }
+        else
+        {
+        }
+      }
+
+      void setSelectedId(int id)
+      {
+        if (id >= 0 && id < m_items.size())
+        {
+          m_selectedId = id;
+          m_selected->setText(getSelectedName());
+        }
+      }
+
+triggers:
+
+      void onSelect()
+      {
+        this->callTrigger(&GDropdown::onSelect);
+      }
+
+      void onDropdown()
+      {
+        if (m_selected->isPressed() && m_selected->isToggled())
+        {
+          this->callTrigger(&GDropdown::onDropdown);
+        }
+      }
+
+    private:
+      struct Item
+      {
+        GButton * m_button;
+        T * m_obj;
+        std::string m_name;
+      };
+      std::vector<Item> m_items;
+
+      int m_selectedId = 0;
+
+      GButton * m_selected;
+
+      int getItemId(std::string name)
+      {
+        for (int i = 0; i < m_items.size(); ++i)
+        {
+          if (m_items[i].m_name == name)
+          {
+            return i;
+          }
+        }
       }
     };
   }

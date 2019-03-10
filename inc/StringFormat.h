@@ -52,12 +52,14 @@ namespace util
     {
       std::stringstream ss;
       int pos = 0;
-      if (m_format.size() == 0)
+      if (m_format.empty())
       {
         for (int i = 0; i < m_args.size(); ++i)
         {
           ss << "%" << i << " ";
         }
+        m_format = ss.str();
+        ss = std::stringstream("");
       }
 
       for (int i = 0; i < m_format.size(); ++i)

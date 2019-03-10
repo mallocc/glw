@@ -33,6 +33,9 @@ using glw::gui::GButton;
 using glw::gui::GWindow;
 using glw::gui::GLabel;
 using glw::gui::GTextEdit;
+using glw::gui::GScrollbar;
+using glw::gui::GSpinner;
+using glw::gui::GDropdown;
 
 
 namespace
@@ -228,13 +231,26 @@ GReturnCode initVBOs()
 
   GWindow * window = new GWindow(glm::vec2(125,250), glm::vec2(300,300), "yoteth");
   context.addComponent(window);
-// window->addChildComponent(
-//  context.addComponent
-      window->addChildComponent(new GTextEdit(glm::vec2(300), glm::vec2(100,100),"this is some text", 20, glw::WHITE_A));
 
+  window->addChildComponent(new GTextEdit(glm::vec2(300), glm::vec2(100,100),"this is some text", 20, glw::WHITE_A));
+
+  window->addChildComponent(new GScrollbar(glm::vec2(150), glm::vec2(300,10), 0.25f, 0.5f));
+
+  window->addChildComponent(new GScrollbar(glm::vec2(150, 200), glm::vec2(25,200), 0.25f, 0.05f, true));
+
+  window->addChildComponent(new GSpinner(glm::vec2(200), glm::vec2(100, 25)));
+
+  GDropdown<std::string> * dropdown = new GDropdown<std::string>(glm::vec2(400), glm::vec2(100, 25));
+  window->addChildComponent(dropdown);
 
   context.setContent(content);
   context.init();
+
+  std::string str("");
+  dropdown->add(str, "one");
+  dropdown->add(str, "two");
+  dropdown->add(str, "three");
+  dropdown->setSelectedId(2);
 
   context.validate();
 
