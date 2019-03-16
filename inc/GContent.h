@@ -115,6 +115,7 @@ namespace glw
 			void clearAll();
 			
 			void getWindowSize(glm::vec2& windowSize) const;
+      glm::vec2 getWindowSize() const;
       void setWindowSize(glm::vec2 windowSize);
 
       void setEyePos(const glm::vec3& pos);

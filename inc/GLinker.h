@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <string>
+#include <thread>
+
 
 namespace glw
 {
@@ -177,6 +179,38 @@ namespace glw
       linker.link(trigger, action);
     }
 
+
+//    class GTask
+//    {
+//    public:
+
+//      GTask(GAction action)
+//        : m_action(action)
+//      {
+//        std::thread(&GTask::run, this);
+//      }
+
+//      ~GTask()
+//      {
+//        delete m_action;
+//      }
+
+//      void run()
+//      {
+//        m_action->callback();
+//        this->~GTask();
+//      }
+
+//    private:
+//      GAction m_action;
+//    };
+
+//    static void __run(GAction action)
+//    {
+//      GTask * task = new GTask(action);
+//      task->run();
+//    }
+
   }
 }
 
@@ -185,3 +219,5 @@ namespace glw
 #define TRIGGER(...) glw::meta::__trigger(__VA_ARGS__)
 #define ACTION(...) glw::meta::__action(__VA_ARGS__)
 #define LINK(...) glw::meta::__link(__VA_ARGS__)
+
+//#define RUN(...) glw::meta::__run(__VA_ARGS__)

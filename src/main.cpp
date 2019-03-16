@@ -39,6 +39,8 @@ using glw::gui::GDropdown;
 using glw::gui::GImageView;
 using glw::gui::GProgressBar;
 using glw::gui::GCheckBox;
+using glw::gui::GDialog;
+using glw::gui::GPane;
 
 
 namespace
@@ -62,6 +64,8 @@ namespace
   GLabel * fpsLabel;
 
   GProgressBar * progressbar;
+
+  GPane * pane;
 }
 
 
@@ -187,6 +191,9 @@ GReturnCode initShaderPrograms()
 void onButtonPress()
 {
   LINFO(TRG, "This is a test");
+
+  context.printComponentTree(0, "");
+
   context.validate();
 }
 
@@ -228,51 +235,74 @@ GReturnCode initVBOs()
           glm::vec3(1),
           "../textures/mars.jpg");          // Scale vector
 
+  // Get the content window size
   glm::vec2 windowSize;
   content->getWindowSize(windowSize);
 
+  // Context setup
+  context.setContent(content);
   context.setColorStyle({glw::WHITE_A, glw::BLACK_A, glw::SKY_BLUE_A});
 
-  context.addComponent(glw::gui::createLabel("fucking yeeeeeeeeeet",  windowSize / 2.0f, 100.0f, glm::vec4(1.0f,0.0,0.0f,0.5f), true));
+  // Create pane for all components
+  pane = new GPane(glm::vec2(), windowSize);
+  context.addComponent(pane);
 
+  // Add a label
+  pane->addComponent(glw::gui::createLabel("fucking yeeeeeeeeeet",  windowSize / 2.0f, 100.0f, glm::vec4(1.0f,0.0,0.0f,0.5f), true));
+
+  // Add a label
   fpsLabel = glw::gui::createLabel("fps", glm::vec2(), 20, glw::BLACK_A);
-  context.addComponent(fpsLabel);
+  pane->addComponent(fpsLabel);
 
+  // Add a button with callbacks
   GButton * button = new GButton(glm::vec2(100), glm::vec2(500, 100), "yeet me");
   LINK(TRIGGER(button, &GButton::onPressed), ACTION(onButtonPress));
   LINK(TRIGGER(button, &GButton::onToggledOn), ACTION(onToggledOn));
-  context.addComponent(button);
+  pane->addComponent(button);
+
+  // Add a window
+  pane->addComponent(new GWindow(glm::vec2(125,250), glm::vec2(300,300), "vindow"));
 
   GWindow * window = new GWindow(glm::vec2(125,250), glm::vec2(300,300), "yoteth");
-  context.addComponent(window);
+  pane->addComponent(window);
 
+  // Add a text edit to the window
   window->addChildComponent(new GTextEdit(glm::vec2(300), glm::vec2(100,100),"this is some text", 20, glw::WHITE_A));
 
+  // Add a slider to the window
   window->addChildComponent(new GSlider(glm::vec2(150), glm::vec2(300,10), 0.25f, 0.5f));
 
+  // Add a slider to the window
   window->addChildComponent(new GSlider(glm::vec2(150, 200), glm::vec2(25,200), 0.25f, 0.05f, true));
 
+  // Add a spinner to the window
   window->addChildComponent(new GSpinner(glm::vec2(200), glm::vec2(100, 25)));
 
+  // Add a dropdown to the window
   GDropdown<std::string> * dropdown = new GDropdown<std::string>(glm::vec2(400), glm::vec2(100, 25));
   window->addChildComponent(dropdown);
 
+  // Add an image to the window
   window->addChildComponent(new GImageView(glm::vec2(0, 300), glm::vec2(100), "../textures/151.bmp"));
 
+  // Add a progress bar the window
   progressbar = new GProgressBar(glm::vec2(400, 500), glm::vec2(100, 20), 0,100, true);
   window->addChildComponent(progressbar);
 
+  // Add a checkbox to the window
   window->addChildComponent(new GCheckBox(glm::vec2(550, 400), glm::vec2(30)));
 
-  context.setContent(content);
+  // Initialise the context
   context.init();
 
+  // Add items to the dropdown
   std::string str("");
   dropdown->add(str, "one");
   dropdown->add(str, "two");
   dropdown->add(str, "three");
   dropdown->setSelectedId(2);
 
+  // Validate the context
   context.validate();
 
   return success;
@@ -302,8 +332,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
   {
     switch (button)
     {
-    case GLFW_MOUSE_BUTTON_LEFT:
-      LINFO(TRG, "User left click");
+    case GLFW_MOUSE_BUTTON_RIGHT:
+
       break;
     }
   }
@@ -318,8 +348,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     switch (key)
     {
     case GLFW_KEY_ESCAPE:
-      LINFO(TRG, "User triggered terminatation.");
-      content->exit();
+      // Create a dialog for exit
+      GDialog * dialog = createDialog(context, pane, "Are you sure you want to exit?");
+      dialog->addConfirmCallback(ACTION(*content, &GContent::exit));
       break;
     }
   }

@@ -270,6 +270,11 @@ void GContent::getWindowSize(glm::vec2& windowSize) const
   windowSize = m_windowSize;
 }
 
+glm::vec2 GContent::getWindowSize() const
+{
+  return m_windowSize;
+}
+
 void GContent::setWindowSize(glm::vec2 windowSize)
 {
   m_windowSize = windowSize;

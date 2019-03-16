@@ -12,6 +12,7 @@
 #include "GLinker.h"
 #include <algorithm>
 
+
 using glw::engine::GContent;
 using glw::engine::buffers::GVertexBufferObject;
 using glw::engine::buffers::GPrimativeFactory;
@@ -175,7 +176,7 @@ namespace glw
       GUnitID m_id;
     };
 
-    class IGComponent
+    class IGComponent : public GUnit
     {
     public:
       IGComponent() {}
@@ -298,7 +299,7 @@ namespace glw
             if (i != 0)
             {
               m_group.erase(m_group.begin() + i);
-              m_group.insert(m_group.begin() + i - 1, component);
+              m_group.push_back(component);
             }
             break;
           }
@@ -346,6 +347,37 @@ namespace glw
           top = std::max(pos.y + size.y, top);
         }
         return glm::vec2(right + padding, top + padding);
+      }
+
+      void printComponentTree(int level, std::string pre)
+      {
+        for (int ix = 0; ix < m_group.size(); ++ix)
+        {
+          std::string tree;
+          bool end = ix == m_group.size() - 1;
+          if (level > 0)
+          {
+            if (end)
+              tree.append(std::string(1, '\\'));
+            else
+              tree.append(std::string(1, '+'));
+            tree.append(std::string(3, '-'));
+          }
+          LINFO(TRG, StringFormat("%2%0%1").arg(tree).arg(m_group[ix]->getId()).arg(pre).str());
+          std::string t = pre;
+          if (GGroup * group = dynamic_cast<GGroup*>(m_group[ix]))
+          {
+            if (level > 0)
+            {
+              if (end)
+                t.append(std::string(1, ' '));
+              else
+                t.append(std::string(1, '|'));
+              t.append(std::string(3, ' '));
+            }
+            group->printComponentTree(level + 1, t);
+          }
+        }
       }
 
     private:
@@ -479,7 +511,7 @@ namespace glw
       IGComponent * m_focused = GNULLPTR;
     };
 
-    class GComponent : public IGComponent, public GUnit
+    class GComponent : public IGComponent
     {
     public:
       GComponent() {}
@@ -693,23 +725,23 @@ namespace glw
 
       static GFont * getDefault()
       {
-          static GFont * instance;
+        static GFont * instance;
 
-          if (NULL == instance)
-          {
-            GArrayVec2 uv;
-            GArrayVec3 v, c, n, t;
+        if (NULL == instance)
+        {
+          GArrayVec2 uv;
+          GArrayVec3 v, c, n, t;
 
-            GPrimativeFactory::squareMeshes(v, 256);
+          GPrimativeFactory::squareMeshes(v, 256);
 
-            GPrimativeFactory::squareMeshUVs(uv, 16, 16);
+          GPrimativeFactory::squareMeshUVs(uv, 16, 16);
 
-            GArrayVertex o;
-            GPrimativeFactory::packObject(o, v, c, n, t, uv);
-            instance = new GFont(o, GUI_DEFAULT_FONT);
-          }
+          GArrayVertex o;
+          GPrimativeFactory::packObject(o, v, c, n, t, uv);
+          instance = new GFont(o, GUI_DEFAULT_FONT);
+        }
 
-          return instance;
+        return instance;
       }
 
       GFont() {}
@@ -1126,7 +1158,7 @@ namespace glw
       int m_heldThreshold = GGUI_BUTTON_ROLLOVER;
     };
 
-    class GButton : public GClickable, public GLinker<GButton>
+    class GButton : public GGroup, public GClickable, public GLinker<GButton>
     {
     public:
       GButton() {}
@@ -1191,6 +1223,10 @@ namespace glw
         pos.x += m_size.x / 2;
         m_label = createLabel(m_text, pos, m_size.y, getColorStyle().foreground);
         m_label->centerHorizontal(true);
+
+        addComponent(m_label);
+
+        initGroup(context, this);
       }
 
       virtual void validate()
@@ -1386,7 +1422,7 @@ namespace glw
         m_back.setColor(getColorStyle().background / 2.0f);
 
         m_titleBar->setPos(glm::vec2());
-        m_titleBar->setSize(glm::vec2(getSize().x - GGUI_WINDOW_TITLBAR_HEIGHT * 2, GGUI_WINDOW_TITLBAR_HEIGHT));
+        m_titleBar->setSize(glm::vec2(getSize().x, GGUI_WINDOW_TITLBAR_HEIGHT));
 
         m_leftResizeBar->setPos(glm::vec2());
         m_leftResizeBar->setSize(glm::vec2(GGUI_WINDOW_DEADZONE, getSize().y));
@@ -1504,15 +1540,6 @@ namespace glw
         m_children.updateGroup();
       }
 
-      void focus()
-      {
-        IGComponent * component = getParent();
-        if (component != GNULLPTR)
-        {
-          dynamic_cast<GGroup*>(component)->bringToFront(this);
-        }
-      }
-
       void addChildComponent(IGComponent * component)
       {
         m_children.addComponent(component);
@@ -1561,21 +1588,59 @@ namespace glw
       void setResizeable(bool resizable)
       {
         m_isResizable = resizable;
+
+        m_leftResizeBar->setVisible(resizable);
+        m_rightResizeBar->setVisible(resizable);
+        m_bottomResizeBar->setVisible(resizable);
+        m_bottomLeftResizeBar->setVisible(resizable);
+        m_bottomRightResizeBar->setVisible(resizable);
       }
-      void setResizableVeritcal(bool resizeable)
+      void setResizableVeritcal(bool resizable)
       {
-        m_isResizableX = !resizeable;
-        m_isResizableY = resizeable;
+        m_isResizableX = !resizable;
+        m_isResizableY = resizable;
+
+        m_bottomResizeBar->setVisible(resizable);
+        m_bottomLeftResizeBar->setVisible(resizable);
+        m_bottomRightResizeBar->setVisible(resizable);
       }
-      void setResizableHorizontal(bool resizeable)
+      void setResizableHorizontal(bool resizable)
       {
-        m_isResizableX = resizeable;
-        m_isResizableY = !resizeable;
+        m_isResizableX = resizable;
+        m_isResizableY = !resizable;
+
+        m_leftResizeBar->setVisible(resizable);
+        m_rightResizeBar->setVisible(resizable);
+        m_bottomLeftResizeBar->setVisible(resizable);
+        m_bottomRightResizeBar->setVisible(resizable);
       }
-      void setResizableBoth(bool resizeable)
+      void setResizableBoth(bool resizable)
       {
-        m_isResizableX = resizeable;
-        m_isResizableY = resizeable;
+        m_isResizableX = resizable;
+        m_isResizableY = resizable;
+
+        m_leftResizeBar->setVisible(resizable);
+        m_rightResizeBar->setVisible(resizable);
+        m_bottomResizeBar->setVisible(resizable);
+        m_bottomLeftResizeBar->setVisible(resizable);
+        m_bottomRightResizeBar->setVisible(resizable);
+      }
+
+      void setScalable(bool scalable)
+      {
+        m_scalable = scalable;
+
+        m_maxmin->setVisible(scalable);
+      }
+
+      void focus()
+      {
+        IGComponent * component = getParent();
+        if (component != GNULLPTR)
+        {
+          dynamic_cast<GGroup*>(component)->bringToFront(this);
+          callTrigger(&GWindow::focus);
+        }
       }
 
       triggers:
@@ -1634,6 +1699,8 @@ namespace glw
       glm::vec2 m_oldSize;
       glm::vec2 m_minSize;
 
+      bool m_scalable = true;
+
       bool m_maximised = false;
 
       bool m_isResizable = true;
@@ -1688,12 +1755,13 @@ namespace glw
 
       GTextEdit() {}
 
-      GTextEdit(glm::vec2 pos, glm::vec2 size, std::string text, int fontSize, glm::vec4 color)
+      GTextEdit(glm::vec2 pos, glm::vec2 size, std::string text, int fontSize, glm::vec4 color, bool editable = true)
         : GClickable(pos,size),
           m_text(text),
           m_fontSize(fontSize),
           m_font(*GFont::getDefault()),
-          m_cursorPosition(text.size())
+          m_cursorPosition(text.size()),
+          m_editable(editable)
       {
         setColor(color);
       }
@@ -1711,7 +1779,10 @@ namespace glw
       {
         bool eventHasHappened = false;
 
-        eventHasHappened |= GClickable::checkMouseEvents(button, action);
+        if (m_editable)
+        {
+          eventHasHappened |= GClickable::checkMouseEvents(button, action);
+        }
 
         onPressed();
 
@@ -1886,6 +1957,8 @@ namespace glw
       int m_cursorBlinkTime = 50;
       GFont m_font;
       std::string m_text;
+
+      bool m_editable;
 
       void insertChar(char c)
       {
@@ -2385,7 +2458,7 @@ namespace glw
         }
       }
 
-triggers:
+      triggers:
 
       void onSelect()
       {
@@ -2486,7 +2559,7 @@ triggers:
 
     };
 
-    class GProgressBar : public GClickable, public GLinker<GProgressBar>
+    class GProgressBar : public GGroup, public GClickable, public GLinker<GProgressBar>
     {
     public:
 
@@ -2535,6 +2608,10 @@ triggers:
         m_front = createRectangle(getPos(), getSize() * glm::vec2(getPercentageProgress(), 1), getColorStyle().accent);
         m_label = createLabel("0", getPos() + glm::vec2(getSize().x / 2, 0), m_size.y, getColorStyle().foreground);
         m_label->centerHorizontal(true);
+
+        addComponent(m_label);
+
+        initGroup(context, this);
       }
 
       virtual void validate()
@@ -2670,6 +2747,245 @@ triggers:
       GShape m_check;
 
     };
+
+    /**
+     * @brief The GDialog class - Needs threading work for waiting for outcome
+     */
+    class GDialog : public GGroup, public GClickable, public GLinker<GDialog>
+    {
+    public:
+      GDialog() {}
+
+      GDialog(glm::vec2 pos, std::string message, std::string confirmText = "Okay", std::string cancelText = "Cancel", std::string title = "")
+        : GClickable(pos, glm::vec2()),
+          m_messageText(message),
+          m_confirmText(confirmText),
+          m_cancelText(cancelText),
+          m_title(title)
+      {
+      }
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        m_window->draw(parentMatrix, shaderHandle, contextHandle);
+      }
+
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        bool eventHasHappened = false;
+
+        eventHasHappened |= m_window->checkMouseEvents(button, action);
+
+        return eventHasHappened;
+      }
+
+      virtual bool checkKeyEvents(int key, int action)
+      {
+        return false;
+      }
+
+      virtual void init(GContext *context, IGComponent *parent)
+      {
+        setContext(context);
+        setParent(parent);
+        setId("dialog");
+        inheritColorStyle();
+
+        m_window = new GWindow(GClickable::getPos(), GClickable::getSize(), m_title);
+
+        LINK(TRIGGER(m_window, &GWindow::onClose), ACTION(*this, &GDialog::onClose));
+        LINK(TRIGGER(m_window, &GWindow::focus), ACTION(*this, &GDialog::focus));
+
+        m_message = new GTextEdit(glm::vec2(GGUI_DEFAULT_PADDING), glm::vec2(250, GGUI_DEFAULT_PADDING), m_messageText, GGUI_DEFAULT_FONT_SIZE, getColorStyle().foreground, false);
+        m_window->addChildComponent(m_message);
+
+        m_confirm = new GButton(glm::vec2(50, m_message->getSize().y + GGUI_DEFAULT_PADDING), glm::vec2(100, GGUI_DEFAULT_FONT_SIZE), m_confirmText);
+        m_window->addChildComponent(m_confirm);
+
+        LINK(TRIGGER(m_confirm, &GButton::onPressed), ACTION(*this, &GDialog::onConfirm));
+
+        m_cancel = new GButton(glm::vec2(200, m_message->getSize().y + GGUI_DEFAULT_PADDING), glm::vec2(100, GGUI_DEFAULT_FONT_SIZE), m_cancelText);
+        m_window->addChildComponent(m_cancel);
+
+        LINK(TRIGGER(m_cancel, &GButton::onPressed), ACTION(*this, &GDialog::onCancel));
+
+        addComponent(m_window);
+
+        initGroup(context, parent);
+
+        m_window->setResizeable(false);
+        m_window->setScalable(false);
+      }
+
+      virtual void validate()
+      {
+        m_window->validate();
+
+        m_confirm->setPos(glm::vec2(50, m_message->getSize().y + GGUI_DEFAULT_PADDING));
+        m_confirm->setSize(glm::vec2(100, GGUI_DEFAULT_FONT_SIZE));
+
+        m_cancel->setPos(glm::vec2(200, m_message->getSize().y + GGUI_DEFAULT_PADDING));
+        m_cancel->setSize(glm::vec2(100, GGUI_DEFAULT_FONT_SIZE));
+
+        m_message->setPos(glm::vec2(GGUI_DEFAULT_PADDING));
+        m_message->setSize(glm::vec2(250, GGUI_DEFAULT_PADDING));
+      }
+
+      virtual void update()
+      {
+        m_window->update();
+      }
+
+      bool getOutcome()
+      {
+        return m_outcome;
+      }
+
+      void finish()
+      {
+        if (getContext() != GNULLPTR)
+        {
+          getContext()->removeComponent(this);
+        }
+      }
+
+      void setPos(const glm::vec2 pos)
+      {
+        m_window->setPos(pos);
+      }
+      glm::vec2 getPos()
+      {
+        return m_window->getPos();
+      }
+
+      void setSize(const glm::vec2 size)
+      {
+        m_window->setSize(size);
+      }
+      glm::vec2 getSize()
+      {
+        return m_window->getSize();
+      }
+
+      void addConfirmCallback(glw::meta::GAction action)
+      {
+        LINK(TRIGGER(*this, &GDialog::onConfirm), action);
+      }
+
+      void addCancelCallback(glw::meta::GAction action)
+      {
+        LINK(TRIGGER(*this, &GDialog::onCancel), action);
+        LINK(TRIGGER(*this, &GDialog::onClose), action);
+      }
+
+      void focus()
+      {
+        IGComponent * component = getParent();
+        if (component != GNULLPTR)
+        {
+          dynamic_cast<GGroup*>(component)->bringToFront(this);
+        }
+      }
+
+      triggers:
+
+      void onConfirm()
+      {
+        m_outcome = true;
+        callTrigger(&GDialog::onConfirm);
+        finish();
+      }
+
+      void onCancel()
+      {
+        m_outcome = false;
+        callTrigger(&GDialog::onCancel);
+        finish();
+      }
+
+      void onClose()
+      {
+        callTrigger(&GDialog::onClose);
+        finish();
+      }
+
+    private:
+
+      std::string m_confirmText;
+      std::string m_cancelText;
+      std::string m_messageText;
+      std::string m_title;
+
+      GButton * m_confirm;
+      GButton * m_cancel;
+      GTextEdit * m_message;
+
+      GWindow * m_window;
+
+      bool m_outcome = false;
+    };
+
+    class GPane : public GComponent, public GGroup
+    {
+    public:
+
+      GPane() {}
+
+      GPane(glm::vec2 pos, glm::vec2 size)
+        : GComponent(pos, size)
+      {
+      }
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
+      }
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        checkGroupMouseEvents(button, action);
+      }
+      virtual bool checkKeyEvents(int key, int action)
+      {
+        checkGroupKeyEvents(key, action);
+      }
+      virtual void init(GContext * context, IGComponent * parent)
+      {
+        setContext(context);
+        setParent(parent);
+        setId("pane");
+        inheritColorStyle();
+
+        initGroup(context, this);
+      }
+      virtual void validate()
+      {
+        validateGroup();
+      }
+      virtual void update()
+      {
+        updateGroup();
+      }
+
+    private:
+    };
+
+
+    static GDialog * createDialog(GContext& context, IGComponent *parent, std::string message, std::string confirmText = "Okay", std::string cancelText = "Cancel", std::string title = "")
+    {
+      glm::vec2 windowSize;
+      context.getContent()->getWindowSize(windowSize);
+      GDialog * dialog = new GDialog(windowSize / 2.0f, message, confirmText, cancelText, title);
+      if (dynamic_cast<GGroup*>(parent) != GNULLPTR)
+      {
+        GGroup * group = dynamic_cast<GGroup*>(parent);
+        group->addComponent(dialog);
+      }
+      dialog->init(&context, parent);
+      dialog->validate();
+      dialog->setPos(windowSize / 2.0f - dialog->getSize() / 2.0f);
+      return dialog;
+    }
+
 
   }
 }
