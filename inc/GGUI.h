@@ -352,7 +352,7 @@ namespace glw
       std::vector<IGComponent*> m_group;
     };
 
-    class GContext : protected GGroup
+    class GContext : public GGroup
     {
     public:
 
@@ -690,6 +690,28 @@ namespace glw
     class GFont : public GVertexBufferObject
     {
     public:
+
+      static GFont * getDefault()
+      {
+          static GFont * instance;
+
+          if (NULL == instance)
+          {
+            GArrayVec2 uv;
+            GArrayVec3 v, c, n, t;
+
+            GPrimativeFactory::squareMeshes(v, 256);
+
+            GPrimativeFactory::squareMeshUVs(uv, 16, 16);
+
+            GArrayVertex o;
+            GPrimativeFactory::packObject(o, v, c, n, t, uv);
+            instance = new GFont(o, GUI_DEFAULT_FONT);
+          }
+
+          return instance;
+      }
+
       GFont() {}
 
       GFont(GArrayVertex data, const char *fontfile) :
@@ -738,6 +760,62 @@ namespace glw
         }
         drawArray(c * 6, 6);
       }
+    private:
+      glm::vec4 m_color;
+    };
+
+    class GImage : public GVertexBufferObject
+    {
+    public:
+      GImage() {}
+
+      GImage(GArrayVertex data, const char * imagefile)
+        :  GVertexBufferObject(data,
+                               glm::vec3(),
+                               glm::vec3(0,0,1), 0.0f,
+                               glm::vec3(0,0,1), 0.0f,
+                               glm::vec3(1),
+                               imagefile)
+      {
+      }
+
+      void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        if(NULL != contextHandle.colorHandle)
+        {
+          contextHandle.colorHandle->load(m_color);
+        }
+        if (NULL != contextHandle.isFontHandle)
+        {
+          contextHandle.isFontHandle->load(0);
+        }
+        if (NULL != contextHandle.istextureHandle)
+        {
+          contextHandle.istextureHandle->load(1);
+        }
+        GVertexBufferObject::draw(parentMatrix, shaderHandle);
+      }
+
+      void setPos(glm::vec2 pos)
+      {
+        m_pos = glm::vec3(pos, 0);
+      }
+
+      glm::vec2 getPos()
+      {
+        return glm::vec2(m_pos.x, m_pos.y);
+      }
+
+      void setSize(glm::vec2 size)
+      {
+        m_scale = glm::vec3(size, 0);
+      }
+
+      glm::vec2 getSize()
+      {
+        return glm::vec2(m_scale.x, m_scale.y);
+      }
+
     private:
       glm::vec4 m_color;
     };
@@ -870,7 +948,7 @@ namespace glw
       GShape shape(o, pos, size, color);
       return shape;
     }
-    static GFont createFont()
+    static GFont createFont(const char * fontfile)
     {
       GArrayVec2 uv;
       GArrayVec3 v, c, n, t;
@@ -881,14 +959,28 @@ namespace glw
 
       GArrayVertex o;
       GPrimativeFactory::packObject(o, v, c, n, t, uv);
-      GFont font(o, GUI_DEFAULT_FONT);
+      GFont font(o, fontfile);
       return font;
     }
     static GLabel * createLabel(std::string text, glm::vec2 pos, float height, glm::vec4 color, bool centered = false)
     {
-      GLabel * label = new GLabel(createFont(), text, pos, height, color);
+      GLabel * label = new GLabel(*GFont::getDefault(), text, pos, height, color);
       label->centerBoth(centered);
       return label;
+    }
+    static GImage createImage(const char * imagefile)
+    {
+      GArrayVec2 uv;
+      GArrayVec3 v, c, n, t;
+
+      GPrimativeFactory::squareMesh(v, 1, 1);
+
+      GPrimativeFactory::squareMeshUVs(uv, 1, 1);
+
+      GArrayVertex o;
+      GPrimativeFactory::packObject(o, v, c, n, t, uv);
+      GImage image(o, imagefile);
+      return image;
     }
 
     class GClickable : public GComponent
@@ -1600,7 +1692,7 @@ namespace glw
         : GClickable(pos,size),
           m_text(text),
           m_fontSize(fontSize),
-          m_font(createFont()),
+          m_font(*GFont::getDefault()),
           m_cursorPosition(text.size())
       {
         setColor(color);
@@ -1818,10 +1910,10 @@ namespace glw
       }
     };
 
-    class GScrollbar : public GGroup, public GClickable, public GLinker<GScrollbar>
+    class GSlider : public GGroup, public GClickable, public GLinker<GSlider>
     {
     public:
-      GScrollbar(glm::vec2 pos, glm::vec2 size, float value, float inc, float isVertical = false)
+      GSlider(glm::vec2 pos, glm::vec2 size, float value, float inc, float isVertical = false)
         : GClickable(pos, size),
           m_value(value),
           m_inc(inc),
@@ -1983,7 +2075,7 @@ namespace glw
         {
           increment();
           validate();
-          callTrigger(&GScrollbar::onDown);
+          callTrigger(&GSlider::onDown);
         }
       }
       void onUp()
@@ -1992,7 +2084,7 @@ namespace glw
         {
           decrement();
           validate();
-          callTrigger(&GScrollbar::onUp);
+          callTrigger(&GSlider::onUp);
         }
       }
       void onBarMove()
@@ -2000,7 +2092,7 @@ namespace glw
         if (m_bar->isDragging())
         {
           validate();
-          callTrigger(&GScrollbar::onBarMove);
+          callTrigger(&GSlider::onBarMove);
         }
       }
 
@@ -2332,5 +2424,67 @@ triggers:
         }
       }
     };
+
+    class GImageView : public GClickable, public GLinker<GImageView>
+    {
+    public:
+
+      GImageView() {}
+
+      GImageView(glm::vec2 pos, glm::vec2 size, const char * imagefile)
+        : GClickable(pos, size),
+          m_imagefile(imagefile)
+      {
+      }
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        m_image.draw(parentMatrix, shaderHandle, contextHandle);
+      }
+
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        bool eventHasHappened = false;
+
+        eventHasHappened |= GClickable::checkMouseEvents(button, action);
+
+        return eventHasHappened;
+
+      }
+
+      virtual bool checkKeyEvents(int key, int action)
+      {
+        return false;
+      }
+
+      virtual void init(GContext *context, IGComponent *parent)
+      {
+        setContext(context);
+        setParent(parent);
+        setId("imageview");
+        inheritColorStyle();
+
+        m_image = createImage(m_imagefile);
+      }
+
+      virtual void validate()
+      {
+        m_image.setPos(getPos());
+        m_image.setSize(getSize());
+      }
+
+      virtual void update()
+      {
+      }
+
+      triggers:
+    private:
+
+      const char * m_imagefile;
+
+      GImage m_image;
+
+    };
+
   }
 }

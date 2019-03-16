@@ -33,9 +33,10 @@ using glw::gui::GButton;
 using glw::gui::GWindow;
 using glw::gui::GLabel;
 using glw::gui::GTextEdit;
-using glw::gui::GScrollbar;
+using glw::gui::GSlider;
 using glw::gui::GSpinner;
 using glw::gui::GDropdown;
+using glw::gui::GImageView;
 
 
 namespace
@@ -234,14 +235,16 @@ GReturnCode initVBOs()
 
   window->addChildComponent(new GTextEdit(glm::vec2(300), glm::vec2(100,100),"this is some text", 20, glw::WHITE_A));
 
-  window->addChildComponent(new GScrollbar(glm::vec2(150), glm::vec2(300,10), 0.25f, 0.5f));
+  window->addChildComponent(new GSlider(glm::vec2(150), glm::vec2(300,10), 0.25f, 0.5f));
 
-  window->addChildComponent(new GScrollbar(glm::vec2(150, 200), glm::vec2(25,200), 0.25f, 0.05f, true));
+  window->addChildComponent(new GSlider(glm::vec2(150, 200), glm::vec2(25,200), 0.25f, 0.05f, true));
 
   window->addChildComponent(new GSpinner(glm::vec2(200), glm::vec2(100, 25)));
 
   GDropdown<std::string> * dropdown = new GDropdown<std::string>(glm::vec2(400), glm::vec2(100, 25));
   window->addChildComponent(dropdown);
+
+  window->addChildComponent(new GImageView(glm::vec2(0, 300), glm::vec2(100), "../textures/151.bmp"));
 
   context.setContent(content);
   context.init();
