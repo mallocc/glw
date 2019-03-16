@@ -37,6 +37,8 @@ using glw::gui::GSlider;
 using glw::gui::GSpinner;
 using glw::gui::GDropdown;
 using glw::gui::GImageView;
+using glw::gui::GProgressBar;
+using glw::gui::GCheckBox;
 
 
 namespace
@@ -59,6 +61,7 @@ namespace
 
   GLabel * fpsLabel;
 
+  GProgressBar * progressbar;
 }
 
 
@@ -72,6 +75,16 @@ void handleInput()
   else
   {
     camera.applyForceForward(content->getMouse()->popScrollDelta().y);
+  }
+
+  if (content->getKeyboard()->isKeyDown(GLFW_KEY_DOWN))
+  {
+    progressbar->setProgress(progressbar->getProgress() - 1);
+  }
+
+  if (content->getKeyboard()->isKeyDown(GLFW_KEY_UP))
+  {
+    progressbar->setProgress(progressbar->getProgress() + 1);
   }
 }
 
@@ -245,6 +258,11 @@ GReturnCode initVBOs()
   window->addChildComponent(dropdown);
 
   window->addChildComponent(new GImageView(glm::vec2(0, 300), glm::vec2(100), "../textures/151.bmp"));
+
+  progressbar = new GProgressBar(glm::vec2(400, 500), glm::vec2(100, 20), 0,100, true);
+  window->addChildComponent(progressbar);
+
+  window->addChildComponent(new GCheckBox(glm::vec2(550, 400), glm::vec2(30)));
 
   context.setContent(content);
   context.init();

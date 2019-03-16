@@ -2486,5 +2486,190 @@ triggers:
 
     };
 
+    class GProgressBar : public GClickable, public GLinker<GProgressBar>
+    {
+    public:
+
+      GProgressBar() {}
+
+      GProgressBar(glm::vec2 pos, glm::vec2 size, float progressMin, float progressMax, bool vertical = false)
+        : GClickable(pos, size),
+          m_progressMin(progressMin),
+          m_progressMax(progressMax),
+          m_progressCurrent(m_progressMin),
+          m_vertical(vertical)
+      {
+      }
+
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        m_back.draw(parentMatrix, shaderHandle, contextHandle);
+        m_front.draw(parentMatrix, shaderHandle, contextHandle);
+        m_label->draw(parentMatrix, shaderHandle, contextHandle);
+      }
+
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        bool eventHasHappened = false;
+
+        eventHasHappened |= GClickable::checkMouseEvents(button, action);
+
+        return eventHasHappened;
+
+      }
+
+      virtual bool checkKeyEvents(int key, int action)
+      {
+        return false;
+      }
+
+      virtual void init(GContext *context, IGComponent *parent)
+      {
+        setContext(context);
+        setParent(parent);
+        setId("progressbar");
+        inheritColorStyle();
+
+        m_back = createRectangle(getPos(), m_size, getColorStyle().background);
+        m_front = createRectangle(getPos(), getSize() * glm::vec2(getPercentageProgress(), 1), getColorStyle().accent);
+        m_label = createLabel("0", getPos() + glm::vec2(getSize().x / 2, 0), m_size.y, getColorStyle().foreground);
+        m_label->centerHorizontal(true);
+      }
+
+      virtual void validate()
+      {
+        m_back.setPos(getPos());
+        m_back.setSize(getSize());
+        m_back.setColor(getColorStyle().background);
+
+        if (m_vertical)
+        {
+          m_front.setPos(getPos() + glm::vec2(0, getSize().y) * glm::vec2(1, 1 - getPercentageProgress()));
+          m_front.setSize(getSize() * glm::vec2(1, getPercentageProgress()));
+          m_front.setColor(getColorStyle().accent);
+        }
+        else
+        {
+          m_front.setPos(getPos());
+          m_front.setSize(getSize() * glm::vec2(getPercentageProgress(), 1));
+          m_front.setColor(getColorStyle().accent);
+        }
+
+        m_label->setPos(getPos() + glm::vec2(getSize().x / 2, 0));
+        m_label->setColor(getColorStyle().foreground);
+        m_label->setHeight(getSize().y);
+      }
+
+      virtual void update()
+      {
+        m_label->update();
+      }
+
+      void setProgress(float progress)
+      {
+        if (progress >= m_progressMin && progress <= m_progressMax)
+        {
+          m_progressCurrent = progress;
+          char number[24];
+          sprintf(number, "%.1f", m_progressCurrent);
+          m_label->setText(number);
+          validate();
+        }
+      }
+
+      float getProgress()
+      {
+        return m_progressCurrent;
+      }
+
+      triggers:
+    private:
+
+      GShape m_back;
+      GShape m_front;
+      GLabel * m_label;
+
+      float m_progressMin;
+      float m_progressMax;
+      float m_progressCurrent;
+
+      bool m_vertical;
+
+      float getPercentageProgress()
+      {
+        return m_progressCurrent / (m_progressMax - m_progressMin);
+      }
+
+    };
+
+    class GCheckBox : public GClickable, public GLinker<GCheckBox>
+    {
+    public:
+      GCheckBox() {}
+
+      GCheckBox(glm::vec2 pos, glm::vec2 size)
+        : GClickable(pos, size, true)
+      {
+      }
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        m_border.draw(parentMatrix, shaderHandle, contextHandle);
+        if (isToggled())
+        {
+          m_check.draw(parentMatrix, shaderHandle, contextHandle);
+        }
+      }
+
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        bool eventHasHappened = false;
+
+        eventHasHappened |= GClickable::checkMouseEvents(button, action);
+
+        return eventHasHappened;
+
+      }
+
+      virtual bool checkKeyEvents(int key, int action)
+      {
+        return false;
+      }
+
+      virtual void init(GContext *context, IGComponent *parent)
+      {
+        setContext(context);
+        setParent(parent);
+        setId("button");
+        inheritColorStyle();
+
+        m_border = createBox(getPos(), getSize(), 0.1f, getColorStyle().accent);
+        m_check = createRectangle(getPos(), getSize(), getColorStyle().accent);
+
+      }
+
+      virtual void validate()
+      {
+        m_border.setPos(getPos());
+        m_border.setSize(getSize());
+        m_border.setColor(getColorStyle().accent);
+        m_check.setPos(getPos() + getSize() * 0.2f);
+        m_check.setSize(getSize() * 0.6f);
+        m_check.setColor(getColorStyle().accent);
+      }
+
+      virtual void update()
+      {
+      }
+
+      triggers:
+    private:
+
+      GShape m_border;
+      GShape m_check;
+
+    };
+
   }
 }
