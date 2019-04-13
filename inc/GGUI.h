@@ -11,6 +11,7 @@
 #include "StringFormat.h"
 #include "GLinker.h"
 #include <algorithm>
+#include <pthread.h>
 
 
 using glw::engine::GContent;
@@ -46,7 +47,9 @@ using glw::meta::GLinker;
 #define GGUI_WINDOW_TITLBAR_HEIGHT 25
 #define GGUI_WINDOW_DEADZONE 10
 
-
+#include <exception>
+#include <typeinfo>
+#include <stdexcept>
 namespace glw
 {
   namespace gui
@@ -224,20 +227,27 @@ namespace glw
 
       bool checkGroupMouseEvents(int button, int action)
       {
+
         std::vector<IGComponent*>::reverse_iterator itor = m_group.rbegin();
+
 
         bool eventHappenedInChild = false;
 
         while(itor != m_group.rend() && !eventHappenedInChild)
         {
+
           IGComponent * component = *itor;
-          if (component->isVisible())
+          if (GNULLPTR != component)
           {
-            if (component->isEnabled())
+            if (component->isVisible())
             {
-              eventHappenedInChild = component->checkMouseEvents(button, action);
+              if (component->isEnabled())
+              {
+                eventHappenedInChild = component->checkMouseEvents(button, action);
+              }
             }
           }
+
           ++itor;
         }
 
@@ -363,7 +373,7 @@ namespace glw
               tree.append(std::string(1, '+'));
             tree.append(std::string(3, '-'));
           }
-          LINFO(TRG, StringFormat("%2%0%1").arg(tree).arg(m_group[ix]->getId()).arg(pre).str());
+          LINFO(TRG, StringFormat("%2%0%1").arg(tree).arg(m_group[ix]->getId()).arg(pre).str(), "GGroup", __func__);
           std::string t = pre;
           if (GGroup * group = dynamic_cast<GGroup*>(m_group[ix]))
           {
@@ -388,10 +398,13 @@ namespace glw
     {
     public:
 
-      GContext() {}
+      GContext()
+      {
+        pthread_mutex_init(&m_mutex, NULL);
+      }
 
-      GContext(GContent * content):
-        m_content(content)
+      GContext(GContent * content)
+        : m_content(content)
       {
       }
 
@@ -413,6 +426,7 @@ namespace glw
 
       void draw()
       {
+
         if(isValid())
         {
           m_shaderProgram.load();
@@ -422,6 +436,8 @@ namespace glw
         {
           LERROR(TRG, "GContext is invalid.", __FILE__, __LINE__, "GContext", __func__);
         }
+
+
       }
 
       void init()
@@ -432,18 +448,25 @@ namespace glw
 
       void validate()
       {
+
         if (isValid())
         {
           validateGroup();
         }
+
+
       }
 
       void update()
       {
+
+
         if (isValid())
         {
           updateGroup();
         }
+
+
       }
 
       bool isValid()
@@ -509,6 +532,8 @@ namespace glw
       bool m_isValid = false;
 
       IGComponent * m_focused = GNULLPTR;
+
+      pthread_mutex_t m_mutex;
     };
 
     class GComponent : public IGComponent

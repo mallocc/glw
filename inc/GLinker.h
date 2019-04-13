@@ -180,36 +180,36 @@ namespace glw
     }
 
 
-//    class GTask
-//    {
-//    public:
+    class GTask
+    {
+    public:
 
-//      GTask(GAction action)
-//        : m_action(action)
-//      {
-//        std::thread(&GTask::run, this);
-//      }
+      GTask(GAction action)
+        : m_action(action)
+      {
+        std::thread(&GTask::run, this);
+      }
 
-//      ~GTask()
-//      {
-//        delete m_action;
-//      }
+      ~GTask()
+      {
+        delete m_action;
+      }
 
-//      void run()
-//      {
-//        m_action->callback();
-//        this->~GTask();
-//      }
+      void run()
+      {
+        m_action->callback();
+        this->~GTask();
+      }
 
-//    private:
-//      GAction m_action;
-//    };
+    private:
+      GAction m_action;
+    };
 
-//    static void __run(GAction action)
-//    {
-//      GTask * task = new GTask(action);
-//      task->run();
-//    }
+    static void __run(GAction action)
+    {
+      GTask * task = new GTask(action);
+      task->run();
+    }
 
   }
 }
@@ -220,4 +220,4 @@ namespace glw
 #define ACTION(...) glw::meta::__action(__VA_ARGS__)
 #define LINK(...) glw::meta::__link(__VA_ARGS__)
 
-//#define RUN(...) glw::meta::__run(__VA_ARGS__)
+#define RUN(...) glw::meta::__run(__VA_ARGS__)

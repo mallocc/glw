@@ -103,7 +103,7 @@ GReturnCode GShaderVariableHandle::init(const GLuint program)
 	else
 	{
 	  LINFO(TRG, StringFormat("GShaderProgram Id %0, linking %1 to GShaderVariableHandleId %2")
-	      .arg(program).arg(m_variableIdentifier).arg(m_id).str());
+        .arg(program).arg(m_variableIdentifier).arg(m_id).str(), __CLASSNAME__, __func__);
   }
   
   return success;

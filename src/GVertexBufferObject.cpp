@@ -53,7 +53,7 @@ GVertexBufferObject::GVertexBufferObject(
     m_preTheta(preTheta),
     m_data(data)
 {
-  LINFO(TRG, "Loading new GVertexBufferObject...");
+  LINFO(TRG, "Loading new GVertexBufferObject...", __CLASSNAME__, __func__);
 
   loadTextures(texfilename);
 
@@ -94,7 +94,7 @@ GReturnCode GVertexBufferObject::init()
 	glEnableVertexAttribArray(4);
 	glBindVertexArray(0);
 
-  LINFO(TRG, "Buffered into VAO");
+  LINFO(TRG, "Buffered into VAO", __CLASSNAME__, __func__);
 	
 	return GLW_SUCCESS;
 }
@@ -106,12 +106,12 @@ void GVertexBufferObject::loadTextures(const char *texfilename)
   if (filename.compare("NULL") != 0)
   {
     m_tex = ImageLoader::loadTextureFromImage(texfilename);
-    LINFO(TRG, StringFormat("%0 -> Texture Id %1").arg(texfilename).arg(m_tex).str());
+    LINFO(TRG, StringFormat("%0 -> Texture Id %1").arg(texfilename).arg(m_tex).str(), __CLASSNAME__, __func__);
   }
   else
   {
 //    m_tex = ImageLoader::loadBlankTexture();
-    LINFO(TRG, "No texture file loaded");
+    LINFO(TRG, "No texture file loaded", __CLASSNAME__, __func__);
   }
 }
 

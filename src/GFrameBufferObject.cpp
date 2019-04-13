@@ -108,7 +108,7 @@ GReturnCode GFrameBufferObject::createFBO()
 {
   GReturnCode retCode = GLW_SUCCESS;
 
-  LINFO(TRG, "Creating new FBO...");
+  LINFO(TRG, "Creating new FBO...", __CLASSNAME__, __func__);
 
   glGenFramebuffers(1, &m_id);
   glBindFramebuffer(GL_FRAMEBUFFER, m_id);
@@ -158,8 +158,7 @@ GReturnCode GFrameBufferObject::createFBO()
     LERROR(TRG, StringFormat("Error creating FBO").str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
   }
 
-  LINFO(TRG, StringFormat("Successfully created FBO = %0").arg(m_id).str());
-
+  LINFO(TRG, StringFormat("Successfully created FBO = %0").arg(m_id).str(), __CLASSNAME__, __func__);
   return retCode;
 }
 

@@ -10,6 +10,7 @@
 
 #include "GGUI.h"
 
+#include <pthread.h>
 
 using util::StringFormat;
 
@@ -139,7 +140,7 @@ GReturnCode initShaderPrograms()
 {
   GReturnCode success = GLW_SUCCESS;
 
-  LINFO(TRG, "Initialising GLSL shader programs...");
+  LINFO(TRG, "Initialising GLSL shader programs...", __CLASSNAME__, __func__);
 
   // Add a new program to the manager
   if (GLW_SUCCESS == shaderProgramManager.addNewProgram(
@@ -190,7 +191,7 @@ GReturnCode initShaderPrograms()
 
 void onButtonPress()
 {
-  LINFO(TRG, "This is a test");
+  LINFO(TRG, "This is a test", __CLASSNAME__, __func__);
 
   context.printComponentTree(0, "");
 
@@ -199,21 +200,21 @@ void onButtonPress()
 
 void onToggledOn()
 {
-  LINFO(TRG, "Toggled On");
+  LINFO(TRG, "Toggled On", __CLASSNAME__, __func__);
 }
 
 GReturnCode initVBOs()
 {
   GReturnCode success = GLW_SUCCESS;
 
-  LINFO(TRG, "Initialising VBOs...");
+  LINFO(TRG, "Initialising VBOs...", __CLASSNAME__, __func__);
 
   // Create array containers
   GArrayVertex o;
   GArrayVec3 v, c, n, t;
   GArrayVec2 uv;
 
-  LINFO(TRG, "Generating Sphere...");
+  LINFO(TRG, "Generating Sphere...", __CLASSNAME__, __func__);
 
   // Generate an array of vec3s for a sphere
   GPrimativeFactory::sphere(v, 12, 12);
@@ -324,8 +325,32 @@ GReturnCode init()
   return success;
 }
 
+struct thread_args
+{
+  GContext * instance;
+  int button, action;
+};
+
+void * thread_helper(void *voidArgs)
+{
+  thread_args *args = (thread_args *) voidArgs;
+  args->instance->checkMouseEvents(args->button, args->action);
+  return new int(0);
+}
+
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+//  std::thread thread(&GContext::checkMouseEvents, context, button, action);
+
+//  thread.detach();
+
+//  pthread_t thread;
+//  thread_args args;
+//  args.instance = &context;
+//  args.button = button;
+//  args.action = action;
+//  pthread_create(&thread, NULL, &thread_helper, &args);
+
   context.checkMouseEvents(button, action);
 
   if (action == GLFW_PRESS)
@@ -360,7 +385,7 @@ int main()
 {
   LSTARTLOGGER("../logs/GLW");
 
-  LINFO(TRG, "Program started.");
+  LINFO(TRG, "Program started.", __CLASSNAME__, __func__);
 
   // Get instance pointer
   content = GContent::getInstancePtr();
@@ -372,7 +397,7 @@ int main()
   // Set the callbacks for the engine, and run
   content->run(loop, init, key_callback, mouse_button_callback);
 
-  LINFO(TRG, "Program exit.");
+  LINFO(TRG, "Program exit.", __CLASSNAME__, __func__);
 
   LENDLOGGER();
 

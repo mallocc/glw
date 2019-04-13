@@ -7,10 +7,11 @@
 #include <iomanip>
 #include <string>
 #include <algorithm>
+#include <ctime>
 
 #define MAX_LINE 300
 
-#define __FORMATED_DATE__ (char const[]){ __DATE__[7], __DATE__[8], __DATE__[9], __DATE__[10], ' ', __DATE__[0], __DATE__[1], __DATE__[2], ' ', __DATE__[4], __DATE__[5], '\0' }
+#define PAD2ZEROS std::setfill('0') << std::setw(2)
 
 namespace util
 {
@@ -49,12 +50,34 @@ namespace util
       static std::string LDATE_TIME()
 		  {
         std::stringstream ss;
-        ss << __FORMATED_DATE__ << "   " << __TIME__;
-        std::string dateTime = ss.str();
-        std::replace(dateTime.begin(), dateTime.end(), ' ', '_');
-        std::replace(dateTime.begin(), dateTime.end(), ':', '_');
-        return dateTime;
+        std::time_t t = std::time(0);   // get time now
+        std::tm* now = std::localtime(&t);
+        ss << (now->tm_year + 1900) << '-';
+        ss << PAD2ZEROS << (now->tm_mon + 1);
+        ss << '-';
+        ss << PAD2ZEROS << now->tm_mday;
+        ss << '_';
+        ss << PAD2ZEROS << now->tm_hour;
+        ss << ':';
+        ss << PAD2ZEROS << now->tm_min;
+        ss << ':';
+        ss << PAD2ZEROS << now->tm_sec;
+        return ss.str();
 		  }
+      static std::string LDATE_TIME_F()
+      {
+        std::stringstream ss;
+        std::time_t t = std::time(0);   // get time now
+        std::tm* now = std::localtime(&t);
+        ss << (now->tm_year + 1900);
+        ss << PAD2ZEROS << (now->tm_mon + 1);
+        ss << PAD2ZEROS << now->tm_mday ;
+        ss << '_';
+        ss << PAD2ZEROS << now->tm_hour;
+        ss << PAD2ZEROS << now->tm_min;
+        ss << PAD2ZEROS << now->tm_sec;
+        return ss.str();
+      }
 		  
       static std::string LFILENAME(std::string str)
 		  {
@@ -107,13 +130,15 @@ namespace util
         printf("%s", output);
 		  }
 		  
-      static void LInfo(const char * traceGroup, std::string str)
+      static void LInfo(const char * traceGroup, std::string str,
+                        const char * classname = "", const char * func = "")
 		  {
-		    char output[MAX_LINE];
-			  sprintf(output, 
-			      "[%s] :%s [INFO   ] %s\n", 
+        char output[MAX_LINE];
+        sprintf(output,
+            "[%s] :%s [INFO   ] (%s::%s) %s\n",
             LDATE_TIME().c_str(), traceGroup,
-			      str.c_str());
+            classname, func,
+            str.c_str());
         LAppendFile(output);
         printf("%s", output);
 		  }
@@ -134,7 +159,7 @@ namespace util
       void openFile(const std::string& filename)
       {
         char file[100];
-        sprintf(file, "%s__%s.log", filename.c_str(), LDATE_TIME().c_str());
+        sprintf(file, "%s__%s.log", filename.c_str(), LDATE_TIME_F().c_str());
         m_file.open(file);
       }
       

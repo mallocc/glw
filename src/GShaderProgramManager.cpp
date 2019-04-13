@@ -46,7 +46,7 @@ GReturnCode GShaderProgramManager::addNewProgram(
 	else
 	{
 	  m_shaderPrograms.insert({ program.getId(), program });	  
-	  LINFO(TRG, "GShaderProgram added to GShaderProgramManager.");
+    LINFO(TRG, "GShaderProgram added to GShaderProgramManager.", __CLASSNAME__, __func__);
 	}
 	return success;
 }
@@ -86,7 +86,7 @@ GReturnCode GShaderProgramManager::addNewProgram(
     {
 	    m_shaderPrograms.insert({ program.getId(), program });	  
       shaderProgramId = program.getId();
-  	  LINFO(TRG, "GShaderProgram added to GShaderProgramManager.");
+      LINFO(TRG, "GShaderProgram added to GShaderProgramManager.", __CLASSNAME__, __func__);
    	}
 	}
   return success;
@@ -103,7 +103,7 @@ GReturnCode GShaderProgramManager::addNewProgram(GShaderProgram program)
   else
   {
     m_shaderPrograms.insert({ program.getId(), program });	  
-    LINFO(TRG, "GShaderProgram added to GShaderProgramManager.");
+    LINFO(TRG, "GShaderProgram added to GShaderProgramManager.", __CLASSNAME__, __func__);
   }
   return success;
 }
@@ -127,7 +127,7 @@ void GShaderProgramManager::drawVBO(GVertexBufferObject& vbo)
   }
   else
   {
-    LINFO(TRG, "NULL shaderProgram");
+    LINFO(TRG, "NULL shaderProgram", __CLASSNAME__, __func__);
   }
 }
 
@@ -143,7 +143,7 @@ void GShaderProgramManager::drawVBOs(std::vector<GVertexBufferObject*>& vbos)
   }
   else
   {
-    LINFO(TRG, "NULL shaderProgram");
+    LINFO(TRG, "NULL shaderProgram", __CLASSNAME__, __func__);
   }
 }
 
@@ -159,7 +159,7 @@ void GShaderProgramManager::drawVBOs(std::vector<GVertexBufferObject>& vbos)
   }
   else
   {
-    LINFO(TRG, "NULL shaderProgram");
+    LINFO(TRG, "NULL shaderProgram", __CLASSNAME__, __func__);
   }
 }
 

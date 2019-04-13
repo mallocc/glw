@@ -41,7 +41,7 @@ GContent::GContent()
         m_isometricDepth(1.0f),
         m_frames(0)
 {
-  LINFO(TRG, "Constructing default GContent.");
+  LINFO(TRG, "Constructing default GContent.", __CLASSNAME__, __func__);
 }
 
 GContent::GContent(
@@ -65,7 +65,7 @@ GContent::GContent(
         m_isometricDepth(1.0f),
         m_frames(0)
 {
-  LINFO(TRG, "Constructing GContent.");
+  LINFO(TRG, "Constructing GContent.", __CLASSNAME__, __func__);
 }
 
 
@@ -108,7 +108,7 @@ GReturnCode GContent::run(
   {
     if (GLW_SUCCESS == initWindow(init, m_window))
     {
-      LINFO(TRG, "Initialised content succesfully.");
+      LINFO(TRG, "Initialised content succesfully.", __CLASSNAME__, __func__);
     }
     else
     {
@@ -128,7 +128,7 @@ GReturnCode GContent::run(
   
   if (GLW_SUCCESS == success)
   {
-    LINFO(TRG, "GContent terminated succesfully.");
+    LINFO(TRG, "GContent terminated succesfully.", __CLASSNAME__, __func__);
   }
   else
   {
@@ -448,8 +448,8 @@ GReturnCode GContent::glLoop(
         glw::engine::GContentLoop loop,
         GLFWwindow * window)
 {
-	LINFO(TRG, "Running GL loop...");
-	LINFO(TRG, "==================");
+  LINFO(TRG, "Running GL loop...", __CLASSNAME__, __func__);
+  LINFO(TRG, "==================", __CLASSNAME__, __func__);
 	
 	//Main Loop  
 	do
@@ -488,13 +488,13 @@ GReturnCode GContent::glLoop(
     m_fps = 1000/totalFrameMs;
     if(m_printFps && !(m_frames % (int)m_fps))
 		{
-      LINFO(TRG, StringFormat("FPS %0").arg(m_fps).str());
+      LINFO(TRG, StringFormat("FPS %0").arg(m_fps).str(), __CLASSNAME__, __func__);
 		}
 	} //Check if the ESC or Q key had been pressed or if the window had been closed  
 	while (!glfwWindowShouldClose(window));
 
-	LINFO(TRG, "==================");
-	LINFO(TRG, "Window has closed. Application will now exit.");
+  LINFO(TRG, "==================", __CLASSNAME__, __func__);
+  LINFO(TRG, "Window has closed. Application will now exit.", __CLASSNAME__, __func__);
 
 	//Close OpenGL window and terminate GLFW  
 	glfwDestroyWindow(window);
@@ -511,7 +511,7 @@ GReturnCode GContent::initWindow(
 {
   GReturnCode success = GLW_SUCCESS;
 
-  LINFO(TRG, "Initialising new GContent...");
+  LINFO(TRG, "Initialising new GContent...", __CLASSNAME__, __func__);
 
 	//Set the error callback  
 	glfwSetErrorCallback(error_callback);
@@ -528,7 +528,7 @@ GReturnCode GContent::initWindow(
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		LINFO(TRG, "GLFW Initialised.");
+    LINFO(TRG, "GLFW Initialised.", __CLASSNAME__, __func__);
 	}
 	
 	if(GLW_SUCCESS == success)	
@@ -543,12 +543,12 @@ GReturnCode GContent::initWindow(
       success = GLW_FAIL;
 	  }
 	  m_window = window;
-	  LINFO(TRG, "Created GLFW window.");
+    LINFO(TRG, "Created GLFW window.", __CLASSNAME__, __func__);
 
 
 	  //This function makes the context of the specified window current on the calling thread.   
 	  glfwMakeContextCurrent(window);
-	  LINFO(TRG, "GLFW window context set.");
+    LINFO(TRG, "GLFW window context set.", __CLASSNAME__, __func__);
 
 	  //Sets the key callback  
     m_keyboard = GKeyboard(window, KEY_CALLBACK, CHARACTER_CALLBACK);
@@ -568,8 +568,7 @@ GReturnCode GContent::initWindow(
 		  glfwTerminate();
       success = GLW_FAIL;
 	  }
-	  LINFO(TRG, "GLEW Initialised.");
-
+    LINFO(TRG, "GLEW Initialised.", __CLASSNAME__, __func__);
 	  // Enable depth test
 	  glEnable(GL_DEPTH_TEST);
 	  // Accept fragment if it closer to the camera than the former one
@@ -591,10 +590,10 @@ GReturnCode GContent::initWindow(
     // init
     if (NULL != init)
     {
-      LINFO(TRG, "GContent initialisation started...");
+      LINFO(TRG, "GContent initialisation started...", __CLASSNAME__, __func__);
       if (GLW_SUCCESS == init())
       {
-        LINFO(TRG, "GContent initialisation succesful.");
+        LINFO(TRG, "GContent initialisation succesful.", __CLASSNAME__, __func__);
       }
       else
       {

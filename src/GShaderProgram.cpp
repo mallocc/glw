@@ -40,7 +40,7 @@ GShaderProgram::GShaderProgram(const char * vertexFilePath,	const char * fragmen
 
   GReturnCode returnCode = GLW_SUCCESS;
 
-	LINFO(TRG, "Creating new program...");
+  LINFO(TRG, "Creating new program...", __CLASSNAME__, __func__);
 
 	this->m_vertexFilePath = vertexFilePath;
 	this->m_fragmentFilePath = fragmentFilePath;
@@ -99,7 +99,7 @@ GShaderProgram::GShaderProgram(const char * vertexFilePath,	const char * fragmen
 			.arg(&VertexShaderErrorMessage[0]).str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
 	}
 	else
-		LINFO(TRG, StringFormat("%0 compiled succesfully.").arg(vertexFilePath).str());
+    LINFO(TRG, StringFormat("%0 compiled succesfully.").arg(vertexFilePath).str(), __CLASSNAME__, __func__);
 
 	// Compile Fragment Shader
 	char const * FragmentSourcePointer = FragmentShaderCode.c_str();
@@ -117,7 +117,7 @@ GShaderProgram::GShaderProgram(const char * vertexFilePath,	const char * fragmen
 			.arg(&FragmentShaderErrorMessage[0]).str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
 	}
 	else
-		LINFO(TRG, StringFormat("%0 compiled succesfully.").arg(fragmentFilePath).str());
+    LINFO(TRG, StringFormat("%0 compiled succesfully.").arg(fragmentFilePath).str(), __CLASSNAME__, __func__);
 
 	// Link the program
 	GLuint ProgramId = glCreateProgram();
@@ -136,7 +136,7 @@ GShaderProgram::GShaderProgram(const char * vertexFilePath,	const char * fragmen
 			.arg(&ProgramErrorMessage[0]).str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
 	}
 	else
-		LINFO(TRG, "Program linked succesfully.");
+    LINFO(TRG, "Program linked succesfully.", __CLASSNAME__, __func__);
 
 
 	glDetachShader(ProgramId, m_vertexShaderId);
@@ -155,7 +155,7 @@ GShaderProgram::GShaderProgram(const char * vertexFilePath,	const char * fragmen
   }
   else
   {
-    LINFO(TRG, StringFormat("Loaded GShaderProgram %0 succesfully.").arg(ProgramId).str());
+    LINFO(TRG, StringFormat("Loaded GShaderProgram %0 succesfully.").arg(ProgramId).str(), __CLASSNAME__, __func__);
   }
 }
 
