@@ -26,19 +26,23 @@ sudo apt-get install cmake build-essential xorg-dev libglew-dev libglm-dev libx1
  Compiling with version 3.2.1 and core profile version has been set to 4.0
 
 How I installed GLFW:
-- Download glfw3
-- cd to the root directory of the glfw thats been downloaded
-- cmake -G "Unix Makesfiles"
-- make
-- make install
-Should be installed into /usr/local/
+```
+git clone https://github.com/glfw/glfw.git
+cd glfw
+cmake -G "Unix Makesfiles"
+make
+make install
+```
+Should be installed into ```/usr/local/```
 
 ###  stb
 How I installed stb_image:
-- git clone https://github.com/nothings/stb.git
-- cd stb
-- mkdir /usr/include/stb_image
-- sudo cp * /usr/include/stb_image/
+```
+git clone https://github.com/nothings/stb.git
+cd stb
+mkdir /usr/include/stb_image
+sudo cp * /usr/include/stb_image/
+```
 
 # Directory Structure
 Should have a tree structure of:
@@ -56,18 +60,18 @@ shaders/        (*.frag *.vert)
 
 # Tips
 - CMakeLists.txt will build the make files.
-- 'cmake' and 'make' should be run inside of 'build/'.
-- Put all *.h files in 'inc/'.
-- Put all *.cpp files in 'src/'.
-- Make sure to add each new .cpp, you want to compile, to the list of .cpp's
-  in CMakeLists.txt (after the '#files' line).
-- 'run' is a bash script that will:
-  - 'cmake' inside of 'build/',
-  - 'make' inside of 'build/',
-  - Run the resulting program from 'make', if 'make' succeeds.
-- 'add' is a bash script that creates a skeleton class and saves it to a .h
-  and .cpp in the correct directories. It will also add the new .cpp to the 
-  CMakeLists.txt files.
+- ```cmake``` and ```make``` should be run inside of ```build/```.
+- Put all ```*.h``` files in ```inc/```.
+- Put all ```*.cpp``` files in ```src/```.
+- Make sure to add each new ```.cpp```, you want to compile, to the list of ```.cpp```'s
+  in ```CMakeLists.txt``` (after the ```#files``` line).
+- ```run``` is a bash script that will:
+  - ```cmake``` inside of ```build/```,
+  - ```make``` inside of ```build/```,
+  - Run the resulting program from ```make```, if ```make``` succeeds.
+- ```add``` is a bash script that creates a skeleton class and saves it to a ```.h```
+  and ```.cpp``` in the correct directories. It will also add the new ```.cpp``` to the 
+  ```CMakeLists.txt``` files.
 
 General class structure for the graphics wrapper:
  
