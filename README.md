@@ -35,6 +35,8 @@ make install
 ```
 Should be installed into ```/usr/local/```
 
+(May need elevated priviliges)
+
 ###  stb
 How I installed stb_image:
 ```
@@ -43,6 +45,8 @@ cd stb
 mkdir /usr/include/stb_image
 sudo cp * /usr/include/stb_image/
 ```
+
+(May need elevated priviliges)
 
 # Directory Structure
 Should have a tree structure of:
