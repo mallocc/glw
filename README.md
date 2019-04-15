@@ -35,7 +35,7 @@ make install
 ```
 Should be installed into ```/usr/local/```
 
-(May need elevated priviliges)
+(May need elevated privileges)
 
 ###  stb
 How I installed stb_image:
@@ -46,7 +46,7 @@ mkdir /usr/include/stb_image
 sudo cp * /usr/include/stb_image/
 ```
 
-(May need elevated priviliges)
+(May need elevated privileges)
 
 # Directory Structure
 Should have a tree structure of:
@@ -76,6 +76,8 @@ shaders/        (*.frag *.vert)
 - ```add``` is a bash script that creates a skeleton class and saves it to a ```.h```
   and ```.cpp``` in the correct directories. It will also add the new ```.cpp``` to the 
   ```CMakeLists.txt``` files.
+
+# (The following is out of date)
 
 General class structure for the graphics wrapper:
  
