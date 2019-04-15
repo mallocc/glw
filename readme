@@ -27,8 +27,23 @@ sudo apt-get install cmake build-essential xorg-dev libglew-dev libglm-dev libx1
 #########################
 #  
 #  glfw3
+# 
+# Compiling with version 3.2.1 and core profile version has been set to 4.0
 #
-# Download glfw3 and install manually in /usr/include/
+#  - Download glfw3
+#  - cd to the root directory of the glfw thats been downloaded
+#  - cmake -G "Unix Makesfiles"
+#  - make
+#  - make install
+#  - Should be installed into /usr/local/
+# 
+# 
+#  stb
+# 
+#  - git clone https://github.com/nothings/stb.git
+#  - cd stb
+#  - mkdir /usr/include/stb_image
+#  - sudo cp * /usr/include/stb_image/
 #
 ########################
 #  
