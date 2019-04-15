@@ -188,6 +188,11 @@ namespace util
 
 // GLOBAL DEFINES //
 
+#define LINFO_ARGS __CLASSNAME__, __func__
+#define LDEBUG_ARGS LINFO_ARGS
+#define LWARNING_ARGS __FILE__, __LINE__, LDEBUG_ARGS
+#define LERROR_ARGS LWARNING_ARGS
+
 #define LERROR(...) util::log::Logger::LError(__VA_ARGS__)
 #define LWARNING(...) util::log::Logger::LWarning(__VA_ARGS__)
 #define LDEBUG(...) util::log::Logger::LDebug__VA_ARGS__)
