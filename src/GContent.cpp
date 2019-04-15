@@ -542,18 +542,20 @@ GReturnCode GContent::initWindow(
 		  glfwTerminate();
       success = GLW_FAIL;
 	  }
-	  m_window = window;
-    LINFO(TRG, "Created GLFW window.", __CLASSNAME__, __func__);
+    else
+    {
+      m_window = window;
+      LINFO(TRG, "Created GLFW window.", __CLASSNAME__, __func__);
 
 
-	  //This function makes the context of the specified window current on the calling thread.   
-	  glfwMakeContextCurrent(window);
-    LINFO(TRG, "GLFW window context set.", __CLASSNAME__, __func__);
+      //This function makes the context of the specified window current on the calling thread.
+      glfwMakeContextCurrent(window);
+      LINFO(TRG, "GLFW window context set.", __CLASSNAME__, __func__);
 
-	  //Sets the key callback  
-    m_keyboard = GKeyboard(window, KEY_CALLBACK, CHARACTER_CALLBACK);
-    m_mouse = GMouse(window, MOUSE_BUTTON_CALLBACK, CURSOR_POSITION_CALLBACK, SCROLL_CALLBACK);
-
+      //Sets the key callback
+      m_keyboard = GKeyboard(window, KEY_CALLBACK, CHARACTER_CALLBACK);
+      m_mouse = GMouse(window, MOUSE_BUTTON_CALLBACK, CURSOR_POSITION_CALLBACK, SCROLL_CALLBACK);
+    }
 	}
 	
 	if (GLW_SUCCESS == success)
@@ -568,21 +570,24 @@ GReturnCode GContent::initWindow(
 		  glfwTerminate();
       success = GLW_FAIL;
 	  }
-    LINFO(TRG, "GLEW Initialised.", __CLASSNAME__, __func__);
-	  // Enable depth test
-	  glEnable(GL_DEPTH_TEST);
-	  // Accept fragment if it closer to the camera than the former one
-	  glDepthFunc(GL_LESS);
-	  // Cull triangles which normal is not towards the camera
-	  glEnable(GL_CULL_FACE);
-	  // enable texturineg
-	  glEnable(GL_TEXTURE_2D);
+    else
+    {
+      LINFO(TRG, "GLEW Initialised.", __CLASSNAME__, __func__);
+      // Enable depth test
+      glEnable(GL_DEPTH_TEST);
+      // Accept fragment if it closer to the camera than the former one
+      glDepthFunc(GL_LESS);
+      // Cull triangles which normal is not towards the camera
+      glEnable(GL_CULL_FACE);
+      // enable texturineg
+      glEnable(GL_TEXTURE_2D);
 
-	  glEnable(GL_BLEND);
+      glEnable(GL_BLEND);
 
-	  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	  glClearDepth(1.0f);
+      glClearDepth(1.0f);
+    }
 	}
 
   if (GLW_SUCCESS == success)
