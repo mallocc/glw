@@ -42,9 +42,20 @@ namespace glw
       void callback()
       {
         if (m_isStatic)
+        {
           m_func();
+        }
         else
-          (m_object->*m_memberFunc)();
+        {
+          if (NULL != m_object)
+          {
+            (m_object->*m_memberFunc)();
+          }
+          else
+          {
+
+          }
+        }
       }
 
       GMetaAction(GFuncPtr func)
@@ -100,7 +111,12 @@ namespace glw
       {
         for (GLink<T>& link : m_links)
           if (trigger == link.first)
-            link.second->callback();
+          {
+            if (NULL != link.second)
+            {
+              link.second->callback();
+            }
+          }
       }
   private:
       std::vector<GLink<T>> m_links;
@@ -127,7 +143,10 @@ namespace glw
 
       void link(GAction action)
       {
-        m_linker->link(m_trigger, action);
+        if (NULL != m_linker)
+        {
+          m_linker->link(m_trigger, action);
+        }
       }
     protected:
       GLinker<T> * m_linker;

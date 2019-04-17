@@ -12,6 +12,7 @@
 #include "GLinker.h"
 #include <algorithm>
 #include <pthread.h>
+#include <set>
 
 
 using glw::engine::GContent;
@@ -184,7 +185,7 @@ namespace glw
     {
     public:
       IGComponent() {}
-      ~IGComponent() {}
+      virtual ~IGComponent() {}
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle) = 0;
       virtual bool isEnabled() = 0;
       virtual bool isVisible() = 0;
@@ -195,7 +196,98 @@ namespace glw
       virtual glm::vec2 getPos() = 0;
       virtual glm::vec2 getSize() = 0;
       virtual void update() = 0;
+//      virtual void focus() = 0;
     };
+
+    class GComponentTracker
+    {
+    public:
+
+      static GComponentTracker& getInstance()
+      {
+          static GComponentTracker instance;
+          return instance;
+      }
+
+      GComponentTracker()
+        : m_components()
+      {}
+
+      bool tracking(std::string trackingId)
+      {
+        bool exists = false;
+
+        std::map<std::string, IGComponent*>::iterator itor = m_components.find(trackingId);
+
+        exists = (itor != m_components.end());
+
+//        if (exists)
+//        {
+//          itor->second->focus();
+//        }
+
+        return exists;
+      }
+
+      bool track(std::string trackingId, IGComponent* component)
+      {
+        bool exists = false;
+
+        if (NULL != component)
+        {
+          exists = m_components.find(trackingId) != m_components.end();
+
+          if (!exists)
+          {
+            m_components[trackingId] = component;
+          }
+        }
+        else
+        {
+          LERROR("Trying to track a NULL component");
+        }
+
+        return !exists;
+      }
+
+      bool untrack(IGComponent* component)
+      {
+        bool success = false;
+
+        if(NULL != component)
+        {
+          std::map<std::string, IGComponent*>::iterator itor = m_components.begin();
+
+          bool found = false;
+
+          while (itor != m_components.end() && !found)
+          {
+            if (itor->second == component)
+            {
+              m_components.erase(itor);
+              found = true;
+            }
+            else
+            {
+              ++itor;
+            }
+          }
+
+          success = found;
+        }
+
+        return success;
+      }
+
+    private:
+      std::map<std::string, IGComponent*> m_components;
+    };
+
+#define NEW_TRACKER(id) std::string TRACKER_ID = id
+#define TRACKING() ({ glw::gui::GComponentTracker::getInstance().tracking(TRACKER_ID); })
+#define IF_NOT_TRACKING(id) NEW_TRACKER(id); if (!TRACKING())
+#define TRACK(ptr) ({ glw::gui::GComponentTracker::getInstance().track(TRACKER_ID, ptr); })
+#define UNTRACK(ptr) ({ glw::gui::GComponentTracker::getInstance().untrack(ptr); })
 
     class GGroup
     {
@@ -331,8 +423,7 @@ namespace glw
         {
           IGComponent * component = m_group[id];
           m_group.erase(m_group.begin() + id);
-          component->~IGComponent();
-          delete(component);
+          delete component;
           return true;
         }
 
@@ -548,6 +639,11 @@ namespace glw
       {
       }
 
+      virtual ~GComponent()
+      {
+        UNTRACK(this);
+      }
+
       virtual bool isEnabled()
       {
         return m_enabled;
@@ -641,6 +737,14 @@ namespace glw
           setColorStyle(getContext()->getColorStyle());
         }
       }
+
+//      virtual void focus()
+//      {
+//        if (getContext() != NULL)
+//        {
+//          getContext()->setFocused(this);
+//        }
+//      }
 
     protected:
       glm::vec2 m_pos;
@@ -2788,8 +2892,7 @@ namespace glw
           m_confirmText(confirmText),
           m_cancelText(cancelText),
           m_title(title)
-      {
-      }
+      {}
 
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
       {
@@ -3015,6 +3118,8 @@ namespace glw
 
   }
 }
+
+
 
 /*
   virtual void draw(glm::mat4 parentMatrix, glw::engine::glsl::GShaderHandle_T shaderHandle, glw::gui::GContextShaderHandle_T contextHandle)

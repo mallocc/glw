@@ -8,6 +8,8 @@
 #include "GShaderVariableHandle.h"
 #include "GReturnCode.h"
 
+#include "GTextureManager.h"
+
 #include <vector>
 
 
@@ -40,7 +42,7 @@ namespace glw
 				    glm::vec3 preRotation,
 				    GLfloat preTheta,
             glm::vec3 scale = glm::vec3(1),
-            const char * texfilename = "NULL");
+            const char * texfilename = NULL_FILE);
         
         ~GVertexBufferObject();
         
@@ -74,7 +76,7 @@ namespace glw
         std::vector<GVertex_T> m_data;
       	GLuint
 				  m_vao,
-				  m_buffer,
+          m_buffer,
           m_tex = 0;
 			  int
 				  m_dataSize = 0;
