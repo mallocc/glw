@@ -40,7 +40,7 @@ GShaderProgram::GShaderProgram(const char * vertexFilePath,	const char * fragmen
 
   GReturnCode returnCode = GLW_SUCCESS;
 
-  LINFO(TRG, "Creating new program...", __CLASSNAME__, __func__);
+  LINFO("Creating new program...");
 
 	this->m_vertexFilePath = vertexFilePath;
 	this->m_fragmentFilePath = fragmentFilePath;
@@ -60,8 +60,8 @@ GShaderProgram::GShaderProgram(const char * vertexFilePath,	const char * fragmen
 	}
 	else {
 	  returnCode = GLW_FAIL;
-		LERROR(TRG, StringFormat("Failed to open %0.")
-			.arg(vertexFilePath).str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("Failed to open %0.")
+      .arg(vertexFilePath).str());
 	}
 
 	// Read the Fragment Shader code from the file
@@ -75,8 +75,8 @@ GShaderProgram::GShaderProgram(const char * vertexFilePath,	const char * fragmen
 	}
 	else {
 	  returnCode = GLW_FAIL;
-		LERROR(TRG, StringFormat("Failed to open %0.")
-			.arg(fragmentFilePath).str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("Failed to open %0.")
+      .arg(fragmentFilePath).str());
 	}
 
 	GLint Result = GL_FALSE;
@@ -95,11 +95,11 @@ GShaderProgram::GShaderProgram(const char * vertexFilePath,	const char * fragmen
 	  returnCode = GLW_FAIL;
 		std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
 		glGetShaderInfoLog(m_vertexShaderId, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-		LERROR(TRG, StringFormat("Vertex shader compilation failed: \n%0")
-			.arg(&VertexShaderErrorMessage[0]).str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("Vertex shader compilation failed: \n%0")
+      .arg(&VertexShaderErrorMessage[0]).str());
 	}
 	else
-    LINFO(TRG, StringFormat("%0 compiled succesfully.").arg(vertexFilePath).str(), __CLASSNAME__, __func__);
+    LINFO(StringFormat("%0 compiled succesfully.").arg(vertexFilePath).str());
 
 	// Compile Fragment Shader
 	char const * FragmentSourcePointer = FragmentShaderCode.c_str();
@@ -113,11 +113,11 @@ GShaderProgram::GShaderProgram(const char * vertexFilePath,	const char * fragmen
 	  returnCode = GLW_FAIL;
 		std::vector<char> FragmentShaderErrorMessage(InfoLogLength + 1);
 		glGetShaderInfoLog(m_fragmentShaderId, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-		LERROR(TRG, StringFormat("Fragment shader compilation failed: \n%0")
-			.arg(&FragmentShaderErrorMessage[0]).str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("Fragment shader compilation failed: \n%0")
+      .arg(&FragmentShaderErrorMessage[0]).str());
 	}
 	else
-    LINFO(TRG, StringFormat("%0 compiled succesfully.").arg(fragmentFilePath).str(), __CLASSNAME__, __func__);
+    LINFO(StringFormat("%0 compiled succesfully.").arg(fragmentFilePath).str());
 
 	// Link the program
 	GLuint ProgramId = glCreateProgram();
@@ -132,11 +132,11 @@ GShaderProgram::GShaderProgram(const char * vertexFilePath,	const char * fragmen
 	  returnCode = GLW_FAIL;
 		std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
 		glGetProgramInfoLog(ProgramId, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		LERROR(TRG, StringFormat("Linking failed:\n%0\n")
-			.arg(&ProgramErrorMessage[0]).str(), __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("Linking failed:\n%0\n")
+      .arg(&ProgramErrorMessage[0]).str());
 	}
 	else
-    LINFO(TRG, "Program linked succesfully.", __CLASSNAME__, __func__);
+    LINFO("Program linked succesfully.");
 
 
 	glDetachShader(ProgramId, m_vertexShaderId);
@@ -150,12 +150,11 @@ GShaderProgram::GShaderProgram(const char * vertexFilePath,	const char * fragmen
   if (GLW_FAIL == returnCode)
   {
     m_valid = false;
-    LERROR(TRG, StringFormat("Loaded GShaderProgram %0 unsuccessfully.").arg(ProgramId).str(),
-        __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("Loaded GShaderProgram %0 unsuccessfully.").arg(ProgramId).str());
   }
   else
   {
-    LINFO(TRG, StringFormat("Loaded GShaderProgram %0 succesfully.").arg(ProgramId).str(), __CLASSNAME__, __func__);
+    LINFO(StringFormat("Loaded GShaderProgram %0 succesfully.").arg(ProgramId).str());
   }
 }
 
@@ -172,8 +171,7 @@ GReturnCode GShaderProgram::addHandle(GShaderVariableHandle handle)
 	}
 	else
 	{
-	  LERROR(TRG, StringFormat("Failed to add handle.").str(),
-	       __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("Failed to add handle.").str());
 	}
 	return success;
 }
@@ -188,8 +186,7 @@ GReturnCode GShaderProgram::addHandle(GShaderVariableHandle handle, GShaderVaria
   }
   else
   {
-    LERROR(TRG, StringFormat("Failed to add handle.").str(),
-         __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("Failed to add handle.").str());
   }
   return success;
 }
@@ -230,8 +227,7 @@ GReturnCode GShaderProgram::setModelMat4Handle(glm::mat4 * mat)
 	}
 	else
 	{
-	  LERROR(TRG, StringFormat("Failed to set ModelMat4Handle.").str(),
-	       __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("Failed to set ModelMat4Handle.").str());
 	}
 	return success;
 }
@@ -247,8 +243,7 @@ GReturnCode GShaderProgram::setViewMat4Handle(glm::mat4 * mat)
 	}
 	else
 	{
-	  LERROR(TRG, StringFormat("Failed to set ViewMat4Handle.").str(),
-	       __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("Failed to set ViewMat4Handle.").str());
 	}
 	return success;
 }
@@ -264,8 +259,7 @@ GReturnCode GShaderProgram::setProjMat4Handle(glm::mat4 * mat)
 	}
 	else
 	{
-	  LERROR(TRG, StringFormat("Failed to set ProjMat4Handle.").str(),
-	       __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("Failed to set ProjMat4Handle.").str());
 	}
 	return success;
 }
@@ -281,8 +275,7 @@ GReturnCode GShaderProgram::setTexHandle()
 	}
 	else
 	{
-	  LERROR(TRG, StringFormat("Failed to set TexHandle.").str(),
-	       __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("Failed to set TexHandle.").str());
 	}
 	return success;
 }

@@ -40,13 +40,12 @@ GReturnCode GShaderProgramManager::addNewProgram(
 	GReturnCode success = program.isValid() ? GLW_SUCCESS : GLW_FAIL;
 	if (GLW_SUCCESS != success)
 	{
-	  LERROR(TRG, "GShaderProgram not added to GShaderProgramManager.",
-	      __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR("GShaderProgram not added to GShaderProgramManager.");
 	}
 	else
 	{
 	  m_shaderPrograms.insert({ program.getId(), program });	  
-    LINFO(TRG, "GShaderProgram added to GShaderProgramManager.", __CLASSNAME__, __func__);
+    LINFO("GShaderProgram added to GShaderProgramManager.");
 	}
 	return success;
 }
@@ -65,8 +64,7 @@ GReturnCode GShaderProgramManager::addNewProgram(
 	if (GLW_SUCCESS != success)
 	{
 	  shaderProgramId = NULL_SHADER_PROGRAM_ID;
-	  LERROR(TRG, "GShaderProgram not added to GShaderProgramManager.",
-	      __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR("GShaderProgram not added to GShaderProgramManager.");
 	}
 	else
 	{
@@ -86,7 +84,7 @@ GReturnCode GShaderProgramManager::addNewProgram(
     {
 	    m_shaderPrograms.insert({ program.getId(), program });	  
       shaderProgramId = program.getId();
-      LINFO(TRG, "GShaderProgram added to GShaderProgramManager.", __CLASSNAME__, __func__);
+      LINFO("GShaderProgram added to GShaderProgramManager.");
    	}
 	}
   return success;
@@ -97,13 +95,12 @@ GReturnCode GShaderProgramManager::addNewProgram(GShaderProgram program)
   GReturnCode success = program.isValid() ? GLW_SUCCESS : GLW_FAIL;
   if (GLW_SUCCESS != success)
   {
-    LERROR(TRG, "GShaderProgram not added to GShaderProgramManager.",
-        __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR("GShaderProgram not added to GShaderProgramManager.");
   }
   else
   {
     m_shaderPrograms.insert({ program.getId(), program });	  
-    LINFO(TRG, "GShaderProgram added to GShaderProgramManager.", __CLASSNAME__, __func__);
+    LINFO("GShaderProgram added to GShaderProgramManager.");
   }
   return success;
 }
@@ -127,7 +124,7 @@ void GShaderProgramManager::drawVBO(GVertexBufferObject& vbo)
   }
   else
   {
-    LINFO(TRG, "NULL shaderProgram", __CLASSNAME__, __func__);
+    LINFO("NULL shaderProgram");
   }
 }
 
@@ -143,7 +140,7 @@ void GShaderProgramManager::drawVBOs(std::vector<GVertexBufferObject*>& vbos)
   }
   else
   {
-    LINFO(TRG, "NULL shaderProgram", __CLASSNAME__, __func__);
+    LINFO("NULL shaderProgram");
   }
 }
 
@@ -159,7 +156,7 @@ void GShaderProgramManager::drawVBOs(std::vector<GVertexBufferObject>& vbos)
   }
   else
   {
-    LINFO(TRG, "NULL shaderProgram", __CLASSNAME__, __func__);
+    LINFO("NULL shaderProgram");
   }
 }
 

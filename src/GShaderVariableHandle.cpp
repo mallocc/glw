@@ -96,14 +96,13 @@ GReturnCode GShaderVariableHandle::init(const GLuint program)
 	if (NULL_UNIFORM_LOCATION == m_id)
 	{
 	  success = GLW_FAIL;
-	  LERROR(TRG, StringFormat("GShaderProgram Id %0, failed linking %1")
-	    .arg(program).arg(m_variableIdentifier).str(),
-	    __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR(StringFormat("GShaderProgram Id %0, failed linking %1")
+      .arg(program).arg(m_variableIdentifier).str());
 	}
 	else
 	{
-	  LINFO(TRG, StringFormat("GShaderProgram Id %0, linking %1 to GShaderVariableHandleId %2")
-        .arg(program).arg(m_variableIdentifier).arg(m_id).str(), __CLASSNAME__, __func__);
+    LINFO(StringFormat("GShaderProgram Id %0, linking %1 to GShaderVariableHandleId %2")
+        .arg(program).arg(m_variableIdentifier).arg(m_id).str());
   }
   
   return success;
@@ -133,9 +132,9 @@ void GShaderVariableHandle::load()
 	  break;
 	case NO_HANDLE:
   default:
-//    LERROR(TRG, StringFormat("GShaderVariableHandle %0 has not been constructed properly.")
+//    LERROR(StringFormat("GShaderVariableHandle %0 has not been constructed properly.")
 //        .arg(m_variableIdentifier).str(),
-//        __FILE__, __LINE__, __CLASSNAME__, __func__);
+//        );
     break;
   }
 }

@@ -188,16 +188,17 @@ namespace util
 
 // GLOBAL DEFINES //
 
+#define __XCLASSNAME__ typeid(this).name()
 #define LINFO_ARGS __CLASSNAME__, __func__
 #define LDEBUG_ARGS LINFO_ARGS
 #define LWARNING_ARGS __FILE__, __LINE__, LDEBUG_ARGS
 #define LERROR_ARGS LWARNING_ARGS
 
-#define LERROR(...) util::log::Logger::LError(__VA_ARGS__)
-#define LWARNING(...) util::log::Logger::LWarning(__VA_ARGS__)
-#define LDEBUG(...) util::log::Logger::LDebug__VA_ARGS__)
-#define LINFO(...) util::log::Logger::LInfo(__VA_ARGS__)
+#define LERROR(str) util::log::Logger::LError(TRG, str, LERROR_ARGS)
+#define LWARNING(str) util::log::Logger::LWarning(TRG, str, LWARNING_ARGS)
+#define LDEBUG(str) util::log::Logger::LDebug(TRG, str, LDEBUG_ARGS)
+#define LINFO(str) util::log::Logger::LInfo(TRG, str, LINFO_ARGS)
 #define LTRACE() util::log::Logger::LTrace()
 
-#define LSTARTLOGGER(...) util::log::Logger::LOpenFile(__VA_ARGS__)
-#define LENDLOGGER(...) util::log::Logger::LCloseFile()
+#define LSTARTLOGGER(str) util::log::Logger::LOpenFile(str)
+#define LENDLOGGER() util::log::Logger::LCloseFile()

@@ -60,6 +60,7 @@ namespace glw
       const char * GUI_SHADER_VERT = "../shaders/gui.vert";
       const char * GUI_SHADER_FRAG = "../shaders/gui.frag";
       const char * GUI_DEFAULT_FONT = "../textures/default_font.png";
+      const char * __CLASSNAME__ = "GGUISTUFF";
     }
 
 
@@ -373,7 +374,7 @@ namespace glw
               tree.append(std::string(1, '+'));
             tree.append(std::string(3, '-'));
           }
-          LINFO(TRG, StringFormat("%2%0%1").arg(tree).arg(m_group[ix]->getId()).arg(pre).str(), "GGroup", __func__);
+          LINFO(StringFormat("%2%0%1").arg(tree).arg(m_group[ix]->getId()).arg(pre).str());
           std::string t = pre;
           if (GGroup * group = dynamic_cast<GGroup*>(m_group[ix]))
           {
@@ -434,7 +435,7 @@ namespace glw
         }
         else
         {
-          LERROR(TRG, "GContext is invalid.", __FILE__, __LINE__, "GContext", __func__);
+          LERROR("GContext is invalid.");
         }
 
 
@@ -485,7 +486,7 @@ namespace glw
         }
         else
         {
-          LERROR(TRG, "GContext is invalid.", __FILE__, __LINE__, "GContext", __func__);
+          LERROR("GContext is invalid.");
         }
       }
 
@@ -500,7 +501,7 @@ namespace glw
         }
         else
         {
-          LERROR(TRG, "GContext is invalid.", __FILE__, __LINE__, "GContext", __func__);
+          LERROR("GContext is invalid.");
         }
       }
 
@@ -3014,3 +3015,30 @@ namespace glw
 
   }
 }
+
+/*
+  virtual void draw(glm::mat4 parentMatrix, glw::engine::glsl::GShaderHandle_T shaderHandle, glw::gui::GContextShaderHandle_T contextHandle)
+  {
+
+  }
+  virtual bool checkKeyEvents(int key, int action)
+  {
+    return false;
+  }
+  virtual bool checkMouseEvents(int button, int action)
+  {
+    return false;
+  }
+  virtual void init(glw::gui::GContext *context, IGComponent *parent)
+  {
+
+  }
+  virtual void validate()
+  {
+
+  }
+  virtual void update()
+  {
+
+  }
+*/

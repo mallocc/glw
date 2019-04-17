@@ -140,7 +140,7 @@ GReturnCode initShaderPrograms()
 {
   GReturnCode success = GLW_SUCCESS;
 
-  LINFO(TRG, "Initialising GLSL shader programs...", __CLASSNAME__, __func__);
+  LINFO("Initialising GLSL shader programs...");
 
   // Add a new program to the manager
   if (GLW_SUCCESS == shaderProgramManager.addNewProgram(
@@ -160,8 +160,7 @@ GReturnCode initShaderPrograms()
       if(!shaderProgram->isValid())
       {
         success = GLW_FAIL;
-        LERROR(TRG, "BASIC_PROGRAM is not valid",
-               __FILE__, __LINE__, __CLASSNAME__, __func__);
+        LERROR("BASIC_PROGRAM is not valid");
       }
       else
       {
@@ -171,15 +170,13 @@ GReturnCode initShaderPrograms()
     else
     {
       success = GLW_FAIL;
-      LERROR(TRG, "BASIC_PROGRAM is NULL",
-             __FILE__, __LINE__, __CLASSNAME__, __func__);
+      LERROR("BASIC_PROGRAM is NULL");
     }
   }
   else
   {
     success = GLW_FAIL;
-    LERROR(TRG, "Failed to add BASIC_PROGRAM",
-           __FILE__, __LINE__, __CLASSNAME__, __func__);
+    LERROR("Failed to add BASIC_PROGRAM");
   }
 
   context.initShaderProgram(content->getModelMat(),
@@ -191,7 +188,7 @@ GReturnCode initShaderPrograms()
 
 void onButtonPress()
 {
-  LINFO(TRG, "This is a test", __CLASSNAME__, __func__);
+  LINFO("This is a test");
 
   context.printComponentTree(0, "");
 
@@ -200,21 +197,21 @@ void onButtonPress()
 
 void onToggledOn()
 {
-  LINFO(TRG, "Toggled On", __CLASSNAME__, __func__);
+  LINFO("Toggled On");
 }
 
 GReturnCode initVBOs()
 {
   GReturnCode success = GLW_SUCCESS;
 
-  LINFO(TRG, "Initialising VBOs...", __CLASSNAME__, __func__);
+  LINFO("Initialising VBOs...");
 
   // Create array containers
   GArrayVertex o;
   GArrayVec3 v, c, n, t;
   GArrayVec2 uv;
 
-  LINFO(TRG, "Generating Sphere...", __CLASSNAME__, __func__);
+  LINFO("Generating Sphere...");
 
   // Generate an array of vec3s for a sphere
   GPrimativeFactory::sphere(v, 12, 12);
@@ -385,7 +382,7 @@ int main()
 {
   LSTARTLOGGER("../logs/GLW");
 
-  LINFO(TRG, "Program started.", __CLASSNAME__, __func__);
+  LINFO("Program started.");
 
   // Get instance pointer
   content = GContent::getInstancePtr();
@@ -397,7 +394,7 @@ int main()
   // Set the callbacks for the engine, and run
   content->run(loop, init, key_callback, mouse_button_callback);
 
-  LINFO(TRG, "Program exit.", __CLASSNAME__, __func__);
+  LINFO("Program exit.");
 
   LENDLOGGER();
 
