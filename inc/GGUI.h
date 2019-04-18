@@ -235,9 +235,15 @@ namespace glw
 
         if (NULL != component)
         {
-          exists = m_components.find(trackingId) != m_components.end();
+          std::map<std::string, IGComponent*>::iterator itor = m_components.find(trackingId);
 
-          if (!exists)
+          exists = (itor != m_components.end());
+
+          if (exists)
+          {
+            itor->second->focusComponent();
+          }
+          else
           {
             m_components[trackingId] = component;
           }
@@ -288,6 +294,7 @@ namespace glw
     { std::string TRACKER_ID = id;
 #define FI_NOT_TRACKING(ptr) TRACK(TRACKER_ID, ptr); }
 #define UNTRACK(ptr) glw::gui::GComponentTracker::getInstance().untrack(ptr)
+#define MAKE_UNIQUE(id, ptr) if (!TRACK(id, ptr)) { delete ptr; }
 
     class GGroup
     {
@@ -387,9 +394,15 @@ namespace glw
 
       void updateGroup()
       {
-        for (IGComponent * component : m_group)
+        if (NULL != &m_group)
         {
-          component->update();
+          for (IGComponent * component : m_group)
+          {
+            if (NULL != component)
+            {
+              component->update();
+            }
+          }
         }
       }
 
@@ -765,6 +778,19 @@ namespace glw
         {
           getContext()->setFocused(this);
         }
+      }
+
+      bool makeUnique(std::string id)
+      {
+        bool success = true;
+
+        if(!TRACK(id, this))
+        {
+          getContext()->removeComponent(this);
+          success = false;
+        }
+
+        return success;
       }
 
     protected:
