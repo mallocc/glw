@@ -196,7 +196,7 @@ namespace glw
       virtual glm::vec2 getPos() = 0;
       virtual glm::vec2 getSize() = 0;
       virtual void update() = 0;
-//      virtual void focus() = 0;
+      virtual void focusComponent() = 0;
     };
 
     class GComponentTracker
@@ -221,10 +221,10 @@ namespace glw
 
         exists = (itor != m_components.end());
 
-//        if (exists)
-//        {
-//          itor->second->focus();
-//        }
+        if (exists)
+        {
+          itor->second->focusComponent();
+        }
 
         return exists;
       }
@@ -283,11 +283,11 @@ namespace glw
       std::map<std::string, IGComponent*> m_components;
     };
 
-#define NEW_TRACKER(id) std::string TRACKER_ID = id
-#define TRACKING() ({ glw::gui::GComponentTracker::getInstance().tracking(TRACKER_ID); })
-#define IF_NOT_TRACKING(id) NEW_TRACKER(id); if (!TRACKING())
-#define TRACK(ptr) ({ glw::gui::GComponentTracker::getInstance().track(TRACKER_ID, ptr); })
-#define UNTRACK(ptr) ({ glw::gui::GComponentTracker::getInstance().untrack(ptr); })
+#define TRACK(id, ptr) glw::gui::GComponentTracker::getInstance().track(id, ptr)
+#define IF_NOT_TRACKING(id) if (!glw::gui::GComponentTracker::getInstance().tracking(id)) \
+    { std::string TRACKER_ID = id;
+#define FI_NOT_TRACKING(ptr) TRACK(TRACKER_ID, ptr); }
+#define UNTRACK(ptr) glw::gui::GComponentTracker::getInstance().untrack(ptr)
 
     class GGroup
     {
@@ -411,9 +411,11 @@ namespace glw
 
       int getComponent(IGComponent * component)
       {
-        for (int ix = 0; ix < m_group.size(); ++ix)
-          if (m_group[ix] == component)
-            return ix;
+        if (NULL != component)
+          if (NULL != &m_group)
+            for (int ix = 0; ix < m_group.size(); ++ix)
+              if (m_group[ix] == component)
+                return ix;
         return GNULL_INDEX;
       }
       bool removeComponent(IGComponent * component)
@@ -428,8 +430,18 @@ namespace glw
         }
 
         bool success = false;
-        for (IGComponent * c : m_group)
-          success |= dynamic_cast<GGroup*>(c)->removeComponent(component);
+        if (NULL != &m_group)
+        {
+          for (IGComponent * c : m_group)
+          {
+            if (NULL != c)
+            {
+              success |= dynamic_cast<GGroup*>(c)->removeComponent(component);
+              if (success) break;
+            }
+          }
+        }
+
         return success;
       }
 
@@ -738,13 +750,22 @@ namespace glw
         }
       }
 
-//      virtual void focus()
-//      {
-//        if (getContext() != NULL)
-//        {
-//          getContext()->setFocused(this);
-//        }
-//      }
+      void bringToFront()
+      {
+        IGComponent * component = getParent();
+        if (component != GNULLPTR)
+        {
+          dynamic_cast<GGroup*>(component)->bringToFront(this);
+        }
+      }
+
+      virtual void focusComponent()
+      {
+        if (getContext() != NULL)
+        {
+          getContext()->setFocused(this);
+        }
+      }
 
     protected:
       glm::vec2 m_pos;
@@ -1163,7 +1184,7 @@ namespace glw
         {
           m_onPressed = true;
           m_onDown = true;
-          getContext()->setFocused(this);
+          this->focusComponent();
         }
         else
         {
@@ -1763,14 +1784,9 @@ namespace glw
         m_maxmin->setVisible(scalable);
       }
 
-      void focus()
+      virtual void focusComponent()
       {
-        IGComponent * component = getParent();
-        if (component != GNULLPTR)
-        {
-          dynamic_cast<GGroup*>(component)->bringToFront(this);
-          callTrigger(&GWindow::focus);
-        }
+        focus();
       }
 
       triggers:
@@ -1810,6 +1826,13 @@ namespace glw
             callTrigger(&GWindow::onResize);
           }
         }
+      }
+
+      void focus()
+      {
+        GComponent::focusComponent();
+        GComponent::bringToFront();
+        callTrigger(&GWindow::focus);
       }
 
     private:
@@ -2905,6 +2928,11 @@ namespace glw
 
         eventHasHappened |= m_window->checkMouseEvents(button, action);
 
+        if (eventHasHappened)
+        {
+          focus();
+        }
+
         return eventHasHappened;
       }
 
@@ -3007,13 +3035,9 @@ namespace glw
         LINK(TRIGGER(*this, &GDialog::onClose), action);
       }
 
-      void focus()
+      virtual void focusComponent()
       {
-        IGComponent * component = getParent();
-        if (component != GNULLPTR)
-        {
-          dynamic_cast<GGroup*>(component)->bringToFront(this);
-        }
+        focus();
       }
 
       triggers:
@@ -3034,8 +3058,16 @@ namespace glw
 
       void onClose()
       {
+        m_outcome = false;
         callTrigger(&GDialog::onClose);
         finish();
+      }
+
+      void focus()
+      {
+        GComponent::focusComponent();
+        GComponent::bringToFront();
+        callTrigger(&GDialog::focus);
       }
 
     private:

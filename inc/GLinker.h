@@ -49,11 +49,10 @@ namespace glw
         {
           if (NULL != m_object)
           {
-            (m_object->*m_memberFunc)();
-          }
-          else
-          {
-
+            if (NULL != m_memberFunc)
+            {
+              (m_object->*m_memberFunc)();
+            }
           }
         }
       }
@@ -110,6 +109,7 @@ namespace glw
       void callTrigger(GTriggerFunction<T> trigger)
       {
         for (GLink<T>& link : m_links)
+        {
           if (trigger == link.first)
           {
             if (NULL != link.second)
@@ -117,6 +117,7 @@ namespace glw
               link.second->callback();
             }
           }
+        }
       }
   private:
       std::vector<GLink<T>> m_links;
