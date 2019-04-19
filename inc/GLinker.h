@@ -173,7 +173,7 @@ namespace glw
 #define TRIGGERS_BASE(c, ...) START_DEF_BASE_TRIGGERS(c) __VA_ARGS__ END_DEF_TRIGGERS(c) public
 #define TRIGGERS_DERIVED(d, b, ...) START_DEF_DERIVED_TRIGGERS(d, b) __VA_ARGS__ END_DEF_TRIGGERS(d) public
 
-#define trigger(f) void f()
+#define trigger void
 
 #define LINKER_CALL(t)        GLinker::callTrigger(DEFINE_TRIGGER(t))
 #define LINKER_LINK(...)      GLinker::link(__VA_ARGS__)

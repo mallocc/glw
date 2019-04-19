@@ -187,17 +187,23 @@ namespace glw
     public:
       IGComponent() {}
       virtual ~IGComponent() {}
+
+      virtual void init(GContext * context, IGComponent * parent) = 0;
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle) = 0;
-      virtual bool isEnabled() = 0;
-      virtual bool isVisible() = 0;
+
       virtual bool checkMouseEvents(int button, int action) = 0;
       virtual bool checkKeyEvents(int key, int action) = 0;
-      virtual void init(GContext * context, IGComponent * parent) = 0;
+
       virtual void validate() = 0;
+      virtual void update() = 0;
+
       virtual glm::vec2 getPos() = 0;
       virtual glm::vec2 getSize() = 0;
-      virtual void update() = 0;
+
       virtual void focusComponent() = 0;
+
+      virtual bool isEnabled() = 0;
+      virtual bool isVisible() = 0;
     };
 
     class GGroup;
@@ -837,6 +843,17 @@ namespace glw
         inheritColorStyle();
       }
 
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        return false;
+      }
+      virtual bool checkKeyEvents(int key, int action)
+      {
+        return false;
+      }
+      virtual void validate() {}
+      virtual void update() {}
+
     protected:
       glm::vec2 m_pos;
       glm::vec2 m_size;
@@ -1087,6 +1104,11 @@ namespace glw
         setColor(color);
       }
 
+      virtual void init(GContext * context, IGComponent * parent)
+      {
+        GComponent::initComponent(context, parent, "label");
+      }
+
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
       {
         glm::vec2 pos = m_pos -
@@ -1103,17 +1125,6 @@ namespace glw
                       contextHandle);
         }
       }
-
-      virtual bool checkMouseEvents(int button, int action) { return false; }
-      virtual bool checkKeyEvents(int key, int action) { return false; }
-
-      virtual void init(GContext * context, IGComponent * parent)
-      {
-        GComponent::initComponent(context, parent, "label");
-      }
-
-      virtual void validate() {}
-      virtual void update() {}
 
       float getLength()
       {
@@ -1383,7 +1394,21 @@ namespace glw
 
       GButton(glm::vec2 pos, glm::vec2 size, std::string text = "", bool isTogglable = false):
         GClickable(pos, size, isTogglable), m_text(text)
+      {}
+
+      virtual void init(GContext *context, IGComponent *parent)
       {
+        GComponent::initComponent(context, parent, "button");
+
+        glm::vec2 pos = m_pos;
+        m_back = createRectangle(getPos(), m_size, getColorStyle().accent);
+        pos.x += m_size.x / 2;
+        m_label = createLabel(m_text, pos, m_size.y, getColorStyle().foreground);
+        m_label->centerHorizontal(true);
+
+        addComponent(m_label);
+
+        initGroup(context, this);
       }
 
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
@@ -1424,26 +1449,6 @@ namespace glw
 
       }
 
-      virtual bool checkKeyEvents(int key, int action)
-      {
-        return false;
-      }
-
-      virtual void init(GContext *context, IGComponent *parent)
-      {
-        GComponent::initComponent(context, parent, "button");
-
-        glm::vec2 pos = m_pos;
-        m_back = createRectangle(getPos(), m_size, getColorStyle().accent);
-        pos.x += m_size.x / 2;
-        m_label = createLabel(m_text, pos, m_size.y, getColorStyle().foreground);
-        m_label->centerHorizontal(true);
-
-        addComponent(m_label);
-
-        initGroup(context, this);
-      }
-
       virtual void validate()
       {
         m_back.setPos(getPos());
@@ -1477,7 +1482,7 @@ namespace glw
           DEFINE_TRIGGER(onToggledOn),
           DEFINE_TRIGGER(onToggledOff)):
 
-      void onPressed()
+      trigger onPressed()
       {
         if (isPressed())
         {
@@ -1485,7 +1490,7 @@ namespace glw
         }
       }
 
-      void onDown()
+      trigger onDown()
       {
         if (isDown())
         {
@@ -1493,7 +1498,7 @@ namespace glw
         }
       }
 
-      void onReleased()
+      trigger onReleased()
       {
         if (isReleased())
         {
@@ -1501,7 +1506,7 @@ namespace glw
         }
       }
 
-      void onToggledOn()
+      trigger onToggledOn()
       {
         if (isToggled())
         {
@@ -1509,7 +1514,7 @@ namespace glw
         }
       }
 
-      void onToggledOff()
+      trigger onToggledOff()
       {
         if (!isToggled())
         {
@@ -1539,52 +1544,6 @@ namespace glw
 
       ~GWindow() {}
 
-      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
-      {
-        m_back.draw(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
-        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
-        m_children.drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
-      }
-      virtual bool checkMouseEvents(int button, int action)
-      {
-        bool eventHasHappened = false;
-
-        // Window native buttons are highest priority
-        if (eventHasHappened |= checkGroupMouseEvents(button, action))
-        {
-          onFocus();
-        }
-
-        // Window child components next in priority
-        if (!eventHasHappened)
-        {
-          if (eventHasHappened |= m_children.checkGroupMouseEvents(button, action))
-          {
-            GComponent::bringToFront();
-          }
-        }
-
-        // If nothing else happened check if the component was clicked at all
-        if (!eventHasHappened)
-        {
-          eventHasHappened |= GClickable::checkMouseEvents(button, action);
-        }
-
-        onClose();
-        onScale();
-        onWindowMove();
-        onResize();
-
-        return eventHasHappened;
-      }
-      virtual bool checkKeyEvents(int key, int action)
-      {
-        bool eventHasHappened = false;
-
-        eventHasHappened |= m_children.checkGroupKeyEvents(key, action);
-
-        return eventHasHappened;
-      }
       virtual void init(GContext * context, IGComponent * parent)
       {
         // Inherit properties
@@ -1635,6 +1594,56 @@ namespace glw
         colorStyle.accent = glw::ORANGE_A;
         m_maxmin->setColorStyle(colorStyle);
       }
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        m_back.draw(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
+        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
+        m_children.drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
+      }
+
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        bool eventHasHappened = false;
+
+        // Window native buttons are highest priority
+        if (eventHasHappened |= checkGroupMouseEvents(button, action))
+        {
+          onFocus();
+        }
+
+        // Window child components next in priority
+        if (!eventHasHappened)
+        {
+          if (eventHasHappened |= m_children.checkGroupMouseEvents(button, action))
+          {
+            GComponent::bringToFront();
+          }
+        }
+
+        // If nothing else happened check if the component was clicked at all
+        if (!eventHasHappened)
+        {
+          eventHasHappened |= GClickable::checkMouseEvents(button, action);
+        }
+
+        onClose();
+        onScale();
+        onWindowMove();
+        onResize();
+
+        return eventHasHappened;
+      }
+
+      virtual bool checkKeyEvents(int key, int action)
+      {
+        bool eventHasHappened = false;
+
+        eventHasHappened |= m_children.checkGroupKeyEvents(key, action);
+
+        return eventHasHappened;
+      }
+
       virtual void validate()
       {
         m_minSize = m_children.getMinimumBounds(GGUI_DEFAULT_PADDING);
@@ -1671,6 +1680,7 @@ namespace glw
         validateGroup();
         m_children.validateGroup();
       }
+
       virtual void update()
       {
         glm::vec2 delta = getContext()->getContent()->getMouse()->getMouseDelta();
@@ -1871,7 +1881,7 @@ namespace glw
           DEFINE_TRIGGER(onResize),
           DEFINE_TRIGGER(onFocus)):
 
-      void onClose()
+      trigger onClose()
       {
         if (m_close->isReleasedOver())
         {
@@ -1880,7 +1890,7 @@ namespace glw
         }
       }
 
-      void onScale()
+      trigger onScale()
       {
         if (m_maxmin->isReleasedOver())
         {
@@ -1889,7 +1899,7 @@ namespace glw
         }
       }
 
-      void onWindowMove()
+      trigger onWindowMove()
       {
         if (m_titleBar->isDragging())
         {
@@ -1897,7 +1907,7 @@ namespace glw
         }
       }
 
-      void onResize()
+      trigger onResize()
       {
         if(m_isResizable && !m_maximised)
         {
@@ -1908,7 +1918,7 @@ namespace glw
         }
       }
 
-      void onFocus()
+      trigger onFocus()
       {
         GComponent::focusComponent();
         GComponent::bringToFront();
@@ -2010,74 +2020,7 @@ namespace glw
       {
         GComponent::initComponent(context, parent, "textedit");
       }
-      virtual void validate() {}
-      virtual void update() {}
-      virtual bool checkMouseEvents(int button, int action)
-      {
-        bool eventHasHappened = false;
 
-        if (m_editable)
-        {
-          eventHasHappened |= GClickable::checkMouseEvents(button, action);
-        }
-
-        onPressed();
-
-        return eventHasHappened;
-      }
-      virtual bool checkKeyEvents(int key, int action)
-      {
-        bool eventHasHappened = false;
-
-        if (getContext()->isFocused(this))
-        {
-          if (GLFW_PRESS == action || GLFW_REPEAT == action)
-          {
-            if (key == GLFW_KEY_BACKSPACE)
-            {
-              if (m_text.size() > 0)
-              {
-                m_text.erase(m_text.begin() + m_cursorPosition - 1);
-                m_cursorPosition--;
-                m_cursorBlinkTimer = 0;
-              }
-              eventHasHappened = true;
-            }
-            if (key == GLFW_KEY_RIGHT)
-            {
-              if (m_cursorPosition < m_text.size())
-              {
-                m_cursorPosition++;
-                m_cursorBlinkTimer = 0;
-              }
-              eventHasHappened = true;
-            }
-            if (key == GLFW_KEY_LEFT)
-            {
-              if (m_cursorPosition > 0)
-              {
-                m_cursorPosition--;
-                m_cursorBlinkTimer = 0;
-              }
-              eventHasHappened = true;
-            }
-          }
-
-          unsigned char key = 0U;
-          key = getContext()->getContent()->getKeyboard()->popTypedInputChar();
-          if (key != 0)
-          {
-            if (getContext()->isFocused(this))
-            {
-              insertChar(key);
-              eventHasHappened = true;
-              onType();
-            }
-          }
-        }
-
-        return eventHasHappened;
-      }
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
       {
         ++m_cursorBlinkTimer;
@@ -2152,6 +2095,74 @@ namespace glw
         }
       }
 
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        bool eventHasHappened = false;
+
+        if (m_editable)
+        {
+          eventHasHappened |= GClickable::checkMouseEvents(button, action);
+        }
+
+        onPressed();
+
+        return eventHasHappened;
+      }
+
+      virtual bool checkKeyEvents(int key, int action)
+      {
+        bool eventHasHappened = false;
+
+        if (getContext()->isFocused(this))
+        {
+          if (GLFW_PRESS == action || GLFW_REPEAT == action)
+          {
+            if (key == GLFW_KEY_BACKSPACE)
+            {
+              if (m_text.size() > 0)
+              {
+                m_text.erase(m_text.begin() + m_cursorPosition - 1);
+                m_cursorPosition--;
+                m_cursorBlinkTimer = 0;
+              }
+              eventHasHappened = true;
+            }
+            if (key == GLFW_KEY_RIGHT)
+            {
+              if (m_cursorPosition < m_text.size())
+              {
+                m_cursorPosition++;
+                m_cursorBlinkTimer = 0;
+              }
+              eventHasHappened = true;
+            }
+            if (key == GLFW_KEY_LEFT)
+            {
+              if (m_cursorPosition > 0)
+              {
+                m_cursorPosition--;
+                m_cursorBlinkTimer = 0;
+              }
+              eventHasHappened = true;
+            }
+          }
+
+          unsigned char key = 0U;
+          key = getContext()->getContent()->getKeyboard()->popTypedInputChar();
+          if (key != 0)
+          {
+            if (getContext()->isFocused(this))
+            {
+              insertChar(key);
+              eventHasHappened = true;
+              onType();
+            }
+          }
+        }
+
+        return eventHasHappened;
+      }
+
       void setText(std::string text)
       {
         m_text = text;
@@ -2176,12 +2187,12 @@ namespace glw
           DEFINE_TRIGGER(onType),
           DEFINE_TRIGGER(onPressed)):
 
-      void onType()
+      trigger onType()
       {
         LINKER_CALL(onType);
       }
 
-      void onPressed()
+      trigger onPressed()
       {
         if (isPressed())
         {
@@ -2235,23 +2246,6 @@ namespace glw
 
       }
 
-      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
-      {
-        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
-      }
-      virtual bool checkMouseEvents(int button, int action)
-      {
-        bool eventHasHappened = false;
-
-        eventHasHappened |= checkGroupMouseEvents(button, action);
-
-        onUp();
-        onDown();
-        onBarMove();
-
-        return eventHasHappened;
-      }
-      virtual bool checkKeyEvents(int key, int action) { return false; }
       virtual void init(GContext * context, IGComponent * parent)
       {
         GComponent::initComponent(context, parent, "slider");
@@ -2281,6 +2275,25 @@ namespace glw
 
         initGroup(context, this);
       }
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
+      }
+
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        bool eventHasHappened = false;
+
+        eventHasHappened |= checkGroupMouseEvents(button, action);
+
+        onUp();
+        onDown();
+        onBarMove();
+
+        return eventHasHappened;
+      }
+
       virtual void validate()
       {
         if (m_isVertical)
@@ -2306,6 +2319,7 @@ namespace glw
 
         validateGroup();
       }
+
       virtual void update()
       {
         m_down->updateCounters();
@@ -2345,7 +2359,6 @@ namespace glw
         updateGroup();
       }
 
-
       void snapValue()
       {
         m_value = round(m_value / m_inc) / (1 / m_inc);
@@ -2383,7 +2396,7 @@ namespace glw
           DEFINE_TRIGGER(onUp),
           DEFINE_TRIGGER(onBarMove)):
 
-      void onDown()
+      trigger onDown()
       {
         if (m_down->isPressed() || m_down->isHeldOver())
         {
@@ -2392,7 +2405,7 @@ namespace glw
           LINKER_CALL(onDown);
         }
       }
-      void onUp()
+      trigger onUp()
       {
         if (m_up->isPressed() || m_up->isHeldOver())
         {
@@ -2401,7 +2414,7 @@ namespace glw
           LINKER_CALL(onUp);
         }
       }
-      void onBarMove()
+      trigger onBarMove()
       {
         if (m_bar->isDragging())
         {
@@ -2433,23 +2446,6 @@ namespace glw
       {
       }
 
-      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
-      {
-        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
-      }
-      virtual bool checkMouseEvents(int button, int action)
-      {
-        bool eventHasHappened = false;
-
-        eventHasHappened |= checkGroupMouseEvents(button, action);
-
-        onIncrease();
-        onDecrease();
-        onReset();
-
-        return eventHasHappened;
-      }
-      virtual bool checkKeyEvents(int key, int action) { return false; }
       virtual void init(GContext * context, IGComponent * parent)
       {
         GComponent::initComponent(context, parent, "spinner");
@@ -2465,6 +2461,25 @@ namespace glw
 
         initGroup(context, this);
       }
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
+      }
+
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        bool eventHasHappened = false;
+
+        eventHasHappened |= checkGroupMouseEvents(button, action);
+
+        onIncrease();
+        onDecrease();
+        onReset();
+
+        return eventHasHappened;
+      }
+
       virtual void validate()
       {
         m_label->setPos(glm::vec2(m_size.x / 6, 0));
@@ -2478,6 +2493,7 @@ namespace glw
 
         validateGroup();
       }
+
       virtual void update()
       {
         m_plus->updateCounters();
@@ -2528,7 +2544,7 @@ namespace glw
           DEFINE_TRIGGER(onDecrease),
           DEFINE_TRIGGER(onReset)):
 
-      void onIncrease()
+      trigger onIncrease()
       {
         if (m_plus->isReleasedOver())
         {
@@ -2536,7 +2552,7 @@ namespace glw
           LINKER_CALL(onIncrease);
         }
       }
-      void onDecrease()
+      trigger onDecrease()
       {
         if (m_minus->isReleasedOver())
         {
@@ -2544,7 +2560,7 @@ namespace glw
           LINKER_CALL(onDecrease);
         }
       }
-      void onReset()
+      trigger onReset()
       {
         if (m_label->isReleasedOver())
         {
@@ -2572,6 +2588,16 @@ namespace glw
       {
       }
 
+      virtual void init(GContext * context, IGComponent * parent)
+      {
+        GComponent::initComponent(context, parent, "dropdown");
+
+        m_selected = new GButton(glm::vec2(), getSize(), getSelectedName(), true);
+        addComponent(m_selected);
+
+        initGroup(context, this);
+      }
+
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
       {
         drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
@@ -2584,6 +2610,7 @@ namespace glw
           }
         }
       }
+
       virtual bool checkMouseEvents(int button, int action)
       {
         bool eventHasHappened = false;
@@ -2615,16 +2642,7 @@ namespace glw
 
         return eventHasHappened;
       }
-      virtual bool checkKeyEvents(int key, int action) {return false;}
-      virtual void init(GContext * context, IGComponent * parent)
-      {
-        GComponent::initComponent(context, parent, "dropdown");
 
-        m_selected = new GButton(glm::vec2(), getSize(), getSelectedName(), true);
-        addComponent(m_selected);
-
-        initGroup(context, this);
-      }
       virtual void validate()
       {
         m_selected->setPos(glm::vec2());
@@ -2642,6 +2660,7 @@ namespace glw
 
         validateGroup();
       }
+
       virtual void update()
       {
         if (!getContext()->isFocused(m_selected))
@@ -2702,12 +2721,12 @@ namespace glw
           DEFINE_TRIGGER(onSelect),
           DEFINE_TRIGGER(onDropdown)):
 
-      void onSelect()
+      trigger onSelect()
       {
         LINKER_CALL(onSelect);
       }
 
-      void onDropdown()
+      trigger onDropdown()
       {
         if (m_selected->isPressed() && m_selected->isToggled())
         {
@@ -2749,7 +2768,13 @@ namespace glw
       GImageView(glm::vec2 pos, glm::vec2 size, const char * imagefile)
         : GClickable(pos, size),
           m_imagefile(imagefile)
+      {}
+
+      virtual void init(GContext *context, IGComponent *parent)
       {
+        GComponent::initComponent(context, parent, "imageview");
+
+        m_image = createImage(m_imagefile);
       }
 
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
@@ -2767,26 +2792,10 @@ namespace glw
 
       }
 
-      virtual bool checkKeyEvents(int key, int action)
-      {
-        return false;
-      }
-
-      virtual void init(GContext *context, IGComponent *parent)
-      {
-        GComponent::initComponent(context, parent, "imageview");
-
-        m_image = createImage(m_imagefile);
-      }
-
       virtual void validate()
       {
         m_image.setPos(getPos());
         m_image.setSize(getSize());
-      }
-
-      virtual void update()
-      {
       }
 
       TRIGGERS_BASE(GIMAGEVIEW, DEFINE_TRIGGER_NONE):
@@ -2814,6 +2823,19 @@ namespace glw
       {
       }
 
+      virtual void init(GContext *context, IGComponent *parent)
+      {
+        GComponent::initComponent(context, parent, "progressbar");
+
+        m_back = createRectangle(getPos(), m_size, getColorStyle().background);
+        m_front = createRectangle(getPos(), getSize() * glm::vec2(getPercentageProgress(), 1), getColorStyle().accent);
+        m_label = createLabel("0", getPos() + glm::vec2(getSize().x / 2, 0), m_size.y, getColorStyle().foreground);
+        m_label->centerHorizontal(true);
+
+        addComponent(m_label);
+
+        initGroup(context, this);
+      }
 
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
       {
@@ -2830,25 +2852,6 @@ namespace glw
 
         return eventHasHappened;
 
-      }
-
-      virtual bool checkKeyEvents(int key, int action)
-      {
-        return false;
-      }
-
-      virtual void init(GContext *context, IGComponent *parent)
-      {
-        GComponent::initComponent(context, parent, "progressbar");
-
-        m_back = createRectangle(getPos(), m_size, getColorStyle().background);
-        m_front = createRectangle(getPos(), getSize() * glm::vec2(getPercentageProgress(), 1), getColorStyle().accent);
-        m_label = createLabel("0", getPos() + glm::vec2(getSize().x / 2, 0), m_size.y, getColorStyle().foreground);
-        m_label->centerHorizontal(true);
-
-        addComponent(m_label);
-
-        initGroup(context, this);
       }
 
       virtual void validate()
@@ -2925,7 +2928,15 @@ namespace glw
 
       GCheckBox(glm::vec2 pos, glm::vec2 size)
         : GClickable(pos, size, true)
+      {}
+
+      virtual void init(GContext *context, IGComponent *parent)
       {
+        GComponent::initComponent(context, parent, "checkbox");
+
+        m_border = createBox(getPos(), getSize(), 0.1f, getColorStyle().accent);
+        m_check = createRectangle(getPos(), getSize(), getColorStyle().accent);
+
       }
 
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
@@ -2947,20 +2958,6 @@ namespace glw
 
       }
 
-      virtual bool checkKeyEvents(int key, int action)
-      {
-        return false;
-      }
-
-      virtual void init(GContext *context, IGComponent *parent)
-      {
-        GComponent::initComponent(context, parent, "checkbox");
-
-        m_border = createBox(getPos(), getSize(), 0.1f, getColorStyle().accent);
-        m_check = createRectangle(getPos(), getSize(), getColorStyle().accent);
-
-      }
-
       virtual void validate()
       {
         m_border.setPos(getPos());
@@ -2969,10 +2966,6 @@ namespace glw
         m_check.setPos(getPos() + getSize() * 0.2f);
         m_check.setSize(getSize() * 0.6f);
         m_check.setColor(getColorStyle().accent);
-      }
-
-      virtual void update()
-      {
       }
 
       TRIGGERS_BASE(GCHECKBOX, DEFINE_TRIGGER_NONE):
@@ -3223,7 +3216,7 @@ namespace glw
           m_cancelText(cancelText)
       {}
 
-      void init(GContext *context, IGComponent *parent)
+      virtual void init(GContext *context, IGComponent *parent)
       {
         GWindow::init(context, parent);
 
@@ -3266,12 +3259,12 @@ namespace glw
         removeFromParent();
       }
 
-      void addConfirmCallback(glw::meta::GAction action)
+      virtual void addConfirmCallback(glw::meta::GAction action)
       {
         LINKER_LINK(GDialog::T_onConfirm, action);
       }
 
-      void addCancelCallback(glw::meta::GAction action)
+      virtual void addCancelCallback(glw::meta::GAction action)
       {
         LINKER_LINK(GDialog::T_onCancel, action);
         LINKER_LINK(GDialog::T_onClose, action);
@@ -3283,21 +3276,21 @@ namespace glw
           DEFINE_TRIGGER(onCancel),
           DEFINE_TRIGGER(onClose)):
 
-      void onConfirm()
+      trigger onConfirm()
       {
         m_outcome = true;
         LINKER_CALL(onConfirm);
         finish();
       }
 
-      void onCancel()
+      trigger onCancel()
       {
         m_outcome = false;
         LINKER_CALL(onCancel);
         finish();
       }
 
-      void onClose()
+      trigger onClose()
       {
         m_outcome = false;
         LINKER_CALL(onClose);
