@@ -28,6 +28,7 @@ using util::StringFormat;
 
 using glw::meta::GLinker;
 
+
 #define GNULLPTR NULL
 #define GNULL_ID ""
 #define GDEFAULT_ID "component"
@@ -780,13 +781,22 @@ namespace glw
         }
       }
 
+      void removeFromParent()
+      {
+        IGComponent * component = getParent();
+        if (component != GNULLPTR)
+        {
+          dynamic_cast<GGroup*>(component)->removeComponent(this);
+        }
+      }
+
       bool makeUnique(std::string id)
       {
         bool success = true;
 
         if(!TRACK(id, this))
         {
-          getContext()->removeComponent(this);
+          removeFromParent();
           success = false;
         }
 
@@ -1335,7 +1345,7 @@ namespace glw
       int m_heldThreshold = GGUI_BUTTON_ROLLOVER;
     };
 
-    class GButton : public GGroup, public GClickable, public GLinker<GButton>
+    class GButton : public GGroup, public GClickable, public GLinker
     {
     public:
       GButton() {}
@@ -1431,13 +1441,19 @@ namespace glw
         m_label->setText(text);
       }
 
-      triggers:
+      TRIGGERS_BASE(
+          GBUTTON,
+          DEFINE_TRIGGER(onPressed),
+          DEFINE_TRIGGER(onDown),
+          DEFINE_TRIGGER(onReleased),
+          DEFINE_TRIGGER(onToggledOn),
+          DEFINE_TRIGGER(onToggledOff)):
 
       void onPressed()
       {
         if (isPressed())
         {
-          callTrigger(&GButton::onPressed);
+          LINKER_CALL(onPressed);
         }
       }
 
@@ -1445,7 +1461,7 @@ namespace glw
       {
         if (isDown())
         {
-          callTrigger(&GButton::onDown);
+          LINKER_CALL(onDown);
         }
       }
 
@@ -1453,7 +1469,7 @@ namespace glw
       {
         if (isReleased())
         {
-          callTrigger(&GButton::onReleased);
+          LINKER_CALL(onReleased);
         }
       }
 
@@ -1461,7 +1477,7 @@ namespace glw
       {
         if (isToggled())
         {
-          callTrigger(&GButton::onToggledOn);
+          LINKER_CALL(onToggledOn);
         }
       }
 
@@ -1469,7 +1485,7 @@ namespace glw
       {
         if (!isToggled())
         {
-          callTrigger(&GButton::onToggledOff);
+          LINKER_CALL(onToggledOff);
         }
       }
 
@@ -1479,7 +1495,7 @@ namespace glw
       GLabel * m_label;
     };
 
-    class GWindow : public GGroup, public GClickable, public GLinker<GWindow>
+    class GWindow : public GGroup, public GClickable, public GLinker
     {
     public:
 
@@ -1505,12 +1521,22 @@ namespace glw
       {
         bool eventHasHappened = false;
 
-        eventHasHappened |= checkGroupMouseEvents(button, action);
+        // Window native buttons are highest priority
+        if (eventHasHappened |= checkGroupMouseEvents(button, action))
+        {
+          onFocus();
+        }
 
+        // Window child components next in priority
         if (!eventHasHappened)
         {
-          eventHasHappened |= m_children.checkGroupMouseEvents(button, action);
+          if (eventHasHappened |= m_children.checkGroupMouseEvents(button, action))
+          {
+            GComponent::bringToFront();
+          }
         }
+
+        // If nothing else happened check if the component was clicked at all
         if (!eventHasHappened)
         {
           eventHasHappened |= GClickable::checkMouseEvents(button, action);
@@ -1520,11 +1546,6 @@ namespace glw
         onScale();
         onWindowMove();
         onResize();
-
-        if (eventHasHappened)
-        {
-          focus();
-        }
 
         return eventHasHappened;
       }
@@ -1571,7 +1592,7 @@ namespace glw
 
         // Init window components and its children components
         initGroup(context, this);
-        m_children.initGroup(context, this);
+        initChildren(context, this);
 
         // Override colorstyles
         GColorStyle colorStyle = getColorStyle();
@@ -1724,10 +1745,7 @@ namespace glw
 
       void closeWindow()
       {
-        if (getContext() != GNULLPTR)
-        {
-          getContext()->removeComponent(this);
-        }
+        removeFromParent();
       }
 
       void maximiseWindow()
@@ -1812,16 +1830,22 @@ namespace glw
 
       virtual void focusComponent()
       {
-        focus();
+        onFocus();
       }
 
-      triggers:
+      TRIGGERS_BASE(
+          GWINDOW,
+          DEFINE_TRIGGER(onClose),
+          DEFINE_TRIGGER(onScale),
+          DEFINE_TRIGGER(onWindowMove),
+          DEFINE_TRIGGER(onResize),
+          DEFINE_TRIGGER(onFocus)):
 
       void onClose()
       {
         if (m_close->isReleasedOver())
         {
-          callTrigger(&GWindow::onClose);
+          LINKER_CALL(onClose);
           closeWindow();
         }
       }
@@ -1831,7 +1855,7 @@ namespace glw
         if (m_maxmin->isReleasedOver())
         {
           toggleMaximise();
-          callTrigger(&GWindow::onScale);
+          LINKER_CALL(onScale);
         }
       }
 
@@ -1839,7 +1863,7 @@ namespace glw
       {
         if (m_titleBar->isDragging())
         {
-          callTrigger(&GWindow::onWindowMove);
+          LINKER_CALL(onWindowMove);
         }
       }
 
@@ -1849,16 +1873,23 @@ namespace glw
         {
           if (m_leftResizeBar->isDragging() || m_rightResizeBar->isDragging() || m_bottomResizeBar->isDragging())
           {
-            callTrigger(&GWindow::onResize);
+            LINKER_CALL(onResize);
           }
         }
       }
 
-      void focus()
+      void onFocus()
       {
         GComponent::focusComponent();
         GComponent::bringToFront();
-        callTrigger(&GWindow::focus);
+        LINKER_CALL(onFocus);
+      }
+
+    protected:
+
+      void initChildren(GContext * context, IGComponent * parent)
+      {
+        m_children.initGroup(context, parent);
       }
 
     private:
@@ -1928,7 +1959,7 @@ namespace glw
       }
     };
 
-    class GTextEdit : public GClickable, public GLinker<GTextEdit>
+    class GTextEdit : public GClickable, public GLinker
     {
     public:
 
@@ -2113,18 +2144,21 @@ namespace glw
         m_isMultiline = isMultiline;
       }
 
-      triggers:
+      TRIGGERS_BASE(
+          GTEXTEDIT,
+          DEFINE_TRIGGER(onType),
+          DEFINE_TRIGGER(onPressed)):
 
       void onType()
       {
-        callTrigger(&GTextEdit::onType);
+        LINKER_CALL(onType);
       }
 
       void onPressed()
       {
         if (isPressed())
         {
-          callTrigger(&GTextEdit::onPressed);
+          LINKER_CALL(onPressed);
         }
       }
 
@@ -2162,7 +2196,7 @@ namespace glw
       }
     };
 
-    class GSlider : public GGroup, public GClickable, public GLinker<GSlider>
+    class GSlider : public GGroup, public GClickable, public GLinker
     {
     public:
       GSlider(glm::vec2 pos, glm::vec2 size, float value, float inc, float isVertical = false)
@@ -2319,7 +2353,11 @@ namespace glw
         setValue(m_value);
       }
 
-      triggers:
+      TRIGGERS_BASE(
+          GSLIDER,
+          DEFINE_TRIGGER(onDown),
+          DEFINE_TRIGGER(onUp),
+          DEFINE_TRIGGER(onBarMove)):
 
       void onDown()
       {
@@ -2327,7 +2365,7 @@ namespace glw
         {
           increment();
           validate();
-          callTrigger(&GSlider::onDown);
+          LINKER_CALL(onDown);
         }
       }
       void onUp()
@@ -2336,7 +2374,7 @@ namespace glw
         {
           decrement();
           validate();
-          callTrigger(&GSlider::onUp);
+          LINKER_CALL(onUp);
         }
       }
       void onBarMove()
@@ -2344,7 +2382,7 @@ namespace glw
         if (m_bar->isDragging())
         {
           validate();
-          callTrigger(&GSlider::onBarMove);
+          LINKER_CALL(onBarMove);
         }
       }
 
@@ -2361,7 +2399,7 @@ namespace glw
 
     };
 
-    class GSpinner : public GGroup, public GClickable, public GLinker<GSpinner>
+    class GSpinner : public GGroup, public GClickable, public GLinker
     {
     public:
       GSpinner(glm::vec2 pos, glm::vec2 size, float value = 0.0f, float inc = 1.0f)
@@ -2463,14 +2501,18 @@ namespace glw
         validate();
       }
 
-      triggers:
+      TRIGGERS_BASE(
+          GSPINNER,
+          DEFINE_TRIGGER(onIncrease),
+          DEFINE_TRIGGER(onDecrease),
+          DEFINE_TRIGGER(onReset)):
 
       void onIncrease()
       {
         if (m_plus->isReleasedOver())
         {
           increase();
-          callTrigger(&GSpinner::onIncrease);
+          LINKER_CALL(onIncrease);
         }
       }
       void onDecrease()
@@ -2478,7 +2520,7 @@ namespace glw
         if (m_minus->isReleasedOver())
         {
           decrease();
-          callTrigger(&GSpinner::onDecrease);
+          LINKER_CALL(onDecrease);
         }
       }
       void onReset()
@@ -2487,7 +2529,7 @@ namespace glw
         {
           setValue(0);
           validate();
-          callTrigger(&GSpinner::onReset);
+          LINKER_CALL(onReset);
         }
       }
 
@@ -2500,7 +2542,7 @@ namespace glw
     };
 
     template <class T>
-    class GDropdown : public GGroup, public GClickable, public GLinker<GDropdown<T>>
+    class GDropdown : public GGroup, public GClickable, public GLinker
     {
     public:
 
@@ -2637,18 +2679,21 @@ namespace glw
         }
       }
 
-      triggers:
+      TRIGGERS_BASE(
+          GDROPDOWN,
+          DEFINE_TRIGGER(onSelect),
+          DEFINE_TRIGGER(onDropdown)):
 
       void onSelect()
       {
-        this->callTrigger(&GDropdown::onSelect);
+        LINKER_CALL(onSelect);
       }
 
       void onDropdown()
       {
         if (m_selected->isPressed() && m_selected->isToggled())
         {
-          this->callTrigger(&GDropdown::onDropdown);
+          LINKER_CALL(onDropdown);
         }
       }
 
@@ -2677,7 +2722,7 @@ namespace glw
       }
     };
 
-    class GImageView : public GClickable, public GLinker<GImageView>
+    class GImageView : public GClickable, public GLinker
     {
     public:
 
@@ -2729,7 +2774,8 @@ namespace glw
       {
       }
 
-      triggers:
+      TRIGGERS_BASE(GIMAGEVIEW, DEFINE_TRIGGER_NONE):
+
     private:
 
       const char * m_imagefile;
@@ -2738,7 +2784,7 @@ namespace glw
 
     };
 
-    class GProgressBar : public GGroup, public GClickable, public GLinker<GProgressBar>
+    class GProgressBar : public GGroup, public GClickable, public GLinker
     {
     public:
 
@@ -2839,7 +2885,8 @@ namespace glw
         return m_progressCurrent;
       }
 
-      triggers:
+      TRIGGERS_BASE(GPROGRESSBAR, DEFINE_TRIGGER_NONE):
+
     private:
 
       GShape m_back;
@@ -2859,7 +2906,7 @@ namespace glw
 
     };
 
-    class GCheckBox : public GClickable, public GLinker<GCheckBox>
+    class GCheckBox : public GClickable, public GLinker
     {
     public:
       GCheckBox() {}
@@ -2919,7 +2966,8 @@ namespace glw
       {
       }
 
-      triggers:
+      TRIGGERS_BASE(GCHECKBOX, DEFINE_TRIGGER_NONE):
+
     private:
 
       GShape m_border;
@@ -2930,6 +2978,7 @@ namespace glw
     /**
      * @brief The GDialog class - Needs threading work for waiting for outcome
      */
+    /*
     class GDialog : public GGroup, public GClickable, public GLinker<GDialog>
     {
     public:
@@ -3026,10 +3075,7 @@ namespace glw
 
       void finish()
       {
-        if (getContext() != GNULLPTR)
-        {
-          getContext()->removeComponent(this);
-        }
+        removeFromParent();
       }
 
       void setPos(const glm::vec2 pos)
@@ -3111,6 +3157,7 @@ namespace glw
 
       bool m_outcome = false;
     };
+*/
 
     class GPane : public GComponent, public GGroup
     {
@@ -3157,6 +3204,112 @@ namespace glw
     };
 
 
+    class GDialog : public GWindow
+    {
+    public:
+
+      GDialog() {}
+
+      GDialog(glm::vec2 pos, std::string message, std::string confirmText = "Okay", std::string cancelText = "Cancel", std::string title = "")
+        : GWindow(pos, glm::vec2(), title),
+          m_messageText(message),
+          m_confirmText(confirmText),
+          m_cancelText(cancelText)
+      {}
+
+      void init(GContext *context, IGComponent *parent)
+      {
+        GWindow::init(context, parent);
+
+        setId("dialog");
+
+        m_message = new GTextEdit(glm::vec2(GGUI_DEFAULT_PADDING), glm::vec2(250, GGUI_DEFAULT_PADDING), m_messageText, GGUI_DEFAULT_FONT_SIZE, getColorStyle().foreground, false);
+        addChildComponent(m_message);
+
+        m_confirm = new GButton(glm::vec2(50, m_message->getSize().y + GGUI_DEFAULT_PADDING), glm::vec2(100, GGUI_DEFAULT_FONT_SIZE), m_confirmText);
+        addChildComponent(m_confirm);
+        LINKER_NEW_LINK(m_confirm, GButton::T_onPressed, ACTION(*this, &GDialog::onConfirm));
+
+
+        m_cancel = new GButton(glm::vec2(200, m_message->getSize().y + GGUI_DEFAULT_PADDING), glm::vec2(100, GGUI_DEFAULT_FONT_SIZE), m_cancelText);
+        addChildComponent(m_cancel);
+        LINKER_NEW_LINK(m_cancel, GButton::T_onPressed, ACTION(*this, &GDialog::onCancel));
+
+        initChildren(context, this);
+
+        setResizeable(false);
+        setScalable(false);
+      }
+
+      virtual void validate()
+      {
+        GWindow::validate();
+
+        m_confirm->setPos(glm::vec2(50, m_message->getSize().y + GGUI_DEFAULT_PADDING));
+        m_confirm->setSize(glm::vec2(100, GGUI_DEFAULT_FONT_SIZE));
+
+        m_cancel->setPos(glm::vec2(200, m_message->getSize().y + GGUI_DEFAULT_PADDING));
+        m_cancel->setSize(glm::vec2(100, GGUI_DEFAULT_FONT_SIZE));
+
+        m_message->setPos(glm::vec2(GGUI_DEFAULT_PADDING));
+        m_message->setSize(glm::vec2(250, GGUI_DEFAULT_PADDING));
+      }
+
+      void finish()
+      {
+        removeFromParent();
+      }
+
+      void addConfirmCallback(glw::meta::GAction action)
+      {
+        LINKER_LINK(GDialog::T_onConfirm, action);
+      }
+
+      void addCancelCallback(glw::meta::GAction action)
+      {
+        LINKER_LINK(GDialog::T_onCancel, action);
+        LINKER_LINK(GDialog::T_onClose, action);
+      }
+
+      TRIGGERS_DERIVED(
+          GDIALOG, GWINDOW,
+          DEFINE_TRIGGER(onConfirm),
+          DEFINE_TRIGGER(onCancel),
+          DEFINE_TRIGGER(onClose)):
+
+      void onConfirm()
+      {
+        m_outcome = true;
+        LINKER_CALL(onConfirm);
+        finish();
+      }
+
+      void onCancel()
+      {
+        m_outcome = false;
+        LINKER_CALL(onCancel);
+        finish();
+      }
+
+      void onClose()
+      {
+        m_outcome = false;
+        LINKER_CALL(onClose);
+        finish();
+      }
+
+    private:
+      std::string m_confirmText;
+      std::string m_cancelText;
+      std::string m_messageText;
+
+      GButton * m_confirm;
+      GButton * m_cancel;
+      GTextEdit * m_message;
+
+      bool m_outcome = false;
+    };
+
     static GDialog * createDialog(GContext& context, IGComponent *parent, std::string message, std::string confirmText = "Okay", std::string cancelText = "Cancel", std::string title = "")
     {
       glm::vec2 windowSize;
@@ -3172,7 +3325,6 @@ namespace glw
       dialog->setPos(windowSize / 2.0f - dialog->getSize() / 2.0f);
       return dialog;
     }
-
 
   }
 }

@@ -200,5 +200,8 @@ namespace util
 #define LINFO(str) util::log::Logger::LInfo(TRG, str, LINFO_ARGS)
 #define LTRACE() util::log::Logger::LTrace()
 
+#define LASSERT_TRUE(b) LINFO(b ? "ASSERT_TRUE: PASSED" : "ASSERT_TRUE: FAILED")
+#define LASSERT_FALSE(b) LINFO(!b ? "ASSERT_FALSE: PASSED" : "ASSERT_FALSE: FAILED")
+
 #define LSTARTLOGGER(str) util::log::Logger::LOpenFile(str)
 #define LENDLOGGER() util::log::Logger::LCloseFile()

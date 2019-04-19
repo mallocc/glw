@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 #include <thread>
+#include <map>
+#include "Logger.h"
 
 
 namespace glw
@@ -33,12 +35,26 @@ namespace glw
     {
     public:
       virtual void callback() = 0;
+      virtual void* getObject() = 0;
+      virtual void* getFunc() = 0;
     };
     // templated action class
     template<typename T>
     class GMetaAction : public IGMetaAction
     {
     public:
+      GMetaAction(GFuncPtr func)
+      {
+        m_func = func;
+        m_isStatic = true;
+      }
+      GMetaAction(T* object, GMemberFunc<T> func)
+      {
+        m_object = object;
+        m_memberFunc = func;
+        m_isStatic = false;
+      }
+
       void callback()
       {
         if (m_isStatic)
@@ -57,106 +73,24 @@ namespace glw
         }
       }
 
-      GMetaAction(GFuncPtr func)
+      void* getObject()
       {
-        m_func = func;
-        m_isStatic = true;
+        return m_object;
       }
-      GMetaAction(T * object, GMemberFunc<T> func)
+
+      void* getFunc()
       {
-        m_object = object;
-        m_memberFunc = func;
-        m_isStatic = false;
+        return &m_memberFunc;
       }
     protected:
       bool m_isStatic;
       GFuncPtr m_func;
       GMemberFunc<T> m_memberFunc;
-      T * m_object;
+      T* m_object;
     };
+
     // Typedef the interface
     typedef IGMetaAction* GAction;
-
-
-
-    // Template class for a trigger
-    template<typename T>
-    struct GTriggerPtr
-    {
-      typedef void (T::*GTriggerFunc)();
-    };
-    // Typedef the templated trigger's function
-    template<typename T>
-    using GTriggerFunction = typename GTriggerPtr<T>::GTriggerFunc;
-
-
-
-    // Templated pair of trigger and action
-    template<typename T>
-    using GLink = std::pair<GTriggerFunction<T>, GAction>;
-    // Templated linker class
-    template<typename T>
-    class GLinker
-    {
-    public:
-      void link(GTriggerFunction<T> trigger, GAction action)
-      {
-        m_links.push_back(std::make_pair(trigger, action));
-      }
-
-      GLinker() {}
-    protected:
-      void callTrigger(GTriggerFunction<T> trigger)
-      {
-        for (GLink<T>& link : m_links)
-        {
-          if (trigger == link.first)
-          {
-            if (NULL != link.second)
-            {
-              link.second->callback();
-            }
-          }
-        }
-      }
-  private:
-      std::vector<GLink<T>> m_links;
-    };
-
-
-
-    // Interface for action class
-    class IGMetaTrigger
-    {
-    public:
-      virtual void link(GAction action) = 0;
-    };
-    // templated action class
-    template<typename T>
-    class GMetaTrigger : public IGMetaTrigger
-    {
-    public:
-      GMetaTrigger(GLinker<T> * linker, GTriggerFunction<T> trigger)
-      {
-        m_linker = linker;
-        m_trigger = trigger;
-      }
-
-      void link(GAction action)
-      {
-        if (NULL != m_linker)
-        {
-          m_linker->link(m_trigger, action);
-        }
-      }
-    protected:
-      GLinker<T> * m_linker;
-      GTriggerFunction<T> m_trigger;
-    };
-    // Typedef the interface
-    typedef IGMetaTrigger* GTrigger;
-
-
 
     // static function to create an action
     static GAction __action(GFuncPtr func)
@@ -175,69 +109,74 @@ namespace glw
       return new GMetaAction<T>(object, func);
     }
 
-    // static function to create a trigger
-    template<typename T>
-    static GTrigger __trigger(GLinker<T>& linker, GTriggerFunction<T> trigger)
-    {
-      return new GMetaTrigger<T>(&linker, trigger);
-    }
-    template<typename T>
-    static GTrigger __trigger(GLinker<T> * linker, GTriggerFunction<T> trigger)
-    {
-      return new GMetaTrigger<T>(linker, trigger);
-    }
 
-    // static function to link trigger and action
-    static void __link(GTrigger trigger, GAction action)
-    {
-      trigger->link(action);
-    }
-    // static function to link linker's with trigger and action
-    template<typename T>
-    static void __link(GLinker<T>& linker, GTriggerFunction<T> trigger, GAction action)
-    {
-      linker.link(trigger, action);
-    }
-
-
-    class GTask
+    // Trigger id
+    typedef int Trigger;
+    // Templated linker class
+    class GLinker
     {
     public:
+      GLinker()
+        : m_links() {}
 
-      GTask(GAction action)
-        : m_action(action)
+      void link(Trigger trigger, GAction action)
       {
-        std::thread(&GTask::run, this);
+        m_links[trigger] = action;
       }
 
-      ~GTask()
+    protected:
+      void callTrigger(Trigger trigger)
       {
-        delete m_action;
+        std::map<Trigger, GAction>::iterator link = m_links.find(trigger);
+        if (link != m_links.end())
+        {
+          if (NULL != link->second)
+          {
+            link->second->callback();
+          }
+        }
       }
-
-      void run()
-      {
-        m_action->callback();
-        this->~GTask();
-      }
-
     private:
-      GAction m_action;
+      std::map<Trigger, GAction> m_links;
     };
 
-    static void __run(GAction action)
+
+
+    // static function to link linker's with trigger and action
+    static void __link(GLinker* linker, Trigger trigger, GAction action)
     {
-      GTask * task = new GTask(action);
-      task->run();
+      linker->link(trigger, action);
+    }
+    // static function to link linker's with trigger and action
+    static void __link(GLinker& linker, Trigger trigger, GAction action)
+    {
+      linker.link(trigger, action);
     }
 
   }
 }
 
-#define triggers public
 
-#define TRIGGER(...) glw::meta::__trigger(__VA_ARGS__)
+#define PPCAT_NX(A, B)  A ## B
+#define PPCAT(A, B)     PPCAT_NX(A, B)
+
+#define DEFINE_TRIGGER_PREFIX   T_
+#define DEFINE_TRIGGER(e)       PPCAT(DEFINE_TRIGGER_PREFIX, e)
+#define DEFINE_TRIGGER_COUNT(c) DEFINE_TRIGGER(PPCAT(c, _COUNT))
+#define DEFINE_TRIGGER_START(c) DEFINE_TRIGGER(PPCAT(c, _START))
+#define DEFINE_TRIGGER_NONE     DEFINE_TRIGGER(NONE)
+
+#define START_DEF_BASE_TRIGGERS(c) enum PPCAT(DEFINE_TRIGGER_PREFIX, c) {
+#define END_DEF_TRIGGERS(c) , DEFINE_TRIGGER_COUNT(c) };
+#define START_DEF_DERIVED_TRIGGERS(d,b) START_DEF_BASE_TRIGGERS(d) DEFINE_TRIGGER_START(d) = DEFINE_TRIGGER_COUNT(b),
+
+#define TRIGGERS_BASE(c, ...) START_DEF_BASE_TRIGGERS(c) __VA_ARGS__ END_DEF_TRIGGERS(c) public
+#define TRIGGERS_DERIVED(d, b, ...) START_DEF_DERIVED_TRIGGERS(d, b) __VA_ARGS__ END_DEF_TRIGGERS(d) public
+
+#define trigger(f) void f()
+
+#define LINKER_CALL(t)        GLinker::callTrigger(DEFINE_TRIGGER(t))
+#define LINKER_LINK(...)      GLinker::link(__VA_ARGS__)
+#define LINKER_NEW_LINK(...)  glw::meta::__link(__VA_ARGS__)
+
 #define ACTION(...) glw::meta::__action(__VA_ARGS__)
-#define LINK(...) glw::meta::__link(__VA_ARGS__)
-
-#define RUN(...) glw::meta::__run(__VA_ARGS__)

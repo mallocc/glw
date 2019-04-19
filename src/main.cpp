@@ -254,8 +254,8 @@ GReturnCode initVBOs()
 
   // Add a button with callbacks
   GButton * button = new GButton(glm::vec2(100), glm::vec2(500, 100), "yeet me");
-  LINK(TRIGGER(button, &GButton::onPressed), ACTION(onButtonPress));
-  LINK(TRIGGER(button, &GButton::onToggledOn), ACTION(onToggledOn));
+  LINKER_NEW_LINK(button, GButton::T_onPressed, ACTION(onButtonPress));
+  LINKER_NEW_LINK(button, GButton::T_onToggledOn, ACTION(onToggledOn));
   pane->addComponent(button);
 
   // Add a window
