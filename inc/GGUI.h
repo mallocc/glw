@@ -200,6 +200,13 @@ namespace glw
       virtual void focusComponent() = 0;
     };
 
+    class GGroup;
+    class IGWindow
+    {
+    public:
+      virtual GGroup& getChildren() = 0;
+    };
+
     class GComponentTracker
     {
     public:
@@ -477,12 +484,17 @@ namespace glw
         return glm::vec2(right + padding, top + padding);
       }
 
-      void printComponentTree(int level, std::string pre)
+      size_t size()
+      {
+        return m_group.size();
+      }
+
+      void printComponentTree(int level, std::string pre, bool capEnd = true)
       {
         for (int ix = 0; ix < m_group.size(); ++ix)
         {
           std::string tree;
-          bool end = ix == m_group.size() - 1;
+          bool end = capEnd && ix == m_group.size() - 1;
           if (level > 0)
           {
             if (end)
@@ -503,7 +515,21 @@ namespace glw
                 t.append(std::string(1, '|'));
               t.append(std::string(3, ' '));
             }
-            group->printComponentTree(level + 1, t);
+            if (IGWindow * window = dynamic_cast<IGWindow*>(m_group[ix]))
+            {
+              bool hasChildren = window->getChildren().size() > 0;
+              group->printComponentTree(level + 1, t, !hasChildren);
+              if (hasChildren)
+              {
+                LINFO(StringFormat("%2%0%1").arg(tree).arg("[CHILDREN]").arg(t).str());
+                t.append(std::string(4, ' '));
+                window->getChildren().printComponentTree(level + 2, t);
+              }
+            }
+            else
+            {
+              group->printComponentTree(level + 1, t);
+            }
           }
         }
       }
@@ -803,6 +829,14 @@ namespace glw
         return success;
       }
 
+      void initComponent(GContext *context, IGComponent *parent, GUnitID id)
+      {
+        setContext(context);
+        setParent(parent);
+        setId(id);
+        inheritColorStyle();
+      }
+
     protected:
       glm::vec2 m_pos;
       glm::vec2 m_size;
@@ -1075,10 +1109,7 @@ namespace glw
 
       virtual void init(GContext * context, IGComponent * parent)
       {
-        setContext(context);
-        setParent(parent);
-        setId("label");
-        inheritColorStyle();
+        GComponent::initComponent(context, parent, "label");
       }
 
       virtual void validate() {}
@@ -1400,10 +1431,7 @@ namespace glw
 
       virtual void init(GContext *context, IGComponent *parent)
       {
-        setContext(context);
-        setParent(parent);
-        setId("button");
-        inheritColorStyle();
+        GComponent::initComponent(context, parent, "button");
 
         glm::vec2 pos = m_pos;
         m_back = createRectangle(getPos(), m_size, getColorStyle().accent);
@@ -1495,7 +1523,7 @@ namespace glw
       GLabel * m_label;
     };
 
-    class GWindow : public GGroup, public GClickable, public GLinker
+    class GWindow : public IGWindow, public GGroup, public GClickable, public GLinker
     {
     public:
 
@@ -1560,10 +1588,7 @@ namespace glw
       virtual void init(GContext * context, IGComponent * parent)
       {
         // Inherit properties
-        setContext(context);
-        setParent(parent);
-        setId("window");
-        inheritColorStyle();
+        GComponent::initComponent(context, parent, "window");
 
         // Create background of the window
         m_back = createRectangle(glm::vec2(), getSize(), getColorStyle().background/2.0f);
@@ -1833,6 +1858,11 @@ namespace glw
         onFocus();
       }
 
+      virtual GGroup& getChildren()
+      {
+        return m_children;
+      }
+
       TRIGGERS_BASE(
           GWINDOW,
           DEFINE_TRIGGER(onClose),
@@ -1978,10 +2008,7 @@ namespace glw
 
       virtual void init(GContext *context, IGComponent *parent)
       {
-        setContext(context);
-        setParent(parent);
-        setId("textEdit");
-        inheritColorStyle();
+        GComponent::initComponent(context, parent, "textedit");
       }
       virtual void validate() {}
       virtual void update() {}
@@ -2227,10 +2254,7 @@ namespace glw
       virtual bool checkKeyEvents(int key, int action) { return false; }
       virtual void init(GContext * context, IGComponent * parent)
       {
-        setContext(context);
-        setParent(parent);
-        setId("scrollbar");
-        inheritColorStyle();
+        GComponent::initComponent(context, parent, "slider");
 
         if (m_isVertical)
         {
@@ -2428,10 +2452,7 @@ namespace glw
       virtual bool checkKeyEvents(int key, int action) { return false; }
       virtual void init(GContext * context, IGComponent * parent)
       {
-        setContext(context);
-        setParent(parent);
-        setId("spinner");
-        inheritColorStyle();
+        GComponent::initComponent(context, parent, "spinner");
 
         m_label = new GButton(glm::vec2(m_size.x / 6, 0), glm::vec2(m_size.x / 6 * 4, m_size.y), "0");
         addComponent(m_label);
@@ -2597,10 +2618,7 @@ namespace glw
       virtual bool checkKeyEvents(int key, int action) {return false;}
       virtual void init(GContext * context, IGComponent * parent)
       {
-        setContext(context);
-        setParent(parent);
-        setId("dropdown");
-        inheritColorStyle();
+        GComponent::initComponent(context, parent, "dropdown");
 
         m_selected = new GButton(glm::vec2(), getSize(), getSelectedName(), true);
         addComponent(m_selected);
@@ -2756,10 +2774,7 @@ namespace glw
 
       virtual void init(GContext *context, IGComponent *parent)
       {
-        setContext(context);
-        setParent(parent);
-        setId("imageview");
-        inheritColorStyle();
+        GComponent::initComponent(context, parent, "imageview");
 
         m_image = createImage(m_imagefile);
       }
@@ -2824,10 +2839,7 @@ namespace glw
 
       virtual void init(GContext *context, IGComponent *parent)
       {
-        setContext(context);
-        setParent(parent);
-        setId("progressbar");
-        inheritColorStyle();
+        GComponent::initComponent(context, parent, "progressbar");
 
         m_back = createRectangle(getPos(), m_size, getColorStyle().background);
         m_front = createRectangle(getPos(), getSize() * glm::vec2(getPercentageProgress(), 1), getColorStyle().accent);
@@ -2942,10 +2954,7 @@ namespace glw
 
       virtual void init(GContext *context, IGComponent *parent)
       {
-        setContext(context);
-        setParent(parent);
-        setId("button");
-        inheritColorStyle();
+        GComponent::initComponent(context, parent, "checkbox");
 
         m_border = createBox(getPos(), getSize(), 0.1f, getColorStyle().accent);
         m_check = createRectangle(getPos(), getSize(), getColorStyle().accent);
@@ -3184,10 +3193,7 @@ namespace glw
       }
       virtual void init(GContext * context, IGComponent * parent)
       {
-        setContext(context);
-        setParent(parent);
-        setId("pane");
-        inheritColorStyle();
+        GComponent::initComponent(context, parent, "pane");
 
         initGroup(context, this);
       }
