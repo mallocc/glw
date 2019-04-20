@@ -11,6 +11,12 @@ namespace glw
 {
   namespace meta
   {
+    namespace
+    {
+      const char * TRG = "GLNK";
+      const char * __CLASSNAME__ = "GLinker";
+    }
+
     // Normal function pointer
     typedef void(*GFuncPtr)();
 
@@ -67,6 +73,7 @@ namespace glw
           {
             if (NULL != m_memberFunc)
             {
+//              LINFO("EXECUTING CALLBACK");
               (m_object->*m_memberFunc)();
             }
           }
@@ -130,6 +137,7 @@ namespace glw
         std::map<Trigger, GAction>::iterator link = m_links.find(trigger);
         if (link != m_links.end())
         {
+//          LINFO("CALLING VALID ACTION");
           if (NULL != link->second)
           {
             link->second->callback();
@@ -145,11 +153,13 @@ namespace glw
     // static function to link linker's with trigger and action
     static void __link(GLinker* linker, Trigger trigger, GAction action)
     {
+//      LINFO("CREATING NEW LINK");
       linker->link(trigger, action);
     }
     // static function to link linker's with trigger and action
     static void __link(GLinker& linker, Trigger trigger, GAction action)
     {
+//      LINFO("CREATING NEW LINK");
       linker.link(trigger, action);
     }
 
@@ -173,7 +183,8 @@ namespace glw
 #define TRIGGERS_BASE(c, ...) START_DEF_BASE_TRIGGERS(c) __VA_ARGS__ END_DEF_TRIGGERS(c) public
 #define TRIGGERS_DERIVED(d, b, ...) START_DEF_DERIVED_TRIGGERS(d, b) __VA_ARGS__ END_DEF_TRIGGERS(d) public
 
-#define trigger void
+#define trigger_func void
+#define action_func void
 
 #define LINKER_CALL(t)        GLinker::callTrigger(DEFINE_TRIGGER(t))
 #define LINKER_LINK(...)      GLinker::link(__VA_ARGS__)

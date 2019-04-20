@@ -49,6 +49,8 @@ using glw::meta::GLinker;
 #define GGUI_WINDOW_TITLBAR_HEIGHT 25
 #define GGUI_WINDOW_DEADZONE 10
 
+#define DCAST_COMPONENT(c, O,o) O* o = dynamic_cast<O*>(c)
+
 #include <exception>
 #include <typeinfo>
 #include <stdexcept>
@@ -200,10 +202,17 @@ namespace glw
       virtual glm::vec2 getPos() = 0;
       virtual glm::vec2 getSize() = 0;
 
+      virtual std::string getComponentId() = 0;
+
       virtual void focusComponent() = 0;
+      virtual void unfocusComponent() = 0;
 
       virtual bool isEnabled() = 0;
       virtual bool isVisible() = 0;
+
+      virtual bool isInside(IGComponent* component) = 0;
+
+      virtual bool isFocused() = 0;
     };
 
     class GGroup;
@@ -318,7 +327,10 @@ namespace glw
       {
         for (IGComponent* obj : m_group)
         {
-          delete obj;
+          if (NULL != obj)
+          {
+            delete obj;
+          }
         }
         m_group.clear();
       }
@@ -332,26 +344,26 @@ namespace glw
       {
         for (IGComponent * component : m_group)
         {
-          if (component->isVisible())
+          if (NULL != component)
           {
-            component->draw(parentMatrix, shaderHandle, contextHandle);
+            if (component->isVisible())
+            {
+              component->draw(parentMatrix, shaderHandle, contextHandle);
+            }
           }
         }
       }
 
       bool checkGroupMouseEvents(int button, int action)
       {
-
         std::vector<IGComponent*>::reverse_iterator itor = m_group.rbegin();
-
 
         bool eventHappenedInChild = false;
 
         while(itor != m_group.rend() && !eventHappenedInChild)
         {
-
           IGComponent * component = *itor;
-          if (GNULLPTR != component)
+          if (NULL != component)
           {
             if (component->isVisible())
             {
@@ -361,7 +373,6 @@ namespace glw
               }
             }
           }
-
           ++itor;
         }
 
@@ -377,11 +388,14 @@ namespace glw
         while(itor != m_group.rend() && !eventHappenedInChild)
         {
           IGComponent * component = *itor;
-          if (component->isVisible())
+          if (NULL != component)
           {
-            if (component->isEnabled())
+            if (component->isVisible())
             {
-              eventHappenedInChild = component->checkKeyEvents(key, action);
+              if (component->isEnabled())
+              {
+                eventHappenedInChild = component->checkKeyEvents(key, action);
+              }
             }
           }
           ++itor;
@@ -394,7 +408,10 @@ namespace glw
       {
         for (IGComponent * component : m_group)
         {
-          component->init(context, parent);
+          if (NULL != component)
+          {
+            component->init(context, parent);
+          }
         }
       }
 
@@ -402,7 +419,10 @@ namespace glw
       {
         for (IGComponent * component : m_group)
         {
-          component->validate();
+          if (NULL != component)
+          {
+            component->validate();
+          }
         }
       }
 
@@ -452,7 +472,10 @@ namespace glw
         {
           IGComponent * component = m_group[id];
           m_group.erase(m_group.begin() + id);
-          delete component;
+          if (NULL != component)
+          {
+            delete component;
+          }
           return true;
         }
 
@@ -480,12 +503,15 @@ namespace glw
         float bottom = 1000000;
         for (IGComponent * component : m_group)
         {
-          glm::vec2 size = component->getSize();
-          glm::vec2 pos = component->getPos();
-          left = std::min(pos.x, left);
-          right = std::max(pos.x + size.x, right);
-          bottom = std::min(pos.y, bottom);
-          top = std::max(pos.y + size.y, top);
+          if (NULL != component)
+          {
+            glm::vec2 size = component->getSize();
+            glm::vec2 pos = component->getPos();
+            left = std::min(pos.x, left);
+            right = std::max(pos.x + size.x, right);
+            bottom = std::min(pos.y, bottom);
+            top = std::max(pos.y + size.y, top);
+          }
         }
         return glm::vec2(right + padding, top + padding);
       }
@@ -538,6 +564,35 @@ namespace glw
             }
           }
         }
+      }
+
+      std::vector<IGComponent*>& getGroupComponents()
+      {
+        return m_group;
+      }
+
+      bool hasFocusedChild()
+      {
+        bool focusedChild = false;
+
+        if (NULL != &m_group)
+        {
+          for (IGComponent * c : m_group)
+          {
+            if (NULL != c)
+            {
+              if (!(focusedChild |= c->isFocused()))
+              {
+                if (focusedChild |= dynamic_cast<GGroup*>(c)->hasFocusedChild())
+                  break;
+              }
+              else
+                break;
+            }
+          }
+        }
+
+        return focusedChild;
       }
 
     private:
@@ -632,6 +687,10 @@ namespace glw
           {
             validate();
           }
+          else
+          {
+            m_focused = GNULLPTR;
+          }
         }
         else
         {
@@ -665,6 +724,10 @@ namespace glw
 
       void setFocused(IGComponent * component)
       {
+        if (NULL != m_focused)
+        {
+          m_focused->unfocusComponent();
+        }
         m_focused = component;
       }
       bool isFocused(IGComponent * component)
@@ -672,6 +735,10 @@ namespace glw
         return component == m_focused;
       }
 
+      GContextShaderProgram& getShaderProgram()
+      {
+        return m_shaderProgram;
+      }
 
     private:
       GContent * m_content;
@@ -854,6 +921,47 @@ namespace glw
       virtual void validate() {}
       virtual void update() {}
 
+      virtual bool isFocused()
+      {
+        bool focused = false;
+
+        if (NULL != getContext())
+        {
+          focused = getContext()->isFocused(this);
+        }
+
+        return focused;
+      }
+
+      bool isInside(glm::vec2 point)
+      {
+        glm::vec2 relPos = point - getPos();
+        return relPos.x >= 0 && relPos.x <= getSize().x &&
+            relPos.y >= 0 && relPos.y <= getSize().y;
+      }
+
+      virtual bool isInside(IGComponent* component)
+      {
+        bool inside = NULL != component;
+
+        if (inside)
+        {
+          inside =
+              isInside(component->getPos()) ||
+              isInside(component->getPos() + component->getSize()) ||
+              isInside(component->getPos() + component->getSize() * glm::vec2(1,0)) ||
+              isInside(component->getPos() + component->getSize() * glm::vec2(0,1));
+        }
+
+        return inside;
+      }
+
+      virtual void unfocusComponent() {}
+
+      virtual std::string getComponentId()
+      {
+        return getId();
+      }
     protected:
       glm::vec2 m_pos;
       glm::vec2 m_size;
@@ -1253,8 +1361,7 @@ namespace glw
       GClickable(glm::vec2 pos, glm::vec2 size, bool isTogglable = false) :
         GComponent(pos, size),
         m_isTogglable(isTogglable)
-      {
-      }
+      {}
 
       bool onClickablePressed(bool isTrue)
       {
@@ -1262,7 +1369,10 @@ namespace glw
         {
           m_onPressed = true;
           m_onDown = true;
-          this->focusComponent();
+          if (m_focusable)
+          {
+            this->focusComponent();
+          }
         }
         else
         {
@@ -1374,6 +1484,16 @@ namespace glw
         onClickableDown(isDown());
       }
 
+      void setFocusable(bool focusable)
+      {
+        m_focusable = focusable;
+      }
+
+      bool getFocusable()
+      {
+        return m_focusable;
+      }
+
     protected:
 
       bool m_onDown = false;
@@ -1385,6 +1505,8 @@ namespace glw
 
       int m_heldCounter = 0;
       int m_heldThreshold = GGUI_BUTTON_ROLLOVER;
+
+      bool m_focusable = true;
     };
 
     class GButton : public GGroup, public GClickable, public GLinker
@@ -1482,7 +1604,7 @@ namespace glw
           DEFINE_TRIGGER(onToggledOn),
           DEFINE_TRIGGER(onToggledOff)):
 
-      trigger onPressed()
+      trigger_func onPressed()
       {
         if (isPressed())
         {
@@ -1490,7 +1612,7 @@ namespace glw
         }
       }
 
-      trigger onDown()
+      trigger_func onDown()
       {
         if (isDown())
         {
@@ -1498,7 +1620,7 @@ namespace glw
         }
       }
 
-      trigger onReleased()
+      trigger_func onReleased()
       {
         if (isReleased())
         {
@@ -1506,7 +1628,7 @@ namespace glw
         }
       }
 
-      trigger onToggledOn()
+      trigger_func onToggledOn()
       {
         if (isToggled())
         {
@@ -1514,7 +1636,7 @@ namespace glw
         }
       }
 
-      trigger onToggledOff()
+      trigger_func onToggledOff()
       {
         if (!isToggled())
         {
@@ -1881,7 +2003,7 @@ namespace glw
           DEFINE_TRIGGER(onResize),
           DEFINE_TRIGGER(onFocus)):
 
-      trigger onClose()
+      trigger_func onClose()
       {
         if (m_close->isReleasedOver())
         {
@@ -1890,7 +2012,7 @@ namespace glw
         }
       }
 
-      trigger onScale()
+      trigger_func onScale()
       {
         if (m_maxmin->isReleasedOver())
         {
@@ -1899,7 +2021,7 @@ namespace glw
         }
       }
 
-      trigger onWindowMove()
+      trigger_func onWindowMove()
       {
         if (m_titleBar->isDragging())
         {
@@ -1907,7 +2029,7 @@ namespace glw
         }
       }
 
-      trigger onResize()
+      trigger_func onResize()
       {
         if(m_isResizable && !m_maximised)
         {
@@ -1918,7 +2040,7 @@ namespace glw
         }
       }
 
-      trigger onFocus()
+      trigger_func onFocus()
       {
         GComponent::focusComponent();
         GComponent::bringToFront();
@@ -2187,12 +2309,12 @@ namespace glw
           DEFINE_TRIGGER(onType),
           DEFINE_TRIGGER(onPressed)):
 
-      trigger onType()
+      trigger_func onType()
       {
         LINKER_CALL(onType);
       }
 
-      trigger onPressed()
+      trigger_func onPressed()
       {
         if (isPressed())
         {
@@ -2396,7 +2518,7 @@ namespace glw
           DEFINE_TRIGGER(onUp),
           DEFINE_TRIGGER(onBarMove)):
 
-      trigger onDown()
+      trigger_func onDown()
       {
         if (m_down->isPressed() || m_down->isHeldOver())
         {
@@ -2405,7 +2527,7 @@ namespace glw
           LINKER_CALL(onDown);
         }
       }
-      trigger onUp()
+      trigger_func onUp()
       {
         if (m_up->isPressed() || m_up->isHeldOver())
         {
@@ -2414,7 +2536,7 @@ namespace glw
           LINKER_CALL(onUp);
         }
       }
-      trigger onBarMove()
+      trigger_func onBarMove()
       {
         if (m_bar->isDragging())
         {
@@ -2544,7 +2666,7 @@ namespace glw
           DEFINE_TRIGGER(onDecrease),
           DEFINE_TRIGGER(onReset)):
 
-      trigger onIncrease()
+      trigger_func onIncrease()
       {
         if (m_plus->isReleasedOver())
         {
@@ -2552,7 +2674,7 @@ namespace glw
           LINKER_CALL(onIncrease);
         }
       }
-      trigger onDecrease()
+      trigger_func onDecrease()
       {
         if (m_minus->isReleasedOver())
         {
@@ -2560,7 +2682,7 @@ namespace glw
           LINKER_CALL(onDecrease);
         }
       }
-      trigger onReset()
+      trigger_func onReset()
       {
         if (m_label->isReleasedOver())
         {
@@ -2721,12 +2843,12 @@ namespace glw
           DEFINE_TRIGGER(onSelect),
           DEFINE_TRIGGER(onDropdown)):
 
-      trigger onSelect()
+      trigger_func onSelect()
       {
         LINKER_CALL(onSelect);
       }
 
-      trigger onDropdown()
+      trigger_func onDropdown()
       {
         if (m_selected->isPressed() && m_selected->isToggled())
         {
@@ -2782,20 +2904,16 @@ namespace glw
         m_image.draw(parentMatrix, shaderHandle, contextHandle);
       }
 
-      virtual bool checkMouseEvents(int button, int action)
-      {
-        bool eventHasHappened = false;
-
-        eventHasHappened |= GClickable::checkMouseEvents(button, action);
-
-        return eventHasHappened;
-
-      }
-
       virtual void validate()
       {
+        GComponent::validate();
         m_image.setPos(getPos());
         m_image.setSize(getSize());
+      }
+
+      GImage& getImage()
+      {
+        return m_image;
       }
 
       TRIGGERS_BASE(GIMAGEVIEW, DEFINE_TRIGGER_NONE):
@@ -2977,190 +3095,6 @@ namespace glw
 
     };
 
-    /**
-     * @brief The GDialog class - Needs threading work for waiting for outcome
-     */
-    /*
-    class GDialog : public GGroup, public GClickable, public GLinker<GDialog>
-    {
-    public:
-      GDialog() {}
-
-      GDialog(glm::vec2 pos, std::string message, std::string confirmText = "Okay", std::string cancelText = "Cancel", std::string title = "")
-        : GClickable(pos, glm::vec2()),
-          m_messageText(message),
-          m_confirmText(confirmText),
-          m_cancelText(cancelText),
-          m_title(title)
-      {}
-
-      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
-      {
-        m_window->draw(parentMatrix, shaderHandle, contextHandle);
-      }
-
-      virtual bool checkMouseEvents(int button, int action)
-      {
-        bool eventHasHappened = false;
-
-        eventHasHappened |= m_window->checkMouseEvents(button, action);
-
-        if (eventHasHappened)
-        {
-          focus();
-        }
-
-        return eventHasHappened;
-      }
-
-      virtual bool checkKeyEvents(int key, int action)
-      {
-        return false;
-      }
-
-      virtual void init(GContext *context, IGComponent *parent)
-      {
-        setContext(context);
-        setParent(parent);
-        setId("dialog");
-        inheritColorStyle();
-
-        m_window = new GWindow(GClickable::getPos(), GClickable::getSize(), m_title);
-
-        LINK(TRIGGER(m_window, &GWindow::onClose), ACTION(*this, &GDialog::onClose));
-        LINK(TRIGGER(m_window, &GWindow::focus), ACTION(*this, &GDialog::focus));
-
-        m_message = new GTextEdit(glm::vec2(GGUI_DEFAULT_PADDING), glm::vec2(250, GGUI_DEFAULT_PADDING), m_messageText, GGUI_DEFAULT_FONT_SIZE, getColorStyle().foreground, false);
-        m_window->addChildComponent(m_message);
-
-        m_confirm = new GButton(glm::vec2(50, m_message->getSize().y + GGUI_DEFAULT_PADDING), glm::vec2(100, GGUI_DEFAULT_FONT_SIZE), m_confirmText);
-        m_window->addChildComponent(m_confirm);
-
-        LINK(TRIGGER(m_confirm, &GButton::onPressed), ACTION(*this, &GDialog::onConfirm));
-
-        m_cancel = new GButton(glm::vec2(200, m_message->getSize().y + GGUI_DEFAULT_PADDING), glm::vec2(100, GGUI_DEFAULT_FONT_SIZE), m_cancelText);
-        m_window->addChildComponent(m_cancel);
-
-        LINK(TRIGGER(m_cancel, &GButton::onPressed), ACTION(*this, &GDialog::onCancel));
-
-        addComponent(m_window);
-
-        initGroup(context, parent);
-
-        m_window->setResizeable(false);
-        m_window->setScalable(false);
-      }
-
-      virtual void validate()
-      {
-        m_window->validate();
-
-        m_confirm->setPos(glm::vec2(50, m_message->getSize().y + GGUI_DEFAULT_PADDING));
-        m_confirm->setSize(glm::vec2(100, GGUI_DEFAULT_FONT_SIZE));
-
-        m_cancel->setPos(glm::vec2(200, m_message->getSize().y + GGUI_DEFAULT_PADDING));
-        m_cancel->setSize(glm::vec2(100, GGUI_DEFAULT_FONT_SIZE));
-
-        m_message->setPos(glm::vec2(GGUI_DEFAULT_PADDING));
-        m_message->setSize(glm::vec2(250, GGUI_DEFAULT_PADDING));
-      }
-
-      virtual void update()
-      {
-        m_window->update();
-      }
-
-      bool getOutcome()
-      {
-        return m_outcome;
-      }
-
-      void finish()
-      {
-        removeFromParent();
-      }
-
-      void setPos(const glm::vec2 pos)
-      {
-        m_window->setPos(pos);
-      }
-      glm::vec2 getPos()
-      {
-        return m_window->getPos();
-      }
-
-      void setSize(const glm::vec2 size)
-      {
-        m_window->setSize(size);
-      }
-      glm::vec2 getSize()
-      {
-        return m_window->getSize();
-      }
-
-      void addConfirmCallback(glw::meta::GAction action)
-      {
-        LINK(TRIGGER(*this, &GDialog::onConfirm), action);
-      }
-
-      void addCancelCallback(glw::meta::GAction action)
-      {
-        LINK(TRIGGER(*this, &GDialog::onCancel), action);
-        LINK(TRIGGER(*this, &GDialog::onClose), action);
-      }
-
-      virtual void focusComponent()
-      {
-        focus();
-      }
-
-      triggers:
-
-      void onConfirm()
-      {
-        m_outcome = true;
-        callTrigger(&GDialog::onConfirm);
-        finish();
-      }
-
-      void onCancel()
-      {
-        m_outcome = false;
-        callTrigger(&GDialog::onCancel);
-        finish();
-      }
-
-      void onClose()
-      {
-        m_outcome = false;
-        callTrigger(&GDialog::onClose);
-        finish();
-      }
-
-      void focus()
-      {
-        GComponent::focusComponent();
-        GComponent::bringToFront();
-        callTrigger(&GDialog::focus);
-      }
-
-    private:
-
-      std::string m_confirmText;
-      std::string m_cancelText;
-      std::string m_messageText;
-      std::string m_title;
-
-      GButton * m_confirm;
-      GButton * m_cancel;
-      GTextEdit * m_message;
-
-      GWindow * m_window;
-
-      bool m_outcome = false;
-    };
-*/
-
     class GPane : public GComponent, public GGroup
     {
     public:
@@ -3172,36 +3106,90 @@ namespace glw
       {
       }
 
-      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
-      {
-        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
-      }
-      virtual bool checkMouseEvents(int button, int action)
-      {
-        checkGroupMouseEvents(button, action);
-      }
-      virtual bool checkKeyEvents(int key, int action)
-      {
-        checkGroupKeyEvents(key, action);
-      }
       virtual void init(GContext * context, IGComponent * parent)
       {
         GComponent::initComponent(context, parent, "pane");
 
         initGroup(context, this);
       }
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
+      }
+
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        return checkGroupMouseEvents(button, action);
+      }
+
+      virtual bool checkKeyEvents(int key, int action)
+      {
+        return checkGroupKeyEvents(key, action);
+      }
+
       virtual void validate()
       {
+        GComponent::validate();
         validateGroup();
       }
+
       virtual void update()
       {
+        GComponent::update();
         updateGroup();
       }
 
     private:
     };
 
+    class GContainer : public GClickable, public GGroup
+    {
+    public:
+
+      GContainer() {}
+
+      GContainer(glm::vec2 pos, glm::vec2 size)
+        : GClickable(pos, size)
+      {
+      }
+
+      virtual void init(GContext * context, IGComponent * parent)
+      {
+        GComponent::initComponent(context, parent, "container");
+
+        initGroup(context, this);
+      }
+
+      virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
+      {
+        drawGroup(parentMatrix * getRelativeModelMatrix(), shaderHandle, contextHandle);
+      }
+
+      virtual bool checkMouseEvents(int button, int action)
+      {
+        return checkGroupMouseEvents(button, action) || GClickable::checkMouseEvents(button, action);
+      }
+
+      virtual bool checkKeyEvents(int key, int action)
+      {
+        return checkGroupKeyEvents(key, action) || GClickable::checkKeyEvents(key, action);
+      }
+
+      virtual void validate()
+      {
+        GComponent::validate();
+        validateGroup();
+      }
+
+      virtual void update()
+      {
+        GComponent::update();
+        updateGroup();
+      }
+
+    private:
+    };
 
     class GDialog : public GWindow
     {
@@ -3222,8 +3210,11 @@ namespace glw
 
         setId("dialog");
 
-        m_message = new GTextEdit(glm::vec2(GGUI_DEFAULT_PADDING), glm::vec2(250, GGUI_DEFAULT_PADDING), m_messageText, GGUI_DEFAULT_FONT_SIZE, getColorStyle().foreground, false);
+        m_message = new GTextEdit(glm::vec2(GGUI_DEFAULT_PADDING), glm::vec2(220, GGUI_DEFAULT_PADDING), m_messageText, GGUI_DEFAULT_FONT_SIZE, getColorStyle().foreground, false);
         addChildComponent(m_message);
+
+        m_imageView = new GImageView(m_message->getPos() + glm::vec2(m_message->getSize().x, 0), glm::vec2(35), "../textures/question_mark.png");
+        addChildComponent(m_imageView);
 
         m_confirm = new GButton(glm::vec2(50, m_message->getSize().y + GGUI_DEFAULT_PADDING), glm::vec2(100, GGUI_DEFAULT_FONT_SIZE), m_confirmText);
         addChildComponent(m_confirm);
@@ -3244,14 +3235,17 @@ namespace glw
       {
         GWindow::validate();
 
+        m_message->setPos(glm::vec2(GGUI_DEFAULT_PADDING));
+        m_message->setSize(glm::vec2(220, GGUI_DEFAULT_PADDING));
+
+        m_imageView->setPos(m_message->getPos() + glm::vec2(m_message->getSize().x, 0));
+        m_imageView->setSize(glm::vec2(35));
+
         m_confirm->setPos(glm::vec2(50, m_message->getSize().y + GGUI_DEFAULT_PADDING));
         m_confirm->setSize(glm::vec2(100, GGUI_DEFAULT_FONT_SIZE));
 
         m_cancel->setPos(glm::vec2(200, m_message->getSize().y + GGUI_DEFAULT_PADDING));
         m_cancel->setSize(glm::vec2(100, GGUI_DEFAULT_FONT_SIZE));
-
-        m_message->setPos(glm::vec2(GGUI_DEFAULT_PADDING));
-        m_message->setSize(glm::vec2(250, GGUI_DEFAULT_PADDING));
       }
 
       void finish()
@@ -3276,21 +3270,21 @@ namespace glw
           DEFINE_TRIGGER(onCancel),
           DEFINE_TRIGGER(onClose)):
 
-      trigger onConfirm()
+      trigger_func onConfirm()
       {
         m_outcome = true;
         LINKER_CALL(onConfirm);
         finish();
       }
 
-      trigger onCancel()
+      trigger_func onCancel()
       {
         m_outcome = false;
         LINKER_CALL(onCancel);
         finish();
       }
 
-      trigger onClose()
+      trigger_func onClose()
       {
         m_outcome = false;
         LINKER_CALL(onClose);
@@ -3302,6 +3296,7 @@ namespace glw
       std::string m_cancelText;
       std::string m_messageText;
 
+      GImageView * m_imageView;
       GButton * m_confirm;
       GButton * m_cancel;
       GTextEdit * m_message;
