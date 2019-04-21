@@ -143,6 +143,8 @@ namespace glw
 
       void exit();
 
+      bool isValid();
+
      private:
       glm::mat4 getExternalOrtho() const;
 		  glm::mat4 getExternalOrthoView() const;
@@ -205,6 +207,8 @@ namespace glw
 		  bool m_printFps = false;
       int m_fpsCap = 62;
       float m_fps = 0;
+
+      bool m_isValid = false;
 
     };
   }

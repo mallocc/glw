@@ -54,6 +54,7 @@ using glw::meta::GLinker;
 #include <exception>
 #include <typeinfo>
 #include <stdexcept>
+
 namespace glw
 {
   namespace gui
@@ -189,6 +190,8 @@ namespace glw
     public:
       IGComponent() {}
       virtual ~IGComponent() {}
+
+      virtual void createInnerComponents() = 0;
 
       virtual void init(GContext * context, IGComponent * parent) = 0;
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle) = 0;
@@ -475,6 +478,7 @@ namespace glw
           if (NULL != component)
           {
             delete component;
+            component = NULL;
           }
           return true;
         }
@@ -766,6 +770,10 @@ namespace glw
 
       virtual ~GComponent()
       {
+        if (isFocused())
+        {
+          getContext()->setFocused(NULL);
+        }
         UNTRACK(this);
       }
 
@@ -1202,7 +1210,10 @@ namespace glw
     {
     public:
 
-      GLabel() {}
+      GLabel()
+      {
+        createInnerComponents();
+      }
 
       GLabel(GFont font, std::string text, glm::vec2 pos, float height, glm::vec4 color) :
         GComponent(pos, glm::vec2(height)),
@@ -1210,7 +1221,10 @@ namespace glw
         m_text(text)
       {
         setColor(color);
+        createInnerComponents();
       }
+
+      virtual void createInnerComponents() {}
 
       virtual void init(GContext * context, IGComponent * parent)
       {
@@ -1512,23 +1526,29 @@ namespace glw
     class GButton : public GGroup, public GClickable, public GLinker
     {
     public:
-      GButton() {}
+      GButton()
+      {
+        createInnerComponents();
+      }
 
       GButton(glm::vec2 pos, glm::vec2 size, std::string text = "", bool isTogglable = false):
         GClickable(pos, size, isTogglable), m_text(text)
-      {}
+      {
+        createInnerComponents();
+      }
+
+      virtual void createInnerComponents()
+      {
+        m_back = createRectangle(glm::vec2(), glm::vec2(), glm::vec4());
+        m_label = createLabel(m_text, glm::vec2(), 0, glm::vec4());
+        addComponent(m_label);
+      }
 
       virtual void init(GContext *context, IGComponent *parent)
       {
         GComponent::initComponent(context, parent, "button");
 
-        glm::vec2 pos = m_pos;
-        m_back = createRectangle(getPos(), m_size, getColorStyle().accent);
-        pos.x += m_size.x / 2;
-        m_label = createLabel(m_text, pos, m_size.y, getColorStyle().foreground);
         m_label->centerHorizontal(true);
-
-        addComponent(m_label);
 
         initGroup(context, this);
       }
@@ -1656,21 +1676,21 @@ namespace glw
 
       GWindow()
         : m_title("Untitled")
-      {}
+      {
+        createInnerComponents();
+      }
 
       GWindow(glm::vec2 pos, glm::vec2 size, std::string title)
         : GClickable(pos, size),
           m_title(title)
       {
+        createInnerComponents();
       }
 
       ~GWindow() {}
 
-      virtual void init(GContext * context, IGComponent * parent)
+      virtual void createInnerComponents()
       {
-        // Inherit properties
-        GComponent::initComponent(context, parent, "window");
-
         // Create background of the window
         m_back = createRectangle(glm::vec2(), getSize(), getColorStyle().background/2.0f);
 
@@ -1695,26 +1715,16 @@ namespace glw
         addComponent(m_close);
         m_maxmin = new GButton(glm::vec2(getSize().x - GGUI_WINDOW_TITLBAR_HEIGHT * 2, 0), glm::vec2(GGUI_WINDOW_TITLBAR_HEIGHT), "[]");
         addComponent(m_maxmin);
+      }
+
+      virtual void init(GContext * context, IGComponent * parent)
+      {
+        // Inherit properties
+        GComponent::initComponent(context, parent, "window");
 
         // Init window components and its children components
         initGroup(context, this);
         initChildren(context, this);
-
-        // Override colorstyles
-        GColorStyle colorStyle = getColorStyle();
-
-        colorStyle.accent = colorStyle.background / 2.0f;
-        m_leftResizeBar->setColorStyle(colorStyle);
-        m_rightResizeBar->setColorStyle(colorStyle);
-        m_bottomResizeBar->setColorStyle(colorStyle);
-        m_bottomLeftResizeBar->setColorStyle(colorStyle);
-        m_bottomRightResizeBar->setColorStyle(colorStyle);
-
-        colorStyle.accent = glw::RED_A;
-        m_close->setColorStyle(colorStyle);
-
-        colorStyle.accent = glw::ORANGE_A;
-        m_maxmin->setColorStyle(colorStyle);
       }
 
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
@@ -1799,8 +1809,30 @@ namespace glw
         m_maxmin->setPos(glm::vec2(getSize().x - GGUI_WINDOW_TITLBAR_HEIGHT * 2, 0));
         m_maxmin->setSize(glm::vec2(GGUI_WINDOW_TITLBAR_HEIGHT));
 
+
+        // Override colorstyles
+        GColorStyle colorStyle = getColorStyle();
+
+        m_back.setColor(getColorStyle().background/2.0f);
+
+        colorStyle.accent = colorStyle.background / 2.0f;
+        m_leftResizeBar->setColorStyle(colorStyle);
+        m_rightResizeBar->setColorStyle(colorStyle);
+        m_bottomResizeBar->setColorStyle(colorStyle);
+        m_bottomLeftResizeBar->setColorStyle(colorStyle);
+        m_bottomRightResizeBar->setColorStyle(colorStyle);
+
+        colorStyle.accent = glw::RED_A;
+        m_close->setColorStyle(colorStyle);
+
+        colorStyle.accent = glw::ORANGE_A;
+        m_maxmin->setColorStyle(colorStyle);
+
         validateGroup();
         m_children.validateGroup();
+
+        confinePositionToWindow();
+        confineSizeToContent();
       }
 
       virtual void update()
@@ -2125,7 +2157,10 @@ namespace glw
     {
     public:
 
-      GTextEdit() {}
+      GTextEdit()
+      {
+        createInnerComponents();
+      }
 
       GTextEdit(glm::vec2 pos, glm::vec2 size, std::string text, int fontSize, glm::vec4 color, bool editable = true)
         : GClickable(pos,size),
@@ -2136,7 +2171,10 @@ namespace glw
           m_editable(editable)
       {
         setColor(color);
+        createInnerComponents();
       }
+
+      virtual void createInnerComponents() {}
 
       virtual void init(GContext *context, IGComponent *parent)
       {
@@ -2365,13 +2403,11 @@ namespace glw
           m_inc(inc),
           m_isVertical(isVertical)
       {
-
+        createInnerComponents();
       }
 
-      virtual void init(GContext * context, IGComponent * parent)
+      virtual void createInnerComponents()
       {
-        GComponent::initComponent(context, parent, "slider");
-
         if (m_isVertical)
         {
           m_down = new GButton(glm::vec2(0, m_size.y - m_size.x), glm::vec2(m_size.x, m_size.x), "\\/");
@@ -2394,6 +2430,11 @@ namespace glw
           m_bar = new GButton(glm::vec2(m_size.y, 0), glm::vec2(m_size.y, m_size.y), "||");
           addComponent(m_bar);
         }
+      }
+
+      virtual void init(GContext * context, IGComponent * parent)
+      {
+        GComponent::initComponent(context, parent, "slider");
 
         initGroup(context, this);
       }
@@ -2418,6 +2459,8 @@ namespace glw
 
       virtual void validate()
       {
+        snapValue();
+
         if (m_isVertical)
         {
           m_down->setPos(glm::vec2(0, m_size.y - m_size.x));
@@ -2436,8 +2479,6 @@ namespace glw
           m_bar->setPos(glm::vec2(getValue() * (m_size.x - m_size.y * 3) + m_size.y, 0));
           m_bar->setSize(glm::vec2(m_size.y, m_size.y));
         }
-
-        snapValue();
 
         validateGroup();
       }
@@ -2566,12 +2607,11 @@ namespace glw
           m_value(value),
           m_inc(inc)
       {
+        createInnerComponents();
       }
 
-      virtual void init(GContext * context, IGComponent * parent)
+      virtual void createInnerComponents()
       {
-        GComponent::initComponent(context, parent, "spinner");
-
         m_label = new GButton(glm::vec2(m_size.x / 6, 0), glm::vec2(m_size.x / 6 * 4, m_size.y), "0");
         addComponent(m_label);
 
@@ -2580,6 +2620,11 @@ namespace glw
 
         m_minus = new GButton(glm::vec2(m_size.x / 6 * 5, 0), glm::vec2(m_size.x / 6, m_size.y), "-");
         addComponent(m_minus);
+      }
+
+      virtual void init(GContext * context, IGComponent * parent)
+      {
+        GComponent::initComponent(context, parent, "spinner");
 
         initGroup(context, this);
       }
@@ -2708,14 +2753,18 @@ namespace glw
       GDropdown(glm::vec2 pos, glm::vec2 size)
         : GClickable(pos, size)
       {
+        createInnerComponents();
+      }
+
+      virtual void createInnerComponents()
+      {
+        m_selected = new GButton(glm::vec2(), getSize(), getSelectedName(), true);
+        addComponent(m_selected);
       }
 
       virtual void init(GContext * context, IGComponent * parent)
       {
         GComponent::initComponent(context, parent, "dropdown");
-
-        m_selected = new GButton(glm::vec2(), getSize(), getSelectedName(), true);
-        addComponent(m_selected);
 
         initGroup(context, this);
       }
@@ -2890,7 +2939,11 @@ namespace glw
       GImageView(glm::vec2 pos, glm::vec2 size, const char * imagefile)
         : GClickable(pos, size),
           m_imagefile(imagefile)
-      {}
+      {
+        createInnerComponents();
+      }
+
+      virtual void createInnerComponents() {}
 
       virtual void init(GContext *context, IGComponent *parent)
       {
@@ -2930,7 +2983,10 @@ namespace glw
     {
     public:
 
-      GProgressBar() {}
+      GProgressBar()
+      {
+        createInnerComponents();
+      }
 
       GProgressBar(glm::vec2 pos, glm::vec2 size, float progressMin, float progressMax, bool vertical = false)
         : GClickable(pos, size),
@@ -2939,18 +2995,23 @@ namespace glw
           m_progressCurrent(m_progressMin),
           m_vertical(vertical)
       {
+        createInnerComponents();
+      }
+
+      virtual void createInnerComponents()
+      {
+        m_back = createRectangle(getPos(), m_size, getColorStyle().background);
+        m_front = createRectangle(getPos(), getSize() * glm::vec2(getPercentageProgress(), 1), getColorStyle().accent);
+        m_label = createLabel("0", getPos() + glm::vec2(getSize().x / 2, 0), m_size.y, getColorStyle().foreground);
+
+        addComponent(m_label);
       }
 
       virtual void init(GContext *context, IGComponent *parent)
       {
         GComponent::initComponent(context, parent, "progressbar");
 
-        m_back = createRectangle(getPos(), m_size, getColorStyle().background);
-        m_front = createRectangle(getPos(), getSize() * glm::vec2(getPercentageProgress(), 1), getColorStyle().accent);
-        m_label = createLabel("0", getPos() + glm::vec2(getSize().x / 2, 0), m_size.y, getColorStyle().foreground);
         m_label->centerHorizontal(true);
-
-        addComponent(m_label);
 
         initGroup(context, this);
       }
@@ -2994,6 +3055,8 @@ namespace glw
         m_label->setPos(getPos() + glm::vec2(getSize().x / 2, 0));
         m_label->setColor(getColorStyle().foreground);
         m_label->setHeight(getSize().y);
+
+        validateGroup();
       }
 
       virtual void update()
@@ -3042,19 +3105,26 @@ namespace glw
     class GCheckBox : public GClickable, public GLinker
     {
     public:
-      GCheckBox() {}
+      GCheckBox()
+      {
+        createInnerComponents();
+      }
 
       GCheckBox(glm::vec2 pos, glm::vec2 size)
         : GClickable(pos, size, true)
-      {}
+      {
+        createInnerComponents();
+      }
+
+      virtual void createInnerComponents()
+      {
+        m_border = createBox(getPos(), getSize(), 0.1f, getColorStyle().accent);
+        m_check = createRectangle(getPos(), getSize(), getColorStyle().accent);
+      }
 
       virtual void init(GContext *context, IGComponent *parent)
       {
         GComponent::initComponent(context, parent, "checkbox");
-
-        m_border = createBox(getPos(), getSize(), 0.1f, getColorStyle().accent);
-        m_check = createRectangle(getPos(), getSize(), getColorStyle().accent);
-
       }
 
       virtual void draw(glm::mat4 parentMatrix, GShaderHandle_T shaderHandle, GContextShaderHandle_T contextHandle)
@@ -3099,12 +3169,18 @@ namespace glw
     {
     public:
 
-      GPane() {}
+      GPane()
+      {
+        createInnerComponents();
+      }
 
       GPane(glm::vec2 pos, glm::vec2 size)
         : GComponent(pos, size)
       {
+        createInnerComponents();
       }
+
+      virtual void createInnerComponents() {}
 
       virtual void init(GContext * context, IGComponent * parent)
       {
@@ -3147,12 +3223,18 @@ namespace glw
     {
     public:
 
-      GContainer() {}
+      GContainer()
+      {
+        createInnerComponents();
+      }
 
       GContainer(glm::vec2 pos, glm::vec2 size)
         : GClickable(pos, size)
       {
+        createInnerComponents();
       }
+
+      virtual void createInnerComponents() {}
 
       virtual void init(GContext * context, IGComponent * parent)
       {
@@ -3195,21 +3277,25 @@ namespace glw
     {
     public:
 
-      GDialog() {}
+      GDialog()
+      {
+        createInnerComponents();
+      }
 
-      GDialog(glm::vec2 pos, std::string message, std::string confirmText = "Okay", std::string cancelText = "Cancel", std::string title = "")
+      GDialog(glm::vec2 pos, std::string message,
+              std::string confirmText = "Okay",
+              std::string cancelText = "Cancel",
+              std::string title = "")
         : GWindow(pos, glm::vec2(), title),
           m_messageText(message),
           m_confirmText(confirmText),
           m_cancelText(cancelText)
-      {}
-
-      virtual void init(GContext *context, IGComponent *parent)
       {
-        GWindow::init(context, parent);
+        createInnerComponents();
+      }
 
-        setId("dialog");
-
+      virtual void createInnerComponents()
+      {
         m_message = new GTextEdit(glm::vec2(GGUI_DEFAULT_PADDING), glm::vec2(220, GGUI_DEFAULT_PADDING), m_messageText, GGUI_DEFAULT_FONT_SIZE, getColorStyle().foreground, false);
         addChildComponent(m_message);
 
@@ -3220,12 +3306,15 @@ namespace glw
         addChildComponent(m_confirm);
         LINKER_NEW_LINK(m_confirm, GButton::T_onPressed, ACTION(*this, &GDialog::onConfirm));
 
-
         m_cancel = new GButton(glm::vec2(200, m_message->getSize().y + GGUI_DEFAULT_PADDING), glm::vec2(100, GGUI_DEFAULT_FONT_SIZE), m_cancelText);
         addChildComponent(m_cancel);
         LINKER_NEW_LINK(m_cancel, GButton::T_onPressed, ACTION(*this, &GDialog::onCancel));
+      }
 
-        initChildren(context, this);
+      virtual void init(GContext *context, IGComponent *parent)
+      {
+        GWindow::init(context, parent);
+        setId("dialog");
 
         setResizeable(false);
         setScalable(false);
@@ -3237,6 +3326,7 @@ namespace glw
 
         m_message->setPos(glm::vec2(GGUI_DEFAULT_PADDING));
         m_message->setSize(glm::vec2(220, GGUI_DEFAULT_PADDING));
+        m_message->setColor(getColorStyle().foreground);
 
         m_imageView->setPos(m_message->getPos() + glm::vec2(m_message->getSize().x, 0));
         m_imageView->setSize(glm::vec2(35));
@@ -3304,7 +3394,11 @@ namespace glw
       bool m_outcome = false;
     };
 
-    static GDialog * createDialog(GContext& context, IGComponent *parent, std::string message, std::string confirmText = "Okay", std::string cancelText = "Cancel", std::string title = "")
+    static GDialog * createDialog(GContext& context, IGComponent *parent,
+                                  std::string message,
+                                  std::string title = "Message",
+                                  std::string confirmText = "Okay",
+                                  std::string cancelText = "Cancel")
     {
       glm::vec2 windowSize;
       context.getContent()->getWindowSize(windowSize);

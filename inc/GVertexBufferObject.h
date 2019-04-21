@@ -67,9 +67,6 @@ namespace glw
 			  // Override the texture handle seperately
 			  void loadTextureHandle(GShaderVariableHandle * handle);
 
-			  // Sets the texture
-			  void setTex(GLuint tex);
-
 			  // Get the model matrix
 			  glm::mat4 getModelMat();
         

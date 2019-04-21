@@ -355,6 +355,12 @@ void GContent::exit()
   glfwSetWindowShouldClose(m_window, GL_TRUE);
 }
 
+bool GContent::isValid()
+{
+  return m_isValid;
+}
+
+
 glm::mat4 GContent::getExternalOrtho() const
 {
 	return glm::ortho(
@@ -586,6 +592,7 @@ GReturnCode GContent::initWindow(
 
   if (GLW_SUCCESS == success)
   {
+    m_isValid = true;
     // init
     if (NULL != init)
     {

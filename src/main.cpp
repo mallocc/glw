@@ -371,7 +371,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     {
     case GLFW_KEY_ESCAPE:
       // Create a dialog for exit
-      GDialog * dialog = createDialog(context, pane, "Are you sure you want to exit?");
+      GDialog * dialog = createDialog(context, pane, "Are you sure you want to exit?", "Warning");
       dialog->addConfirmCallback(ACTION(*content, &GContent::exit));
       dialog->makeUnique("EXIT_DIALOG");
       break;
